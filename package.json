@@ -12,7 +12,7 @@
   "keywords": [
     "Youtube Music",
     "Pomodoro",
-    "developer-tools"
+    "Game One"
   ],
   "icon": "icon.png",
   "galleryBanner": {
@@ -37,7 +37,9 @@
   },
 
   "activationEvents": [
-    "onView:rene-view"
+    "onView:rene-one-game-view",
+    "onView:rene-pomodoro-view",
+    "onView:rene-yt-music-view"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -46,16 +48,26 @@
         {
           "id": "rene-activitybar",
           "title": "R E N E",
-          "icon": "$(twitter)"
+          "icon": "$(shield)"
         }
       ]
     },
     "views": {
       "rene-activitybar": [
         {
-          "id": "rene-view",
-          "name": "RENE Greeter",
-          "icon": "$(smiley)"
+          "id": "rene-one-game-view",
+          "name": "One Game",
+          "icon": "$(game)"
+        },
+        {
+          "id": "rene-pomodoro-view",
+          "name": "Pomodoro",
+          "icon": "$(clock)"
+        },
+        {
+          "id": "rene-yt-music-view",
+          "name": "YT Music",
+          "icon": "$(music)"
         }
       ]
     }
