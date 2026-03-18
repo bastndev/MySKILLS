@@ -48,7 +48,7 @@
         {
           "id": "rene-activitybar",
           "title": "R E N E",
-          "icon": "$(shield)"
+          "icon": "src/assets/icon-rene.svg"
         }
       ]
     },
