@@ -1,14 +1,59 @@
 {
   "name": "rene",
   "displayName": "R E N E",
-  "description": "new 2026 extension avaible...",
+  "description": "Available now: VSCode • Antigravity • Cursor • Windsurf • Trae.ai • Kiro & (Firebase Studio)... 雨",
   "version": "0.0.1",
+  "publisher": "bastndev",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.74.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Linters",
+    "Machine Learning",
+    "Visualization",
+    "Programming Languages"
   ],
+  "keywords": [
+    "developer-tools",
+    "cursor-settings",
+    "image-preview",
+    "RENE extension",
+    "productivity",
+    "highlighting",
+    "error-lens",
+    "markdown",
+    "auto-tag",
+    "env-lens",
+    "mdx",
+    "git",
+    "svg",
+    "tts",
+    "ai"
+  ],
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#0a0a0a",
+    "theme": "dark"
+  },
+  "homepage": "https://github.com/bastndev/RENE#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bastndev/RENE"
+  },
+  "bugs": {
+    "url": "https://github.com/bastndev/RENE/issues"
+  },
+  "author": {
+    "name": "Gohit Bastian",
+    "email": "hello@gohit.xyz",
+    "url": "https://www.gohit.xyz/me"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/bastndev"
+  },
+
   "activationEvents": [
     "onView:rene-view"
   ],
@@ -48,7 +93,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.110.0",
+    "@types/vscode": "^1.74.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
     "typescript-eslint": "^8.54.0",
