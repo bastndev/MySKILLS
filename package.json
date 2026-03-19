@@ -8,7 +8,9 @@
   "engines": {
     "vscode": "^1.74.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "keywords": [
     "Youtube Music",
     "Pomodoro",
@@ -35,12 +37,6 @@
   "sponsor": {
     "url": "https://github.com/sponsors/bastndev"
   },
-
-  "activationEvents": [
-    "onView:rene-one-game-view",
-    "onView:rene-pomodoro-view",
-    "onView:rene-yt-music-view"
-  ],
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {

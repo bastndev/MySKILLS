@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 export const oneGameProvider: vscode.TreeDataProvider<string> = {
-	getChildren: () => ['Hello One Game'],
+	getChildren: () => ['Hello One Game 123'],
 	getTreeItem: (item: string) => ({
 		label: item,
 		tooltip: item,
