@@ -104,7 +104,6 @@
   },
   "dependencies": {
     "@distube/ytdl-core": "^4.16.12",
-    "play-dl": "^1.9.7",
     "ytmusic-api": "^5.3.1"
   }
 }

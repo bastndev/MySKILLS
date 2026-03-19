@@ -5,6 +5,7 @@ export interface SearchResult {
 	videoId: string;
 	title: string;
 	artist: string;
+	album: string;
 	thumbnail: string;
 	duration: number;
 }
@@ -13,6 +14,7 @@ export interface StreamInfo {
 	url: string;
 	title: string;
 	artist: string;
+	album: string;
 	thumbnail: string;
 	duration: number;
 }
@@ -36,6 +38,7 @@ export async function searchMusic(query: string): Promise<SearchResult[]> {
 			videoId: song.videoId,
 			title: song.name,
 			artist: song.artist?.name || "Unknown",
+			album: song.album?.name || "",
 			thumbnail:
 				song.thumbnails && song.thumbnails.length > 0
 					? song.thumbnails[song.thumbnails.length - 1].url
@@ -72,10 +75,12 @@ export async function getStreamUrl(videoId: string): Promise<StreamInfo> {
 			10,
 		);
 
+		const album = (info.videoDetails as any).album || "";
 		return {
 			url: format.url,
 			title,
 			artist,
+			album,
 			thumbnail,
 			duration,
 		};

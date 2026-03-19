@@ -6,7 +6,6 @@
     let results = [];
     let currentIndex = -1;
     let isPlaying = false;
-    let lastQuery = '';
 
     // --- DOM helpers ---
     const $ = (s) => document.querySelector(s);
@@ -70,7 +69,6 @@
     function doSearch(query) {
         query = (query || '').trim();
         if (!query) { return; }
-        lastQuery = query;
         showScreen('results');
         const queryLabel = $('#results-query');
         if (queryLabel) { queryLabel.textContent = `"${query}"`; }
@@ -97,7 +95,9 @@
                      onerror="this.style.background='rgba(128,128,128,0.15)';this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1 1%22/>'">
                 <div class="result-info">
                     <div class="result-title">${escapeHtml(item.title)}</div>
-                    <div class="result-meta">${escapeHtml(item.artist)} · ${formatDuration(item.duration)}</div>
+                    <div class="result-meta">
+                        ${escapeHtml(item.artist)}${item.album ? ` · ${escapeHtml(item.album)}` : ''} · ${formatDuration(item.duration)}
+                    </div>
                 </div>`;
             el.addEventListener('click', () => playTrack(i));
             container.appendChild(el);
@@ -122,7 +122,7 @@
                 <img class="player-art" src="${escapeHtml(data.thumbnail)}" alt=""
                      onerror="this.style.background='rgba(128,128,128,0.15)'">
                 <div class="player-title">${escapeHtml(data.title)}</div>
-                <div class="player-artist">${escapeHtml(data.artist)}</div>
+                <div class="player-artist">${escapeHtml(data.artist)}${data.album ? ` • ${escapeHtml(data.album)}` : ''}</div>
                 <div class="player-progress">
                     <span id="current-time">0:00</span>
                     <input type="range" id="progress-bar" class="progress-bar" min="0" max="1000" value="0" step="1">
@@ -302,8 +302,6 @@
     const backToSearch = $('#back-to-search');
     if (backToSearch) {
         backToSearch.addEventListener('click', () => {
-            audio.pause();
-            isPlaying = false;
             showScreen('search');
         });
     }
@@ -311,8 +309,6 @@
     const backToResults = $('#back-to-results');
     if (backToResults) {
         backToResults.addEventListener('click', () => {
-            audio.pause();
-            isPlaying = false;
             showScreen('results');
         });
     }
