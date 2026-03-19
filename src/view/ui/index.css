@@ -8,11 +8,12 @@ body {
     background-color: transparent;
     color: var(--vscode-editor-foreground);
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     height: 100vh;
     margin: 0;
-    padding: 24px 20px;
+    padding: 12px 20px;
     box-sizing: border-box;
 }
 
@@ -85,4 +86,52 @@ body {
 .search-input::-webkit-search-cancel-button:hover {
     opacity: 1;
     transform: scale(1.1);
+}
+
+/* Quick Access */
+.quick-access {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    width: 100%;
+    max-width: 500px;
+    justify-content: center;
+    overflow-x: auto;
+    padding-bottom: 8px; /* Room for scrollbar if needed */
+}
+
+/* Hide scrollbar but keep scrollable if many buttons */
+.quick-access::-webkit-scrollbar {
+    display: none;
+}
+
+.qa-btn {
+    background-color: rgba(128, 128, 128, 0.15);
+    color: var(--vscode-foreground);
+    border: 1px solid transparent;
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+.qa-btn:hover {
+    background-color: rgba(128, 128, 128, 0.25);
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.qa-btn.active {
+    background-color: #3e78ff; /* Vibrant blue like in the image */
+    color: white;
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(62, 120, 255, 0.3);
+}
+
+.qa-btn:active {
+    transform: translateY(0);
 }
