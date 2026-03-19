@@ -8,7 +8,9 @@
   "engines": {
     "vscode": "^1.74.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "keywords": [
     "Youtube Music",
     "Pomodoro",
@@ -35,12 +37,6 @@
   "sponsor": {
     "url": "https://github.com/sponsors/bastndev"
   },
-
-  "activationEvents": [
-    "onView:rene-one-game-view",
-    "onView:rene-pomodoro-view",
-    "onView:rene-yt-music-view"
-  ],
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -48,11 +44,19 @@
         {
           "id": "rene-activitybar",
           "title": "R E N E",
-          "icon": "src/assets/icon-rene.svg"
+          "icon": "src/assets/icons/rene.svg"
         }
       ]
     },
     "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "rene-yt-music-view",
+          "name": "RENE MUSIC ♪",
+          "icon": "$(music)"
+        }
+      ],
       "rene-activitybar": [
         {
           "id": "rene-one-game-view",
@@ -65,9 +69,9 @@
           "icon": "$(clock)"
         },
         {
-          "id": "rene-yt-music-view",
-          "name": "YT Music",
-          "icon": "$(music)"
+          "id": "rene-yt-list-view",
+          "name": "Youtube List",
+          "icon": "$(list-unordered)"
         }
       ]
     }
