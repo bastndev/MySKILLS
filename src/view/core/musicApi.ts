@@ -1,17 +1,7 @@
-import ytdl from "@distube/ytdl-core";
 import YTMusic from "ytmusic-api";
 
 export interface SearchResult {
 	videoId: string;
-	title: string;
-	artist: string;
-	album: string;
-	thumbnail: string;
-	duration: number;
-}
-
-export interface StreamInfo {
-	url: string;
 	title: string;
 	artist: string;
 	album: string;
@@ -48,44 +38,5 @@ export async function searchMusic(query: string): Promise<SearchResult[]> {
 	} catch (error) {
 		console.error("[RENE Music] searchMusic error:", error);
 		return [];
-	}
-}
-
-export async function getStreamUrl(videoId: string): Promise<StreamInfo> {
-	try {
-		const info = await ytdl.getInfo(
-			`https://www.youtube.com/watch?v=${videoId}`,
-		);
-		const format = ytdl.chooseFormat(info.formats, {
-			quality: "highestaudio",
-			filter: "audioonly",
-		});
-
-		if (!format || !format.url) {
-			throw new Error("No compatible audio stream found");
-		}
-
-		const title = info.videoDetails.title || "Unknown";
-		const artist = info.videoDetails.author.name || "Unknown";
-		const thumbnails = info.videoDetails.thumbnails || [];
-		const thumbnail =
-			thumbnails.length > 0 ? thumbnails[thumbnails.length - 1].url : "";
-		const duration = Number.parseInt(
-			info.videoDetails.lengthSeconds || "0",
-			10,
-		);
-
-		const album = (info.videoDetails as any).album || "";
-		return {
-			url: format.url,
-			title,
-			artist,
-			album,
-			thumbnail,
-			duration,
-		};
-	} catch (error) {
-		console.error("[RENE Music] getStreamUrl error:", error);
-		throw error;
 	}
 }

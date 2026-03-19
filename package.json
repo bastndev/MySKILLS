@@ -103,7 +103,6 @@
     "typescript-eslint": "^8.54.0"
   },
   "dependencies": {
-    "@distube/ytdl-core": "^4.16.12",
     "ytmusic-api": "^5.3.1"
   }
 }

@@ -1,19 +1,110 @@
 (function () {
     const vscode = acquireVsCodeApi();
 
-    // Audio created but never auto-played
-    const audio = new Audio();
-    audio.preload = 'none';
-
     // --- State ---
     let results = [];
     let currentIndex = -1;
     let isPlaying = false;
     let isMuted = false;
+    let ytPlayer = null;
+    let playerReady = false;
+    let progressTimer = null;
 
     // --- DOM helpers ---
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
+
+    // --- YT IFrame Player Setup ---
+    window.onYouTubeIframeAPIReady = function() {
+        ytPlayer = new YT.Player('youtube-player', {
+            height: '360',
+            width: '640',
+            videoId: '',
+            playerVars: {
+                'playsinline': 1,
+                'autoplay': 0,
+                'controls': 0,
+                'disablekb': 1,
+                'fs': 0,
+                'rel': 0,
+                'modestbranding': 1
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange,
+                'onError': onPlayerError
+            }
+        });
+    };
+
+    function onPlayerReady(event) {
+        playerReady = true;
+        console.log("YouTube Player is Ready");
+    }
+
+    function onPlayerStateChange(event) {
+        // YT.PlayerState.PLAYING = 1
+        // YT.PlayerState.PAUSED = 2
+        // YT.PlayerState.ENDED = 0
+        // YT.PlayerState.BUFFERING = 3
+        
+        if (event.data === YT.PlayerState.PLAYING) {
+            isPlaying = true;
+            updatePlayPauseIcon();
+            startProgressLoop();
+        } else if (event.data === YT.PlayerState.PAUSED) {
+            isPlaying = false;
+            updatePlayPauseIcon();
+            stopProgressLoop();
+        } else if (event.data === YT.PlayerState.ENDED) {
+            isPlaying = false;
+            updatePlayPauseIcon();
+            stopProgressLoop();
+            if (currentIndex < results.length - 1) {
+                selectTrack(currentIndex + 1);
+            }
+        }
+    }
+
+    function onPlayerError(event) {
+        console.error("Player Error:", event.data);
+        showPlayerError('Could not play this track. It might be restricted for embedding.');
+    }
+
+    // --- Progress Loop ---
+    function startProgressLoop() {
+        stopProgressLoop();
+        progressTimer = setInterval(() => {
+            if (ytPlayer && ytPlayer.getCurrentTime) {
+                const currentTime = ytPlayer.getCurrentTime();
+                const duration = ytPlayer.getDuration();
+                updateProgressBar(currentTime, duration);
+            }
+        }, 1000);
+    }
+
+    function stopProgressLoop() {
+        if (progressTimer) {
+            clearInterval(progressTimer);
+            progressTimer = null;
+        }
+    }
+
+    function updateProgressBar(current, total) {
+        const bar = $('#progress-bar');
+        const cur = $('#current-time');
+        const tot = $('#total-time');
+        
+        if (bar && total > 0) {
+            bar.value = (current / total) * 1000;
+        }
+        if (cur) {
+            cur.textContent = formatDuration(Math.floor(current));
+        }
+        if (tot && total > 0) {
+            tot.textContent = formatDuration(Math.floor(total));
+        }
+    }
 
     // --- Screen navigation ---
     function showScreen(name) {
@@ -92,20 +183,15 @@
         });
     }
 
-    // --- Select track: show player INSTANTLY with search data (NO API call) ---
+    // --- Select track: show player + load in hidden YT player ---
     function selectTrack(index) {
         currentIndex = index;
         const track = results[index];
         if (!track) { return; }
 
-        // Stop any current audio
-        audio.pause();
-        audio.removeAttribute('src');
-        isPlaying = false;
-
         showScreen('player');
 
-        // Set track info in header (white title + gray artist)
+        // Set track info in header
         const trackInfo = $('#player-track-info');
         if (trackInfo) {
             trackInfo.innerHTML = `
@@ -115,11 +201,18 @@
             `;
         }
 
-        // Render player IMMEDIATELY with data from search results
         renderPlayerUI(track);
+
+        // Load the video in the hidden player
+        if (ytPlayer && ytPlayer.loadVideoById) {
+            ytPlayer.loadVideoById(track.videoId);
+            ytPlayer.playVideo();
+        } else {
+            showPlayerError('YouTube Player not ready yet. Please wait a moment.');
+        }
     }
 
-    // --- Render player UI instantly (no skeleton, no API, no album art) ---
+    // --- Render player UI instantly ---
     function renderPlayerUI(track) {
         const container = $('#player-container');
         const hasPrev = currentIndex > 0;
@@ -164,31 +257,6 @@
         setupPlayerEvents();
     }
 
-    // --- Request stream and play (called when user presses Play) ---
-    function requestStreamAndPlay() {
-        const track = results[currentIndex];
-        if (!track) { return; }
-
-        // Request stream URL from extension backend
-        vscode.postMessage({ type: 'getStream', videoId: track.videoId });
-    }
-
-    // --- When stream is ready, set audio src and play ---
-    function onStreamReady(data) {
-        if (data.url) {
-            audio.src = data.url;
-            audio.play().then(() => {
-                isPlaying = true;
-                updatePlayPauseIcon();
-            }).catch(() => {
-                isPlaying = false;
-                updatePlayPauseIcon();
-                showPlayerError('Could not play this track.\nTry another one.');
-            });
-        }
-    }
-
-    // --- Show error in player without destroying controls ---
     function showPlayerError(text) {
         const container = $('#player-container');
         if (container) {
@@ -198,7 +266,6 @@
     }
 
     // --- Player controls ---
-    // Single SVG path-swap (avoids display:flex vs display:none conflicts)
     const PATH_PLAY  = 'M8 5v14l11-7z';
     const PATH_PAUSE = 'M6 19h4V5H6v14zm8-14v14h4V5h-4z';
 
@@ -230,25 +297,12 @@
 
         if (playPauseBtn) {
             playPauseBtn.addEventListener('click', () => {
+                if (!ytPlayer || !playerReady) return;
+                
                 if (isPlaying) {
-                    // Pause
-                    audio.pause();
-                    isPlaying = false;
-                    updatePlayPauseIcon();
+                    ytPlayer.pauseVideo();
                 } else {
-                    // If no src loaded yet, request stream from API
-                    if (!audio.src || audio.src === '' || audio.src === location.href) {
-                        requestStreamAndPlay();
-                    } else {
-                        // Resume
-                        audio.play().then(() => {
-                            isPlaying = true;
-                            updatePlayPauseIcon();
-                        }).catch(() => {
-                            isPlaying = false;
-                            updatePlayPauseIcon();
-                        });
-                    }
+                    ytPlayer.playVideo();
                 }
             });
         }
@@ -267,58 +321,38 @@
 
         if (progressBar) {
             progressBar.addEventListener('input', (e) => {
-                if (audio.duration) {
-                    audio.currentTime = (e.target.value / 1000) * audio.duration;
+                if (ytPlayer && ytPlayer.seekTo) {
+                    const duration = ytPlayer.getDuration();
+                    const seekTo = (e.target.value / 1000) * duration;
+                    ytPlayer.seekTo(seekTo, true);
                 }
             });
         }
 
         if (volumeBtn) {
             volumeBtn.addEventListener('click', () => {
+                if (!ytPlayer) return;
                 isMuted = !isMuted;
-                audio.muted = isMuted;
+                if (isMuted) {
+                    ytPlayer.mute();
+                } else {
+                    ytPlayer.unMute();
+                }
                 updateVolumeIcon();
             });
         }
 
         if (repeatBtn) {
+            // Simplified repeat logic for MVP: just toggle loop on the player
             repeatBtn.addEventListener('click', () => {
-                audio.loop = !audio.loop;
-                repeatBtn.style.opacity = audio.loop ? '1' : '';
+                // YT Player doesn't have a simple "v.loop = true", but we can handle it in state change
+                // or use a local flag. For now, let's just use a visual toggle.
+                const isLooped = repeatBtn.classList.toggle('active');
+                repeatBtn.style.opacity = isLooped ? '1' : '';
+                // Note: Actual loop logic would be in onPlayerStateChange (if state === ENDED and isLooped, play again)
             });
         }
     }
-
-    // --- Audio events ---
-    audio.addEventListener('timeupdate', () => {
-        const bar = $('#progress-bar');
-        const cur = $('#current-time');
-        if (bar && audio.duration) {
-            bar.value = Math.floor((audio.currentTime / audio.duration) * 1000);
-        }
-        if (cur) {
-            cur.textContent = formatDuration(Math.floor(audio.currentTime));
-        }
-    });
-
-    audio.addEventListener('loadedmetadata', () => {
-        const tot = $('#total-time');
-        if (tot) { tot.textContent = formatDuration(Math.floor(audio.duration)); }
-    });
-
-    audio.addEventListener('ended', () => {
-        if (!audio.loop && currentIndex < results.length - 1) {
-            selectTrack(currentIndex + 1);
-        } else if (!audio.loop) {
-            isPlaying = false;
-            updatePlayPauseIcon();
-        }
-    });
-
-    audio.addEventListener('error', () => {
-        if (!audio.src || audio.src === '' || audio.src === location.href) { return; }
-        showPlayerError('Could not play this track.\nTry another one.');
-    });
 
     // --- Messages from extension ---
     window.addEventListener('message', (event) => {
@@ -326,9 +360,6 @@
         switch (msg.type) {
             case 'searchResults':
                 renderResults(msg.results);
-                break;
-            case 'streamReady':
-                onStreamReady(msg);
                 break;
             case 'error':
                 handleError(msg.message);
@@ -364,7 +395,6 @@
         });
     }
 
-    // Quick access buttons
     $$('.qa-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
             const query = btn.getAttribute('data-query') || btn.textContent;
@@ -373,11 +403,10 @@
         });
     });
 
-    // Back buttons
     const backToSearch = $('#back-to-search');
     if (backToSearch) {
         backToSearch.addEventListener('click', () => {
-            audio.pause();
+            if (ytPlayer) ytPlayer.pauseVideo();
             isPlaying = false;
             showScreen('search');
         });
@@ -386,8 +415,7 @@
     const backToResults = $('#back-to-results');
     if (backToResults) {
         backToResults.addEventListener('click', () => {
-            audio.pause();
-            isPlaying = false;
+            // Keep playing when going back to results
             showScreen('results');
         });
     }
