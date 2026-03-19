@@ -1,0 +1,84 @@
+/* ============================================
+   Search UI — RENE YT Music
+   ============================================ */
+
+/* Layout */
+body {
+    font-family: var(--vscode-font-family);
+    background-color: transparent;
+    color: var(--vscode-editor-foreground);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    margin: 0;
+    padding: 24px 20px;
+    box-sizing: border-box;
+}
+
+/* Search container */
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    align-items: center;
+}
+
+/* Search icon */
+.search-icon {
+    position: absolute;
+    left: 16px;
+    width: 18px;
+    height: 18px;
+    fill: var(--vscode-input-foreground);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.search-container:focus-within .search-icon {
+    opacity: 0.9;
+    fill: var(--vscode-focusBorder);
+}
+
+/* Search input */
+.search-input {
+    width: 100%;
+    padding: 12px 40px 12px 44px;
+    font-size: 14px;
+    font-family: var(--vscode-font-family);
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1.5px solid var(--vscode-input-border, rgba(128, 128, 128, 0.2));
+    border-radius: 50px;
+    outline: none;
+    box-shadow: none;
+}
+
+.search-input:focus {
+    border-color: var(--vscode-focusBorder);
+}
+
+.search-input::placeholder {
+    color: var(--vscode-input-placeholderForeground);
+    opacity: 0.8;
+    font-weight: 300;
+}
+
+/* Native clear (X) button — webkit */
+.search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+    background-size: contain;
+    cursor: pointer;
+    opacity: 0.6;
+    margin-right: 4px;
+}
+
+.search-input::-webkit-search-cancel-button:hover {
+    opacity: 1;
+}
