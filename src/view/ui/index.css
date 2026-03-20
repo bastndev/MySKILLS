@@ -102,9 +102,6 @@ body {
     border-color: var(--vscode-focusBorder);
 }
 
-.results-query-input:hover {
-    cursor: pointer;
-}
 
 .results-query-input::placeholder {
     color: var(--vscode-input-placeholderForeground);
