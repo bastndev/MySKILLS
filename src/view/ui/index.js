@@ -177,9 +177,7 @@
                             </svg>
                         </button>
                         <button id="repeat-btn" class="control-btn control-btn-sm${isLoopEnabled ? ' active' : ''}" aria-label="Repeat">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
-                            </svg>
+                                ${getRepeatIconSvg(isLoopEnabled)}
                         </button>
                     </div>
                 </div>`;
@@ -279,6 +277,7 @@
                     isLoopEnabled = !isLoopEnabled;
                     repeatBtn.classList.toggle('active', isLoopEnabled);
                     repeatBtn.style.opacity = isLoopEnabled ? '1' : '';
+                    repeatBtn.innerHTML = getRepeatIconSvg(isLoopEnabled);
                 });
             }
 
@@ -473,9 +472,7 @@
                         </svg>
                     </button>
                     <button id="repeat-btn" class="control-btn control-btn-sm${isLoopEnabled ? ' active' : ''}" aria-label="Repeat">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
-                        </svg>
+                        ${getRepeatIconSvg(isLoopEnabled)}
                     </button>
                 </div>
             </div>`;
@@ -550,6 +547,21 @@
     // --- Player controls ---
     const PATH_PLAY  = 'M8 5v14l11-7z';
     const PATH_PAUSE = 'M6 19h4V5H6v14zm8-14v14h4V5h-4z';
+
+    function getRepeatIconSvg(selected) {
+        if (selected) {
+            return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 7H17V10L21 6L17 2V5H5V11H7V7Z" fill="currentColor"/>
+                <path d="M17 17H7V14L3 18L7 22V19H19V13H17V17Z" fill="currentColor"/>
+                <text x="12" y="16" font-size="10" font-weight="bold" text-anchor="middle" fill="currentColor" font-family="sans-serif">1</text>
+            </svg>`;
+        }
+
+        return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 7H17V10L21 6L17 2V5H5V11H7V7Z" fill="currentColor"/>
+            <path d="M17 17H7V14L3 18L7 22V19H19V13H17V17Z" fill="currentColor"/>
+        </svg>`;
+    }
 
     function updatePlayPauseIcon() {
         const pp = $('#play-path');
@@ -630,6 +642,7 @@
                 isLoopEnabled = !isLoopEnabled;
                 repeatBtn.classList.toggle('active', isLoopEnabled);
                 repeatBtn.style.opacity = isLoopEnabled ? '1' : '';
+                repeatBtn.innerHTML = getRepeatIconSvg(isLoopEnabled);
             });
             repeatBtn.style.opacity = isLoopEnabled ? '1' : '';
         }
