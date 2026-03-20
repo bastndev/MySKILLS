@@ -29,7 +29,7 @@ export class YouTubeMusicViewProvider implements vscode.WebviewViewProvider {
 
     private _getHtmlForWebview(webview: vscode.Webview) {
         const scriptUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, 'src', 'view', 'ui', 'index.js'),
+            vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'),
         );
         const styleUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'src', 'view', 'ui', 'index.css'),

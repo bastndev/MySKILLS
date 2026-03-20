@@ -20,17 +20,16 @@ export interface SearchResult {
 }
 
 const ytmusic = new YTMusic();
-let initPromise: Promise<any> | null = null;
+let isInitialized = false;
 
 async function initYTMusic(): Promise<void> {
-	if (!initPromise) {
-		initPromise = ytmusic.initialize().catch((error) => {
+	if (!isInitialized) {
+		try {
+			await ytmusic.initialize();
+			isInitialized = true;
+		} catch (error) {
 			console.warn("[RENE Music] YouTube Music initialization failed:", error);
-			initPromise = null; // Allow retry on next search
-		});
-	}
-	if (initPromise) {
-		await initPromise;
+		}
 	}
 }
 
@@ -127,19 +126,30 @@ async function searchLastFM(query: string): Promise<SearchResult[]> {
 export async function searchMusic(query: string): Promise<SearchResult[]> {
 	console.log(`[RENE Music] Searching for: "${query}"`);
 
-	// 1. YouTube + Deezer en paralelo (más rápido)
+	// 1. YouTube + Deezer en paralelo con Timeout Anticaídas (10 segundos máximo)
+	const withTimeout = (promise: Promise<any>, ms: number, name: string) => 
+		Promise.race([
+			promise, 
+			new Promise((_, reject) => setTimeout(() => reject(new Error(`Timeout: ${name}`)), ms))
+		]);
+
 	const [youtubeResult, deezerResult] = await Promise.allSettled([
-		searchYouTubeMusic(query),
-		searchDeezer(query),
+		withTimeout(searchYouTubeMusic(query), 10000, 'YouTube'),
+		withTimeout(searchDeezer(query), 10000, 'Deezer'),
 	]);
 
 	const allResults: SearchResult[] = [];
 
 	if (youtubeResult.status === 'fulfilled') {
-		allResults.push(...youtubeResult.value);
+		allResults.push(...(youtubeResult.value as SearchResult[]));
+	} else {
+		console.warn("[RENE Music] YouTube search failed/timeout:", youtubeResult.reason);
 	}
+	
 	if (deezerResult.status === 'fulfilled') {
-		allResults.push(...deezerResult.value);
+		allResults.push(...(deezerResult.value as SearchResult[]));
+	} else {
+		console.warn("[RENE Music] Deezer search failed/timeout:", deezerResult.reason);
 	}
 
 	// 2. Last.FM solo si hay pocos resultados

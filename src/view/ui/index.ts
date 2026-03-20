@@ -1,27 +1,29 @@
+declare var acquireVsCodeApi: any;
+declare var YT: any;
 (function () {
     const vscode = acquireVsCodeApi();
 
     // --- State ---
-    let results = [];
+    let results: any[] = [];
     let currentIndex = -1;
     let isPlaying = false;
     let isMuted = false;
-    let ytPlayer = null;
+    let ytPlayer: any = null;
     let playerReady = false;
-    let progressTimer = null;
+    let progressTimer: number | null = null;
     let playbackIndex = -1;
     let selectedTrackIndex = -1;
-    let fallbackTried = new Set();
+    let fallbackTried = new Set<number>();
     let isPlayButtonLoading = false;
     let isLoopEnabled = false;
     let activePlayerSource = 'none';
 
     // --- DOM helpers ---
-    const $ = (s) => document.querySelector(s);
-    const $$ = (s) => document.querySelectorAll(s);
+    const $ = (s: string) => document.querySelector(s) as any;
+    const $$ = (s: string) => document.querySelectorAll(s);
 
     // --- YT IFrame Player Setup ---
-    window.onYouTubeIframeAPIReady = function() {
+    (window as any).onYouTubeIframeAPIReady = function() {
         ytPlayer = new YT.Player('youtube-player', {
             height: '360',
             width: '640',
@@ -43,12 +45,12 @@
         });
     };
 
-    function onPlayerReady(event) {
+    function onPlayerReady(event: any) {
         playerReady = true;
         console.log("YouTube Player is Ready");
     }
 
-    function onPlayerStateChange(event) {
+    function onPlayerStateChange(event: any) {
         if (activePlayerSource !== 'youtube') { return; }
 
         // YT.PlayerState.PLAYING = 1
@@ -84,18 +86,18 @@
         }
     }
 
-    function onPlayerError(event) {
+    function onPlayerError(event: any) {
         if (activePlayerSource !== 'youtube') { return; }
 
-        const errorCodes = {
-            2: 'Invalid parameter',
-            5: 'HTML5 player error',
-            100: 'Video not found',
-            101: 'Video cannot be played embedded (region/copyright restriction)',
-            150: 'Same as 101 (embedded not allowed)'
+        const errorCodes: Record<string, string> = {
+            '2': 'Invalid parameter',
+            '5': 'HTML5 player error',
+            '100': 'Video not found',
+            '101': 'Video cannot be played embedded (region/copyright restriction)',
+            '150': 'Same as 101 (embedded not allowed)'
         };
 
-        const errorMsg = errorCodes[event.data] || `Error code: ${event.data}`;
+        const errorMsg = errorCodes[String(event.data)] || `Error code: ${event.data}`;
         console.error("[RENE] YouTube Player Error:", errorMsg);
 
         // TRY FALLBACK: Si YouTube falla, intentar con Deezer o siguiente resultado
@@ -131,9 +133,9 @@
     }
 
     // Reproductor alternativo para Deezer Preview
-    let deezerAudio = null;
+    let deezerAudio: HTMLAudioElement | null = null;
 
-    function playDeezerPreview(track) {
+    function playDeezerPreview(track: any) {
         if (!track.preview) {
             showPlayerError('No preview available for this track');
             return;
@@ -159,39 +161,41 @@
         deezerAudio = new Audio(track.preview);
         deezerAudio.crossOrigin = 'anonymous';
         
-        deezerAudio.onplay = () => {
-            setPlayButtonLoading(false);
-            isPlaying = true;
-            updatePlayPauseIcon();
-            startProgressLoop();
-        };
+        if (deezerAudio) {
+            deezerAudio.onplay = () => {
+                setPlayButtonLoading(false);
+                isPlaying = true;
+                updatePlayPauseIcon();
+                startProgressLoop();
+            };
 
-        deezerAudio.onpause = () => {
-            isPlaying = false;
-            updatePlayPauseIcon();
-            stopProgressLoop();
-        };
+            deezerAudio.onpause = () => {
+                isPlaying = false;
+                updatePlayPauseIcon();
+                stopProgressLoop();
+            };
 
-        deezerAudio.onended = () => {
-            isPlaying = false;
-            updatePlayPauseIcon();
-            stopProgressLoop();
-            if (isLoopEnabled) {
-                deezerAudio.currentTime = 0;
-                deezerAudio.play();
-                return;
-            }
-            if (currentIndex < results.length - 1) {
-                selectTrack(currentIndex + 1);
-            }
-        };
+            deezerAudio.onended = () => {
+                isPlaying = false;
+                updatePlayPauseIcon();
+                stopProgressLoop();
+                if (isLoopEnabled && deezerAudio) {
+                    deezerAudio.currentTime = 0;
+                    deezerAudio.play();
+                    return;
+                }
+                if (currentIndex < results.length - 1) {
+                    selectTrack(currentIndex + 1);
+                }
+            };
 
-        deezerAudio.muted = isMuted;
-        deezerAudio.play();
+            deezerAudio.muted = isMuted;
+            deezerAudio.play();
+        }
     }
 
     // --- Progress Loop ---
-    let progressDom = null;
+    let progressDom: any = null;
 
     function startProgressLoop() {
         stopProgressLoop();
@@ -220,7 +224,7 @@
         }
     }
 
-    function updateProgressBar(current, total) {
+    function updateProgressBar(current: number, total: number) {
         if (!progressDom) return;
 
         if (progressDom.bar && total > 0) {
@@ -235,21 +239,21 @@
     }
 
     // --- Screen navigation ---
-    function showScreen(name) {
-        $$('.screen').forEach((s) => s.classList.remove('active'));
+    function showScreen(name: string) {
+        $$('.screen').forEach((s: any) => s.classList.remove('active'));
         const el = $(`#screen-${name}`);
         if (el) { el.classList.add('active'); }
     }
 
     // --- Utility ---
-    function formatDuration(sec) {
+    function formatDuration(sec: number) {
         if (!sec || sec < 0) { return '0:00'; }
         const m = Math.floor(sec / 60);
         const s = Math.floor(sec % 60);
         return `${m}:${s.toString().padStart(2, '0')}`;
     }
 
-    function escapeHtml(text) {
+    function escapeHtml(text: string) {
         const d = document.createElement('div');
         d.textContent = text || '';
         return d.innerHTML;
@@ -273,7 +277,7 @@
     }
 
     // --- Search ---
-    function doSearch(query) {
+    function doSearch(query: string) {
         query = (query || '').trim();
         if (!query) { return; }
         showScreen('results');
@@ -285,7 +289,7 @@
     }
 
     // --- Render results ---
-    function renderResults(items) {
+    function renderResults(items: any[]) {
         results = items;
         const container = $('#results-container');
         container.innerHTML = '';
@@ -295,7 +299,7 @@
             return;
         }
 
-        items.forEach((item, i) => {
+        items.forEach((item: any, i: number) => {
             const el = document.createElement('div');
             el.className = 'result-item';
             el.innerHTML = `
@@ -313,7 +317,7 @@
     }
 
     // --- Select track: show player + load in hidden YT player ---
-    function selectTrack(index) {
+    function selectTrack(index: number) {
         currentIndex = index;
         selectedTrackIndex = index;
         playbackIndex = index;
@@ -348,7 +352,7 @@
     }
 
     // --- Render player UI instantly ---
-    function renderPlayerUI(track) {
+    function renderPlayerUI(track: any) {
         const container = $('#player-container');
         const hasPrev = currentIndex > 0;
         const hasNext = currentIndex < results.length - 1;
@@ -390,7 +394,7 @@
         setupPlayerEvents();
     }
 
-    function setPlayButtonLoading(loading) {
+    function setPlayButtonLoading(loading: boolean) {
         isPlayButtonLoading = loading;
         const btn = $('#play-pause-btn');
         const icon = $('#play-path');
@@ -405,7 +409,7 @@
         }
     }
 
-    function attemptPlaybackAtIndex(index) {
+    function attemptPlaybackAtIndex(index: number) {
         const track = results[index];
         if (!track) { return false; }
 
@@ -429,7 +433,7 @@
         return attemptBackgroundFallback();
     }
 
-    function attemptBackgroundFallback() {
+    function attemptBackgroundFallback(): boolean {
         if (results.length <= 1) { return false; }
 
         for (let i = selectedTrackIndex + 1; i < results.length; i++) {
@@ -447,7 +451,7 @@
         return false;
     }
 
-    function showPlayerError(text) {
+    function showPlayerError(text: string) {
         const container = $('#player-container');
         if (container) {
             container.innerHTML = `<div class="error-msg">${escapeHtml(text)}</div>`;
@@ -460,7 +464,7 @@
     const PATH_PLAY  = 'M8 5v14l11-7z';
     const PATH_PAUSE = 'M6 19h4V5H6v14zm8-14v14h4V5h-4z';
 
-    function getRepeatIconSvg(selected) {
+    function getRepeatIconSvg(selected: boolean) {
         if (selected) {
             return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 7H17V10L21 6L17 2V5H5V11H7V7Z" fill="currentColor"/>
@@ -493,7 +497,7 @@
         }
     }
 
-    let eventController = null;
+    let eventController: AbortController | null = null;
 
     function setupPlayerEvents() {
         if (eventController) {
@@ -537,7 +541,7 @@
         }
 
         if (progressBar) {
-            progressBar.addEventListener('input', (e) => {
+            progressBar.addEventListener('input', (e: any) => {
                 const val = e.target.value / 1000;
                 if (activePlayerSource === 'youtube' && ytPlayer && ytPlayer.seekTo) {
                     ytPlayer.seekTo(val * ytPlayer.getDuration(), true);
@@ -572,7 +576,7 @@
     }
 
     // --- Messages from extension ---
-    window.addEventListener('message', (event) => {
+    window.addEventListener('message', (event: any) => {
         const msg = event.data;
         switch (msg.type) {
             case 'searchResults':
@@ -584,7 +588,7 @@
         }
     });
 
-    function handleError(text) {
+    function handleError(text: string) {
         const resultsContainer = $('#results-container');
         const playerContainer = $('#player-container');
         const errHtml = `<div class="error-msg">${escapeHtml(text)}</div>`;
@@ -603,7 +607,7 @@
     const resultsQueryBtn = $('#results-query-btn');
 
     if (searchInput) {
-        searchInput.addEventListener('keypress', (e) => {
+        searchInput.addEventListener('keypress', (e: any) => {
             if (e.key === 'Enter') { doSearch(searchInput.value); }
         });
     }
@@ -615,7 +619,7 @@
     }
 
     if (resultsQueryInput) {
-        resultsQueryInput.addEventListener('keypress', (e) => {
+        resultsQueryInput.addEventListener('keypress', (e: any) => {
             if (e.key === 'Enter') { doSearch(resultsQueryInput.value); }
         });
     }
@@ -626,7 +630,7 @@
         });
     }
 
-    $$('.qa-btn').forEach((btn) => {
+    $$('.qa-btn').forEach((btn: any) => {
         btn.addEventListener('click', () => {
             const query = btn.getAttribute('data-query') || btn.textContent;
             if (searchInput) { searchInput.value = query; }
