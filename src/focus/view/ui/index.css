@@ -199,14 +199,6 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
     opacity: 1;
 }
 
-body.vscode-dark .qa-btn.is-active {
-    color: #fff;
-}
-
-body.vscode-light .qa-btn.is-active {
-    color: #000;
-}
-
 .qa-btn[disabled] {
     pointer-events: none;
     cursor: default;
