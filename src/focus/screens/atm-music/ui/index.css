@@ -109,18 +109,21 @@
 .player-track-info {
     font-size: 11px;
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
 }
 
 .header-track-title {
+    color: var(--vscode-descriptionForeground);
+    font-weight: 500;
+}
+
+.header-track-artist {
     color: var(--vscode-editor-foreground);
     font-weight: 600;
 }
 
-.header-track-separator,
-.header-track-artist {
+.header-track-separator {
     color: var(--vscode-descriptionForeground);
 }
 

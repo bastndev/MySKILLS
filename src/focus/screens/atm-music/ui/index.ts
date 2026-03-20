@@ -447,11 +447,11 @@ class AtmMusicControllerImpl implements AtmMusicController {
 
         const trackInfo = this.$('#player-track-info');
         if (trackInfo) {
-            const truncatedTitle = this.truncateWithDots(track.title, 38);
+            const truncatedTitle = this.truncateWithDots(track.title, 34);
             trackInfo.innerHTML = `
-                <span class="header-track-title">${this.escapeHtml(truncatedTitle)}</span>
-                <span class="header-track-separator"> - </span>
                 <span class="header-track-artist">${this.escapeHtml(track.artist)}</span>
+                <span class="header-track-separator"> - </span>
+                <span class="header-track-title">${this.escapeHtml(truncatedTitle)}</span>
             `;
         }
 
