@@ -206,15 +206,13 @@ body {
 .search-input::-webkit-search-cancel-button {
     -webkit-appearance: none;
     appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
+    width: 8px;
+    height: 8px;
     cursor: pointer;
     opacity: 0.9;
     background:
-        linear-gradient(45deg, transparent 42%, rgba(255, 255, 255, 0.92) 42%, rgba(255, 255, 255, 0.92) 58%, transparent 58%),
-        linear-gradient(-45deg, transparent 42%, rgba(255, 255, 255, 0.92) 42%, rgba(255, 255, 255, 0.92) 58%, transparent 58%),
-        radial-gradient(circle at center, rgba(150, 150, 150, 0.45) 0 67%, transparent 68%);
+        linear-gradient(45deg, transparent 46%, rgba(255, 255, 255, 0.579) 46%, rgba(255, 255, 255, 0.92) 54%, transparent 54%),
+        linear-gradient(-45deg, transparent 46%, rgba(255, 255, 255, 0.447) 46%, rgba(255, 255, 255, 0.92) 54%, transparent 54%);
 }
 
 .search-input::-webkit-search-cancel-button:hover {
@@ -223,9 +221,8 @@ body {
 
 body.vscode-light .search-input::-webkit-search-cancel-button {
     background:
-        linear-gradient(45deg, transparent 42%, rgba(0, 0, 0, 0.9) 42%, rgba(0, 0, 0, 0.9) 58%, transparent 58%),
-        linear-gradient(-45deg, transparent 42%, rgba(0, 0, 0, 0.9) 42%, rgba(0, 0, 0, 0.9) 58%, transparent 58%),
-        radial-gradient(circle at center, rgba(120, 120, 120, 0.4) 0 67%, transparent 68%);
+    linear-gradient(45deg, transparent 46%, rgba(0, 0, 0, 0.9) 46%, rgba(0, 0, 0, 0.9) 54%, transparent 54%),
+    linear-gradient(-45deg, transparent 46%, rgba(0, 0, 0, 0.9) 46%, rgba(0, 0, 0, 0.9) 54%, transparent 54%);
 }
 
 .search-btn {
