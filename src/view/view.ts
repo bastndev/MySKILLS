@@ -35,10 +35,10 @@ export class YouTubeMusicViewProvider implements vscode.WebviewViewProvider {
             vscode.Uri.joinPath(this._extensionUri, 'src', 'view', 'ui', 'index.css'),
         );
         const skeletonUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, 'src', 'shared', 'skeleton', 'view.css'),
+            vscode.Uri.joinPath(this._extensionUri, 'src', 'focus', 'components', 'skeletons', 'view.css'),
         );
         const playSkeletonUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, 'src', 'shared', 'skeleton', 'play.css'),
+            vscode.Uri.joinPath(this._extensionUri, 'src', 'focus', 'components', 'skeletons', 'play.css'),
         );
 
         const csp = [
