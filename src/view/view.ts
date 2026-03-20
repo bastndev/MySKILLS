@@ -45,8 +45,8 @@ export class YouTubeMusicViewProvider implements vscode.WebviewViewProvider {
             `default-src 'none'`,
             `style-src ${webview.cspSource}`,
             `script-src ${webview.cspSource} https://www.youtube.com https://s.ytimg.com`,
-            `img-src https: data:`,
-            `media-src https: blob: data:`,
+            `img-src ${webview.cspSource} https://*.ytimg.com https://*.googleusercontent.com https://*.dzcdn.net https://*.fastly.net data:`,
+            `media-src ${webview.cspSource} https://*.dzcdn.net blob: data:`,
             `frame-src https://www.youtube.com https://www.youtube-nocookie.com`,
             `font-src ${webview.cspSource}`,
         ].join('; ');

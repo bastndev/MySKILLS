@@ -1,4 +1,10 @@
+import * as vscode from 'vscode';
 import YTMusic from "ytmusic-api";
+
+function getLastFmApiKey(): string {
+	const config = vscode.workspace.getConfiguration('rene');
+	return config.get<string>('lastfmApiKey', '');
+}
 
 export interface SearchResult {
 	videoId?: string; // Para YouTube
@@ -83,7 +89,11 @@ async function searchDeezer(query: string): Promise<SearchResult[]> {
 
 // Búsqueda en Last.FM (información detallada)
 async function searchLastFM(query: string): Promise<SearchResult[]> {
-	const API_KEY = 'd41d8cd98f00b204e9800998ecf8427e'; // API key demo (cambiar por la tuya)
+	const API_KEY = getLastFmApiKey();
+	if (!API_KEY) {
+		console.warn("[RENE Music] Last.FM API key not configured. Set 'rene.lastfmApiKey' in settings.");
+		return [];
+	}
 	
 	try {
 		const response = await fetch(

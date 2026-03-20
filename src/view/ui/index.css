@@ -548,27 +548,6 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
     height: 14px;
 }
 
-/* Player skeleton layout */
-.player-skeleton {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-.player-art-skeleton {
-    width: 120px !important;
-    height: 120px !important;
-    border-radius: 10px !important;
-    margin-bottom: 10px;
-}
-
-.player-controls-skeleton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
 
 /* Error message */
 .error-msg {

@@ -74,6 +74,16 @@
           "icon": "$(list-unordered)"
         }
       ]
+    },
+    "configuration": {
+      "title": "RENE Music",
+      "properties": {
+        "rene.lastfmApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Last.FM API key for additional music metadata. Get yours at https://www.last.fm/api/account/create"
+        }
+      }
     }
   },
   "scripts": {
