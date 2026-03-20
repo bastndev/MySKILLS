@@ -13,6 +13,7 @@
     let selectedTrackIndex = -1;
     let fallbackTried = new Set();
     let isPlayButtonLoading = false;
+    let isLoopEnabled = false;
 
     // --- DOM helpers ---
     const $ = (s) => document.querySelector(s);
@@ -69,6 +70,11 @@
             isPlaying = false;
             updatePlayPauseIcon();
             stopProgressLoop();
+            if (isLoopEnabled && ytPlayer && ytPlayer.seekTo) {
+                ytPlayer.seekTo(0, true);
+                ytPlayer.playVideo();
+                return;
+            }
             if (currentIndex < results.length - 1) {
                 selectTrack(currentIndex + 1);
             }
@@ -170,6 +176,11 @@
                                 <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
                             </svg>
                         </button>
+                        <button id="repeat-btn" class="control-btn control-btn-sm${isLoopEnabled ? ' active' : ''}" aria-label="Repeat">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>`;
 
@@ -194,6 +205,11 @@
                 isPlaying = false;
                 updatePlayPauseIcon();
                 stopProgressLoop();
+                if (isLoopEnabled) {
+                    deezerAudio.currentTime = 0;
+                    deezerAudio.play();
+                    return;
+                }
                 if (currentIndex < results.length - 1) {
                     selectTrack(currentIndex + 1);
                 }
@@ -216,6 +232,7 @@
             const nextBtn = $('#next-btn');
             const progressBar = $('#progress-bar');
             const volumeBtn = $('#volume-btn');
+            const repeatBtn = $('#repeat-btn');
 
             if (playPauseBtn) {
                 playPauseBtn.addEventListener('click', () => {
@@ -253,6 +270,15 @@
                     isMuted = !isMuted;
                     deezerAudio.muted = isMuted;
                     updateVolumeIcon();
+                });
+            }
+
+            if (repeatBtn) {
+                repeatBtn.style.opacity = isLoopEnabled ? '1' : '';
+                repeatBtn.addEventListener('click', () => {
+                    isLoopEnabled = !isLoopEnabled;
+                    repeatBtn.classList.toggle('active', isLoopEnabled);
+                    repeatBtn.style.opacity = isLoopEnabled ? '1' : '';
                 });
             }
 
@@ -446,7 +472,7 @@
                             <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
                         </svg>
                     </button>
-                    <button id="repeat-btn" class="control-btn control-btn-sm" aria-label="Repeat">
+                    <button id="repeat-btn" class="control-btn control-btn-sm${isLoopEnabled ? ' active' : ''}" aria-label="Repeat">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
                         </svg>
@@ -600,14 +626,12 @@
         }
 
         if (repeatBtn) {
-            // Simplified repeat logic for MVP: just toggle loop on the player
             repeatBtn.addEventListener('click', () => {
-                // YT Player doesn't have a simple "v.loop = true", but we can handle it in state change
-                // or use a local flag. For now, let's just use a visual toggle.
-                const isLooped = repeatBtn.classList.toggle('active');
-                repeatBtn.style.opacity = isLooped ? '1' : '';
-                // Note: Actual loop logic would be in onPlayerStateChange (if state === ENDED and isLooped, play again)
+                isLoopEnabled = !isLoopEnabled;
+                repeatBtn.classList.toggle('active', isLoopEnabled);
+                repeatBtn.style.opacity = isLoopEnabled ? '1' : '';
             });
+            repeatBtn.style.opacity = isLoopEnabled ? '1' : '';
         }
     }
 
