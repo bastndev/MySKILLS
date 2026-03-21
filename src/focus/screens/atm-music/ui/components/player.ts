@@ -14,6 +14,7 @@ export class MusicPlayerUI {
     private isLoopEnabled = false;
     private activeSource: 'none' | 'youtube' | 'deezer' = 'none';
     private playerReady = false;
+    private pendingTrack: Track | null = null;
 
     constructor(
         private readonly onNext: () => void,
@@ -35,27 +36,65 @@ export class MusicPlayerUI {
         this.stop();
         this.render(track, hasPrev, hasNext);
         this.updateTrackHeader(track);
+        this.setLoading(true);
+        this.attemptPlay(track);
+    }
 
-        if (track.videoId && this.playerReady) {
+    /**
+     * Silently try to play a track without re-rendering the player UI.
+     * Used both for initial play and for fallback skipping.
+     */
+    private attemptPlay(track: Track) {
+        if (track.videoId) {
+            if (!this.playerReady) {
+                // Wait for the player to be ready before playing
+                this.pendingTrack = track;
+                return;
+            }
             this.activeSource = 'youtube';
-            this.setLoading(true);
             this.ytPlayer.loadVideoById(track.videoId);
             this.ytPlayer.playVideo();
         } else if (track.preview) {
             this.activeSource = 'deezer';
             this.playDeezer(track.preview);
         } else {
+            // This track can't play at all - trigger fallback
             this.onFallback();
         }
     }
 
-    public pause() {
-        if (this.activeSource === 'youtube' && this.ytPlayer) this.ytPlayer.pauseVideo();
-        else if (this.activeSource === 'deezer' && this.deezerAudio) this.deezerAudio.pause();
+    /**
+     * Called by the controller when the current track fails.
+     * Updates the header text but does NOT re-render the player controls.
+     */
+    public skipToTrack(track: Track, hasPrev: boolean, hasNext: boolean) {
+        this.stopPlayback();
+        this.updateTrackHeader(track);
+
+        // Update prev/next button states
+        const prevBtn = $('#prev-btn');
+        const nextBtn = $('#next-btn');
+        if (prevBtn) {
+            prevBtn.classList.toggle('disabled', !hasPrev);
+        }
+        if (nextBtn) {
+            nextBtn.classList.toggle('disabled', !hasNext);
+        }
+
+        // Update total time
+        const totalTime = $('#total-time');
+        if (totalTime) {
+            totalTime.textContent = formatDuration(track.duration);
+        }
+
+        this.setLoading(true);
+        this.attemptPlay(track);
     }
 
-    public stop() {
-        this.pause();
+    private stopPlayback() {
+        if (this.activeSource === 'youtube' && this.ytPlayer) {
+            this.ytPlayer.stopVideo();
+        }
         if (this.deezerAudio) {
             this.deezerAudio.pause();
             this.deezerAudio.src = '';
@@ -66,13 +105,28 @@ export class MusicPlayerUI {
         this.stopProgressLoop();
     }
 
+    public pause() {
+        if (this.activeSource === 'youtube' && this.ytPlayer) this.ytPlayer.pauseVideo();
+        else if (this.activeSource === 'deezer' && this.deezerAudio) this.deezerAudio.pause();
+    }
+
+    public stop() {
+        this.stopPlayback();
+    }
+
     private initializeYouTube() {
         (window as any).onYouTubeIframeAPIReady = () => {
             this.ytPlayer = new YT.Player('youtube-player', {
                 height: '360', width: '640', videoId: '',
                 playerVars: { playsinline: 1, controls: 0, disablekb: 1 },
                 events: {
-                    onReady: () => { this.playerReady = true; },
+                    onReady: () => { 
+                        this.playerReady = true; 
+                        if (this.pendingTrack) {
+                            this.attemptPlay(this.pendingTrack);
+                            this.pendingTrack = null;
+                        }
+                    },
                     onStateChange: (e: any) => this.onYTStateChange(e),
                     onError: () => this.onFallback()
                 }
@@ -100,12 +154,44 @@ export class MusicPlayerUI {
         if (!this.deezerAudio) {
             this.deezerAudio = new Audio();
             this.deezerAudio.crossOrigin = 'anonymous';
+        } else {
+            this.deezerAudio.pause();
+            this.deezerAudio.removeAttribute('src');
+            this.deezerAudio.load();
         }
+
         this.deezerAudio.src = url;
-        this.deezerAudio.onplay = () => { this.isPlaying = true; this.setLoading(false); this.updateIcons(); this.startProgressLoop(); };
-        this.deezerAudio.onpause = () => { this.isPlaying = false; this.updateIcons(); this.stopProgressLoop(); };
-        this.deezerAudio.onended = () => { if (this.isLoopEnabled) this.deezerAudio?.play(); else this.onNext(); };
-        this.deezerAudio.play();
+
+        this.deezerAudio.onplay = () => {
+            this.isPlaying = true;
+            this.setLoading(false);
+            this.updateIcons();
+            this.startProgressLoop();
+        };
+
+        this.deezerAudio.onpause = () => {
+            this.isPlaying = false;
+            this.updateIcons();
+            this.stopProgressLoop();
+        };
+
+        this.deezerAudio.onended = () => {
+            if (this.isLoopEnabled) {
+                this.deezerAudio?.play();
+            } else {
+                this.onNext();
+            }
+        };
+
+        this.deezerAudio.onerror = () => {
+            this.onFallback();
+        };
+
+        // Try to auto-play immediately
+        this.deezerAudio.play().catch(() => {
+            // Browser blocked autoplay - user needs to click play
+            this.setLoading(false);
+        });
     }
 
     private render(track: Track, hasPrev: boolean, hasNext: boolean) {
@@ -184,8 +270,15 @@ export class MusicPlayerUI {
 
     private setLoading(loading: boolean) {
         const btn = $('#play-pause-btn');
-        btn?.classList.toggle('loading', loading);
-        (btn as HTMLButtonElement).disabled = loading;
+        if (btn) {
+            btn.classList.toggle('loading', loading);
+            (btn as HTMLButtonElement).disabled = loading;
+            
+            const svg = btn.querySelector('svg');
+            if (svg) {
+                svg.style.opacity = loading ? '0' : '1';
+            }
+        }
     }
 
     private updateIcons() {

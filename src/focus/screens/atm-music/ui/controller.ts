@@ -100,8 +100,23 @@ export class AtmMusicController {
         }
     }
 
-    private playNext() {
-        if (this.currentIndex < this.tracks.length - 1) this.selectTrack(this.currentIndex + 1);
+    private playNext(silent = false) {
+        if (this.currentIndex < this.tracks.length - 1) {
+            this.currentIndex++;
+            const track = this.tracks[this.currentIndex];
+            if (track) {
+                if (silent) {
+                    // Silent skip: don't re-render the player, just update header and try to play
+                    this.playerUI.skipToTrack(
+                        track,
+                        this.currentIndex > 0,
+                        this.currentIndex < this.tracks.length - 1
+                    );
+                } else {
+                    this.selectTrack(this.currentIndex);
+                }
+            }
+        }
     }
 
     private playPrev() {
@@ -126,8 +141,9 @@ export class AtmMusicController {
     }
 
     private handlePlaybackFallback() {
+        // Silent skip: try the next track without re-rendering
         if (this.currentIndex < this.tracks.length - 1) {
-            this.playNext();
+            this.playNext(true);  // silent = true
         } else {
             this.showError('No playable tracks found.');
         }
