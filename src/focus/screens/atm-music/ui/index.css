@@ -1,45 +1,5 @@
-/* ============================================
-   RENE YT Music — Full UI Styles
-   Optimized for VS Code sidebar (narrow width)
-   Uses VS Code theme colors exclusively
-   ============================================ */
+/* ATM Music screens: results + player */
 
-/* === Layout === */
-body {
-    font-family: var(--vscode-font-family);
-    background-color: transparent;
-    color: var(--vscode-editor-foreground);
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-*, *::before, *::after {
-    box-sizing: inherit;
-}
-
-/* === Screens === */
-.screen {
-    display: none;
-    flex-direction: column;
-    height: 100vh;
-    padding: 10px 10px;
-    overflow: hidden;
-}
-
-.screen.active {
-    display: flex;
-    animation: screenFadeIn 0.25s ease;
-}
-
-@keyframes screenFadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* === Screen Header === */
 .screen-header {
     display: flex;
     align-items: center;
@@ -102,10 +62,6 @@ body {
     border-color: var(--vscode-focusBorder);
 }
 
-.results-query-input:hover {
-    cursor: pointer;
-}
-
 .results-query-input::placeholder {
     color: var(--vscode-input-placeholderForeground);
 }
@@ -134,186 +90,43 @@ body {
     transform: scale(0.94);
 }
 
+.results-query-btn.is-disabled,
+.results-query-btn:disabled {
+    background: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-descriptionForeground);
+    cursor: default;
+    opacity: 0.75;
+}
+
+.results-query-btn.is-disabled:hover,
+.results-query-btn:disabled:hover,
+.results-query-btn.is-disabled:active,
+.results-query-btn:disabled:active {
+    transform: none;
+    background: var(--vscode-button-secondaryBackground);
+}
+
 .player-track-info {
     font-size: 11px;
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
 }
 
 .header-track-title {
+    color: var(--vscode-descriptionForeground);
+    font-weight: 500;
+}
+
+.header-track-artist {
     color: var(--vscode-editor-foreground);
     font-weight: 600;
 }
 
 .header-track-separator {
     color: var(--vscode-descriptionForeground);
-    margin: 0 2px;
 }
 
-.header-track-artist {
-    color: var(--vscode-descriptionForeground);
-}
-
-/* === Search Container === */
-.search-container {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.search-icon {
-    position: absolute;
-    left: 12px;
-    width: 14px;
-    height: 14px;
-    fill: var(--vscode-input-foreground);
-    opacity: 0.4;
-    pointer-events: none;
-    z-index: 1;
-    transition: all 0.2s ease;
-}
-
-.search-container:focus-within .search-icon {
-    opacity: 0.9;
-    fill: var(--vscode-focusBorder);
-}
-
-.search-input {
-    flex: 1;
-    padding: 8px 10px 8px 34px;
-    font-size: 12px;
-    font-family: var(--vscode-font-family);
-    background-color: var(--vscode-input-background);
-    color: var(--vscode-input-foreground);
-    border: 1.5px solid var(--vscode-input-border, rgba(128, 128, 128, 0.15));
-    border-radius: 50px;
-    outline: none;
-    box-shadow: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.search-input:focus {
-    border-color: var(--vscode-focusBorder);
-    box-shadow: 0 0 0 1px var(--vscode-focusBorder);
-}
-
-.search-input::placeholder {
-    color: var(--vscode-input-placeholderForeground);
-    opacity: 0.7;
-    font-weight: 300;
-}
-
-.search-input::-webkit-search-cancel-button,
-.results-query-input::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 12px;
-    cursor: pointer;
-    opacity: 0.9;
-    background-color: transparent;
-    background:
-        linear-gradient(45deg, transparent 46%, rgba(255, 255, 255, 0.579) 46%, rgba(255, 255, 255, 0.92) 54%, transparent 54%),
-        linear-gradient(-45deg, transparent 46%, rgba(255, 255, 255, 0.447) 46%, rgba(255, 255, 255, 0.92) 54%, transparent 54%);
-    background-repeat: no-repeat;
-    background-size: 8px 8px, 8px 8px;
-    background-position: center;
-}
-
-.search-input::-webkit-search-cancel-button:hover,
-.results-query-input::-webkit-search-cancel-button:hover {
-    opacity: 1;
-}
-
-.results-query-input::-webkit-search-cancel-button {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.results-query-input:focus::-webkit-search-cancel-button {
-    opacity: 0.9;
-    pointer-events: auto;
-}
-
-body.vscode-light .search-input::-webkit-search-cancel-button,
-body.vscode-light .results-query-input::-webkit-search-cancel-button {
-    background:
-    linear-gradient(45deg, transparent 46%, rgba(0, 0, 0, 0.9) 46%, rgba(0, 0, 0, 0.9) 54%, transparent 54%),
-    linear-gradient(-45deg, transparent 46%, rgba(0, 0, 0, 0.9) 46%, rgba(0, 0, 0, 0.9) 54%, transparent 54%);
-}
-
-.search-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.2s ease, transform 0.15s ease;
-}
-
-.search-btn:hover {
-    background: var(--vscode-button-hoverBackground);
-    transform: scale(1.05);
-}
-
-.search-btn:active {
-    transform: scale(0.93);
-}
-
-/* === Quick Access === */
-.quick-access {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.qa-btn {
-    background-color: var(--vscode-button-secondaryBackground);
-    color: var(--vscode-button-secondaryForeground);
-    border: none;
-    border-radius: 50px;
-    padding: 5px 12px;
-    font-size: 11px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    opacity: 0;
-    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.qa-btn:nth-child(1) { animation-delay: 50ms; }
-.qa-btn:nth-child(2) { animation-delay: 130ms; }
-.qa-btn:nth-child(3) { animation-delay: 210ms; }
-
-.qa-btn:hover {
-    background-color: var(--vscode-button-secondaryHoverBackground);
-    transform: translateY(-1px);
-}
-
-.qa-btn:active {
-    transform: translateY(0);
-}
-
-@keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 0.85; transform: translateY(0); }
-}
-
-/* === Results List === */
 .results-container {
     flex: 1;
     overflow-y: auto;
@@ -396,7 +209,6 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
     color: var(--vscode-descriptionForeground);
 }
 
-/* === Player === */
 .player-container {
     flex: 1;
     display: flex;
@@ -418,12 +230,16 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
 }
 
 @keyframes playerFadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-
-/* Progress bar */
 .player-progress {
     display: flex;
     align-items: center;
@@ -470,7 +286,6 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
     transform: scale(1.3);
 }
 
-/* === Player Controls === */
 .player-controls {
     display: flex;
     align-items: center;
@@ -512,7 +327,6 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
     fill: var(--vscode-foreground);
 }
 
-/* Play/Pause main button — circle outline like reference */
 .play-btn {
     width: 39px;
     height: 39px;
@@ -533,7 +347,6 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
     transform: scale(0.93);
 }
 
-/* Small side buttons (volume, repeat) */
 .control-btn-sm {
     padding: 4px;
     opacity: 0.4;
@@ -548,8 +361,6 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
     height: 14px;
 }
 
-
-/* Error message */
 .error-msg {
     text-align: center;
     padding: 24px 12px;

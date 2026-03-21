@@ -39,44 +39,18 @@
   },
   "main": "./dist/extension.js",
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "rene-activitybar",
-          "title": "R E N E",
-          "icon": "src/assets/icons/rene.svg"
-        }
-      ]
-    },
     "views": {
       "explorer": [
         {
           "type": "webview",
           "id": "rene-yt-music-view",
-          "name": "RENE MUSIC ♪",
+          "name": "ATMㅤㅤMUSIC ♪ ( TIME ~ GAME ) ",
           "icon": "$(music)"
-        }
-      ],
-      "rene-activitybar": [
-        {
-          "id": "rene-one-game-view",
-          "name": "One Game",
-          "icon": "$(game)"
-        },
-        {
-          "id": "rene-pomodoro-view",
-          "name": "Pomodoro",
-          "icon": "$(clock)"
-        },
-        {
-          "id": "rene-yt-list-view",
-          "name": "Youtube List",
-          "icon": "$(list-unordered)"
         }
       ]
     },
     "configuration": {
-      "title": "RENE Music",
+      "title": "ATM",
       "properties": {
         "rene.lastfmApiKey": {
           "type": "string",
