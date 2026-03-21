@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { searchMusic } from './musicApi';
-import { WebviewMessage } from '../../../data/types';
+import { searchMusic } from './api';
+import { WebviewMessage } from '../../../shared/types';
 
 export function handleWebviewMessage(
     webviewView: vscode.WebviewView,

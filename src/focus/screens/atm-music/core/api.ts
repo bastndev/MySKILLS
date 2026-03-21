@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import YTMusic from 'ytmusic-api';
-import { Track } from '../../../data/types';
+import { Track } from '../../../shared/types';
 
 function getLastFmApiKey(): string {
     const config = vscode.workspace.getConfiguration('rene');
