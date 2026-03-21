@@ -363,8 +363,8 @@
 
 #repeat-btn.active {
     opacity: 1;
-    color: #f2c14e;
-    background: rgba(242, 193, 78, 0.18);
+    color: var(--vscode-focusBorder);
+    background: color-mix(in srgb, var(--vscode-focusBorder) 18%, transparent);
 }
 
 #repeat-btn.active:hover {
