@@ -28,25 +28,20 @@ export class YouTubeMusicViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview) {
-		const scriptUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'),
-		);
-		const viewStyleUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this._extensionUri, 'src', 'focus', 'view', 'ui', 'index.css'),
-		);
-		const atmMusicStyleUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this._extensionUri, 'src', 'focus', 'screens', 'atm-music', 'ui', 'index.css'),
-		);
-		const skeletonUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this._extensionUri, 'src', 'focus', 'components', 'skeletons', 's-music', 'view.css'),
-		);
-		const playSkeletonUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this._extensionUri, 'src', 'focus', 'components', 'skeletons', 's-music', 'play.css'),
-		);
+		// Asset paths
+		const styles = [
+			['src', 'focus', 'shared', 'skeletons', 's-music', 'view.css'],
+			['src', 'focus', 'shared', 'skeletons', 's-music', 'play.css'],
+			['src', 'focus', 'view', 'ui', 'index.css'],
+			['src', 'focus', 'screens', 'atm-music', 'ui', 'index.css'],
+		];
+
+		const styleUris = styles.map(s => webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, ...s)));
+		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'));
 
 		const csp = [
 			`default-src 'none'`,
-			`style-src ${webview.cspSource}`,
+			`style-src ${webview.cspSource} 'unsafe-inline'`,
 			`script-src ${webview.cspSource} https://www.youtube.com https://s.ytimg.com`,
 			`img-src ${webview.cspSource} https://*.ytimg.com https://*.googleusercontent.com https://*.dzcdn.net https://*.fastly.net data:`,
 			`media-src ${webview.cspSource} https://*.dzcdn.net blob: data:`,
@@ -57,13 +52,11 @@ export class YouTubeMusicViewProvider implements vscode.WebviewViewProvider {
 		const htmlPath = path.join(this._extensionUri.fsPath, 'src', 'focus', 'view', 'ui', 'index.html');
 		let html = fs.readFileSync(htmlPath, 'utf8');
 
+		const styleLinks = styleUris.map(uri => `<link rel="stylesheet" href="${uri}">`).join('\n');
+
 		html = html.replace(
 			'</head>',
-			`<meta http-equiv="Content-Security-Policy" content="${csp}">\n` +
-			`<link rel="stylesheet" href="${skeletonUri}">\n` +
-			`<link rel="stylesheet" href="${playSkeletonUri}">\n` +
-			`<link rel="stylesheet" href="${viewStyleUri}">\n` +
-			`<link rel="stylesheet" href="${atmMusicStyleUri}">\n</head>`,
+			`<meta http-equiv="Content-Security-Policy" content="${csp}">\n${styleLinks}\n</head>`,
 		);
 		html = html.replace('</body>', `<script src="${scriptUri}"></script>\n</body>`);
 

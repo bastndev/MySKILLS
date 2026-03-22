@@ -6,48 +6,39 @@ import { gameScreenContent } from '../../screens/atm-game/game';
 
 (function () {
     const vscode = acquireVsCodeApi();
-    const musicController = createAtmMusicController(vscode);
 
-    const searchInput = document.querySelector('#search-input') as HTMLInputElement | null;
-    const quickAccessButtons = Array.from(document.querySelectorAll('.qa-btn')) as HTMLButtonElement[];
-    const musicQuickButton = quickAccessButtons[0] || null;
-    const screenSearch = document.querySelector('#screen-search') as HTMLElement | null;
-    const screenTime = document.querySelector('#screen-time') as HTMLElement | null;
-    const screenGame = document.querySelector('#screen-game') as HTMLElement | null;
-    const screenResults = document.querySelector('#screen-results') as HTMLElement | null;
-    const screenPlayer = document.querySelector('#screen-player') as HTMLElement | null;
+    // Mount Time and Game screens
     const atmTimeRoot = document.querySelector('#atm-time-root') as HTMLElement | null;
     const atmGameRoot = document.querySelector('#atm-game-root') as HTMLElement | null;
 
     if (atmTimeRoot) {
         atmTimeRoot.innerHTML = timeScreenContent;
     }
-
     if (atmGameRoot) {
         atmGameRoot.innerHTML = gameScreenContent;
     }
 
-    const setActiveScreen = (target: 'search' | 'time' | 'game') => {
-        if (screenSearch) {
-            screenSearch.classList.toggle('active', target === 'search');
+    // Initialize Music Controller (handles search, results, player internally)
+    const musicController = createAtmMusicController(vscode);
+
+    // Quick Access buttons (Music / Time / Game)
+    const quickAccessButtons = Array.from(document.querySelectorAll('.qa-btn')) as HTMLButtonElement[];
+    const musicQuickButton = quickAccessButtons[0] || null;
+
+    const showGlobalScreen = (target: 'search' | 'time' | 'game') => {
+        // Remove active from ALL screens
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+        // Activate the target screen
+        if (target === 'search') {
+            document.querySelector('#screen-search')?.classList.add('active');
+        } else if (target === 'time') {
+            document.querySelector('#screen-time')?.classList.add('active');
+        } else if (target === 'game') {
+            document.querySelector('#screen-game')?.classList.add('active');
         }
 
-        if (screenTime) {
-            screenTime.classList.toggle('active', target === 'time');
-        }
-
-        if (screenGame) {
-            screenGame.classList.toggle('active', target === 'game');
-        }
-
-        if (screenResults) {
-            screenResults.classList.remove('active');
-        }
-
-        if (screenPlayer) {
-            screenPlayer.classList.remove('active');
-        }
-
+        // Update button styles
         quickAccessButtons.forEach((button) => {
             const isMusicButton = button === musicQuickButton;
             const isActive = isMusicButton ? target === 'search' : button.dataset.screen === target;
@@ -61,27 +52,36 @@ import { gameScreenContent } from '../../screens/atm-game/game';
         });
     };
 
+    // Back-to-search buttons (from Time/Game screens)
     const backToSearchButtons = Array.from(document.querySelectorAll('[data-back-to="search"]')) as HTMLButtonElement[];
     backToSearchButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            setActiveScreen('search');
+            showGlobalScreen('search');
         });
     });
 
+    // Quick Access button clicks
     quickAccessButtons.forEach((button) => {
         button.addEventListener('click', () => {
             const target = button.dataset.screen;
 
             if (target === 'time' || target === 'game') {
-                setActiveScreen(target);
+                showGlobalScreen(target);
             }
         });
     });
 
+    // Search input Enter key -> delegates to music controller
+    // NOTE: MusicSearchUI already handles Enter key internally,
+    // but this catches it for the main search screen too
+    const searchInput = document.querySelector('#search-input') as HTMLInputElement | null;
     if (searchInput) {
         searchInput.addEventListener('keypress', (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
-                musicController.search(searchInput.value);
+                const query = searchInput.value.trim();
+                if (query) {
+                    musicController.search(query);
+                }
             }
         });
     }

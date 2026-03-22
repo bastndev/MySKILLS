@@ -361,6 +361,26 @@
     height: 14px;
 }
 
+#repeat-btn.active {
+    opacity: 1;
+    color: var(--vscode-focusBorder);
+    background: color-mix(in srgb, var(--vscode-focusBorder) 18%, transparent);
+}
+
+#repeat-btn.active:hover {
+    opacity: 1;
+}
+
+#volume-btn.active {
+    opacity: 1;
+    color: var(--vscode-focusBorder);
+    background: color-mix(in srgb, var(--vscode-focusBorder) 18%, transparent);
+}
+
+#volume-btn.active:hover {
+    opacity: 1;
+}
+
 .error-msg {
     text-align: center;
     padding: 24px 12px;

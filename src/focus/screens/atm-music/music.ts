@@ -1,1 +1,1 @@
-export { handleWebviewMessage } from './core/messageHandler';
+export { handleWebviewMessage } from './core/handler';
