@@ -120,7 +120,7 @@ export class MusicResultsUI {
         this.queryBtn.disabled = isDisabled;
         this.queryBtn.classList.toggle('is-disabled', isDisabled);
         
-        if (isUnchanged && this.canForward) {
+        if ((isUnchanged && this.canForward) || isDisabled) {
             this.queryBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
         } else {
             // Search icon if changing query
