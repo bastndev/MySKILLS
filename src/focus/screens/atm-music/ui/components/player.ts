@@ -34,11 +34,15 @@ export class MusicPlayerUI {
     }
 
     public playTrack(track: Track, hasPrev: boolean, hasNext: boolean) {
-        this.stopPlayback();
-        this.render(track, hasPrev, hasNext);
-        this.updateTrackHeader(track);
-        this.setLoading(true);
-        this.attemptPlay(track);
+        if (!this.container?.querySelector('.player-content')) {
+            this.stopPlayback();
+            this.render(track, hasPrev, hasNext);
+            this.updateTrackHeader(track);
+            this.setLoading(true);
+            this.attemptPlay(track);
+        } else {
+            this.skipToTrack(track, hasPrev, hasNext);
+        }
     }
 
     /**
@@ -84,11 +88,15 @@ export class MusicPlayerUI {
             nextBtn.classList.toggle('disabled', !hasNext);
         }
 
-        // Update total time
+        // Update total time and reset progress bar
         const totalTime = $('#total-time');
         if (totalTime) {
             totalTime.textContent = formatDuration(track.duration);
         }
+        const bar = $('#progress-bar') as HTMLInputElement | null;
+        if (bar) bar.value = '0';
+        const curTime = $('#current-time');
+        if (curTime) curTime.textContent = '0:00';
 
         this.setLoading(true);
         this.attemptPlay(track);
@@ -321,11 +329,6 @@ export class MusicPlayerUI {
         if (btn) {
             btn.classList.toggle('loading', loading);
             (btn as HTMLButtonElement).disabled = loading;
-            
-            const svg = btn.querySelector('svg');
-            if (svg) {
-                svg.style.opacity = loading ? '0' : '1';
-            }
         }
     }
 
