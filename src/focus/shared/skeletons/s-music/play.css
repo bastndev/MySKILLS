@@ -1,7 +1,6 @@
 .play-btn.loading {
 	position: relative;
 	pointer-events: none;
-	border-color: transparent !important;
 }
 
 .play-btn.loading svg {
@@ -11,10 +10,11 @@
 .play-btn.loading::after {
 	content: '';
 	position: absolute;
-	top: -2px;
-	left: -2px;
-	right: -2px;
-	bottom: -2px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 16px;
+	height: 16px;
 	border-radius: 50%;
 	background: linear-gradient(
 		90deg,
