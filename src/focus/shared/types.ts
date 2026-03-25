@@ -23,11 +23,14 @@ export type WebviewMessageType =
     | 'search' 
     | 'searchResults' 
     | 'error' 
-    | 'info';
+    | 'info'
+    | 'ready'
+    | 'config';
 
 export interface WebviewMessage {
     type: WebviewMessageType;
     query?: string;
     results?: Track[];
     message?: string;
+    streamPort?: number;
 }

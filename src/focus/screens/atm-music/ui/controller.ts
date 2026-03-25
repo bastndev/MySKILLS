@@ -70,7 +70,9 @@ export class AtmMusicController {
     private bindGlobalMessages() {
         window.addEventListener('message', (event: MessageEvent) => {
             const msg = event.data as WebviewMessage;
-            if (msg.type === 'searchResults') {
+            if (msg.type === 'config' && msg.streamPort) {
+                (window as any).STREAM_PORT = msg.streamPort;
+            } else if (msg.type === 'searchResults') {
                 this.tracks = msg.results || [];
                 this.hasCachedSearch = true;
                 this.resultsUI.render(this.tracks);
@@ -79,6 +81,9 @@ export class AtmMusicController {
                 this.showError(msg.message || 'Unknown error');
             }
         });
+
+        // Notify Extension to start the background audio stream server
+        this.vscode.postMessage({ type: 'ready' } as WebviewMessage);
     }
 
     private performSearch(query: string) {
