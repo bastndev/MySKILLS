@@ -306,33 +306,21 @@
     text-align: right;
 }
 
-/* ── Custom Progress Track ── */
+/* ── Custom Progress Track (Modern Gradient) ── */
 .progress-track {
     position: relative;
     flex: 1;
     height: 4px;
     border-radius: 4px;
-    background: rgba(128, 128, 128, 0.18);
+    background: color-mix(in srgb, var(--vscode-foreground) 10%, transparent);
     cursor: pointer;
-    transition: height 0.15s ease, box-shadow 0.2s ease;
 }
 
 .progress-track::before {
     content: '';
     position: absolute;
-    inset: -6px 0;
+    inset: -8px 0;
     z-index: 1;
-}
-
-.progress-track:hover,
-.progress-track.is-dragging {
-    height: 6px;
-}
-
-.progress-track:hover .progress-thumb,
-.progress-track.is-dragging .progress-thumb {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
 }
 
 .progress-track.loading {
@@ -346,29 +334,29 @@
     left: 0;
     height: 100%;
     border-radius: 4px;
-    background: linear-gradient(90deg, var(--vscode-focusBorder), color-mix(in srgb, var(--vscode-focusBorder) 70%, #fff));
-    transition: width 0.06s linear;
-    box-shadow: 0 0 6px color-mix(in srgb, var(--vscode-focusBorder) 35%, transparent);
+    background: linear-gradient(90deg, transparent 0%, var(--vscode-focusBorder) 100%);
+    transition: width 0.1s linear;
 }
 
 .progress-thumb {
     position: absolute;
     top: 50%;
     left: 0%;
-    width: 12px;
-    height: 12px;
-    margin-top: -6px;
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
     border-radius: 50%;
-    background: var(--vscode-foreground);
-    transform: translateX(-50%) scale(0);
+    background: var(--vscode-focusBorder);
+    transform: translateX(-50%) scale(0.6);
     opacity: 0;
-    transition: opacity 0.15s ease, transform 0.15s cubic-bezier(.34,1.56,.64,1);
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(.17,.67,.29,1.5);
     z-index: 2;
 }
 
-.progress-track.is-dragging .progress-fill {
-    box-shadow: 0 0 10px color-mix(in srgb, var(--vscode-focusBorder) 50%, transparent);
+.progress-track:hover .progress-thumb,
+.progress-track.is-dragging .progress-thumb {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
 }
 
 .player-controls {
