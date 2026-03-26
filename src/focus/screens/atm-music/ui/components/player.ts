@@ -284,6 +284,9 @@ export class MusicPlayerUI {
             const onUp = () => {
                 this.isSeeking = false;
                 track.classList.remove('is-dragging');
+                if (this.audioPlayer.readyState < 3) {
+                    this.setLoading(true);
+                }
                 document.removeEventListener('mousemove', onMove);
                 document.removeEventListener('mouseup', onUp);
             };
@@ -302,6 +305,9 @@ export class MusicPlayerUI {
             const onEnd = () => {
                 this.isSeeking = false;
                 track.classList.remove('is-dragging');
+                if (this.audioPlayer.readyState < 3) {
+                    this.setLoading(true);
+                }
                 document.removeEventListener('touchmove', onMove);
                 document.removeEventListener('touchend', onEnd);
             };
@@ -388,10 +394,17 @@ export class MusicPlayerUI {
 
     private setLoading(loading: boolean) {
         this.isLoadingState = loading;
+        
         const btn = $('#play-pause-btn');
         if (btn) {
             btn.classList.toggle('loading', loading);
             (btn as HTMLButtonElement).disabled = loading;
+        }
+
+        const qaBtn = $('#qa-play-btn');
+        if (qaBtn) {
+            qaBtn.classList.toggle('loading', loading);
+            (qaBtn as HTMLButtonElement).disabled = loading;
         }
 
         const track = $('#progress-track');
