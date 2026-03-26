@@ -11,6 +11,7 @@ export class MusicPlayerUI {
     private isLoopEnabled = false;
     private suppressPlaybackEvents = false;
     private isSeeking = false;
+    private isLoadingState = false;
     private pendingTrack: Track | null = null;
 
     constructor(
@@ -89,8 +90,7 @@ export class MusicPlayerUI {
         const totalTime = $('#total-time');
         if (totalTime) totalTime.textContent = formatDuration(track.duration);
         
-        const bar = $('#progress-bar') as HTMLInputElement | null;
-        if (bar) bar.value = '0';
+        this.updateProgressVisual(0);
         
         const curTime = $('#current-time');
         if (curTime) curTime.textContent = '0:00';
@@ -137,14 +137,30 @@ export class MusicPlayerUI {
 
         this.audioPlayer.onwaiting = () => {
             if (this.suppressPlaybackEvents) return;
-            this.setLoading(true);
+            // Don't show loading spinner while user is actively seeking
+            if (!this.isSeeking) {
+                this.setLoading(true);
+            }
         };
 
         this.audioPlayer.onpause = () => {
             if (this.suppressPlaybackEvents) return;
+            // Don't stop playback state if the pause was caused by seeking
+            if (this.isSeeking) return;
             this.isPlaying = false;
             this.updateIcons();
             this.stopProgressLoop();
+        };
+
+        // When the browser finishes seeking to the new position
+        this.audioPlayer.onseeked = () => {
+            if (this.suppressPlaybackEvents) return;
+            this.isSeeking = false;
+            this.setLoading(false);
+            // Restart the progress loop to ensure UI keeps updating
+            if (this.isPlaying || !this.audioPlayer.paused) {
+                this.startProgressLoop();
+            }
         };
 
         this.audioPlayer.onended = () => {
@@ -168,9 +184,12 @@ export class MusicPlayerUI {
         this.container.innerHTML = `
             <div class="player-content">
                 <div class="player-progress">
-                    <span id="current-time">0:00</span>
-                    <input type="range" id="progress-bar" class="progress-bar" min="0" max="1000" value="0">
-                    <span id="total-time">${formatDuration(track.duration)}</span>
+                    <span id="current-time" class="progress-time" title="Click to toggle elapsed/remaining">0:00</span>
+                    <div id="progress-track" class="progress-track">
+                        <div id="progress-fill" class="progress-fill"></div>
+                        <div id="progress-thumb" class="progress-thumb"></div>
+                    </div>
+                    <span id="total-time" class="progress-time">0:00</span>
                 </div>
                 <div class="player-controls">
                     <button id="volume-btn" class="control-btn control-btn-sm ${this.isMuted ? 'active' : ''}" type="button" aria-pressed="${this.isMuted ? 'true' : 'false'}">
@@ -208,16 +227,86 @@ export class MusicPlayerUI {
         $('#next-btn')?.addEventListener('click', () => this.onNext());
         $('#volume-btn')?.addEventListener('click', () => this.toggleMute());
         $('#repeat-btn')?.addEventListener('click', () => this.toggleLoop());
-        const bar = $('#progress-bar') as HTMLInputElement | null;
-        if (bar) {
-            // Freeze the progress loop while the user is dragging
-            bar.addEventListener('mousedown', () => { this.isSeeking = true; });
-            bar.addEventListener('touchstart', () => { this.isSeeking = true; }, { passive: true });
-            bar.addEventListener('input', (e: any) => this.seek(e.target.value));
-            // Resume the loop once the user lets go
-            bar.addEventListener('mouseup', () => { this.isSeeking = false; });
-            bar.addEventListener('touchend', () => { this.isSeeking = false; });
+        
+        // Toggle time display mode (elapsed vs remaining)
+        $('#current-time')?.addEventListener('click', () => this.toggleTimeMode());
+        $('#total-time')?.addEventListener('click', () => this.toggleTimeMode());
+
+        this.setupProgressBarEvents();
+    }
+
+    private isRemainingMode = false;
+    private toggleTimeMode() {
+        this.isRemainingMode = !this.isRemainingMode;
+        this.updateTimeDisplay();
+    }
+
+    private updateTimeDisplay() {
+        const curEl = $('#current-time');
+        const totEl = $('#total-time');
+        if (!curEl || !totEl) return;
+
+        const cur = this.audioPlayer.currentTime || 0;
+        const dur = this.audioPlayer.duration || 0;
+
+        if (this.isRemainingMode && dur > 0) {
+            curEl.textContent = '-' + formatDuration(Math.max(0, Math.floor(dur - cur)));
+        } else {
+            curEl.textContent = formatDuration(Math.floor(cur));
         }
+        
+        if (dur > 0) {
+            totEl.textContent = formatDuration(Math.floor(dur));
+        }
+    }
+
+    /** Custom progress bar drag/click handling — never disabled by loading states */
+    private setupProgressBarEvents() {
+        const track = $('#progress-track');
+        if (!track) return;
+
+        const seekToPosition = (clientX: number) => {
+            const rect = track.getBoundingClientRect();
+            const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+            this.updateProgressVisual(ratio);
+            this.seek(String(ratio * 1000));
+        };
+
+        // Click to seek
+        track.addEventListener('mousedown', (e: MouseEvent) => {
+            if (this.isLoadingState) return;
+            this.isSeeking = true;
+            seekToPosition(e.clientX);
+            track.classList.add('is-dragging');
+
+            const onMove = (ev: MouseEvent) => seekToPosition(ev.clientX);
+            const onUp = () => {
+                this.isSeeking = false;
+                track.classList.remove('is-dragging');
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            };
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
+
+        // Touch support
+        track.addEventListener('touchstart', (e: TouchEvent) => {
+            if (this.isLoadingState) return;
+            this.isSeeking = true;
+            seekToPosition(e.touches[0].clientX);
+            track.classList.add('is-dragging');
+
+            const onMove = (ev: TouchEvent) => seekToPosition(ev.touches[0].clientX);
+            const onEnd = () => {
+                this.isSeeking = false;
+                track.classList.remove('is-dragging');
+                document.removeEventListener('touchmove', onMove);
+                document.removeEventListener('touchend', onEnd);
+            };
+            document.addEventListener('touchmove', onMove, { passive: true });
+            document.addEventListener('touchend', onEnd);
+        }, { passive: true });
     }
 
     private togglePlayback() {
@@ -252,6 +341,7 @@ export class MusicPlayerUI {
         }
 
         if (this.audioPlayer && dur > 0) {
+            this.isSeeking = true;
             this.audioPlayer.currentTime = val * dur;
             // Update the timer display immediately so it feels responsive
             const curEl = $('#current-time');
@@ -259,10 +349,19 @@ export class MusicPlayerUI {
         }
     }
 
+    /** Update the visual fill + thumb position without touching the audio element */
+    private updateProgressVisual(ratio: number) {
+        const fill = $('#progress-fill');
+        const thumb = $('#progress-thumb');
+        const pct = Math.max(0, Math.min(100, ratio * 100));
+        if (fill) fill.style.width = `${pct}%`;
+        if (thumb) thumb.style.left = `${pct}%`;
+    }
+
     private startProgressLoop() {
         this.stopProgressLoop();
         const update = () => {
-            if (!this.isPlaying) return;
+            if (!this.isPlaying && this.audioPlayer.paused) return;
             const cur = this.audioPlayer.currentTime;
             
             const totalStr = $('#total-time')?.textContent || '1:00';
@@ -275,9 +374,9 @@ export class MusicPlayerUI {
             }
 
             if (cur !== undefined && dur && !this.isSeeking) {
-                const bar = $('#progress-bar') as HTMLInputElement | null;
-                if (bar) bar.value = String((cur / dur) * 1000);
-                $('#current-time')!.textContent = formatDuration(Math.floor(cur));
+                const ratio = cur / dur;
+                this.updateProgressVisual(ratio);
+                this.updateTimeDisplay();
             }
             this.progressTimer = requestAnimationFrame(update);
         };
@@ -287,16 +386,16 @@ export class MusicPlayerUI {
     private stopProgressLoop() { if (this.progressTimer) cancelAnimationFrame(this.progressTimer); }
 
     private setLoading(loading: boolean) {
+        this.isLoadingState = loading;
         const btn = $('#play-pause-btn');
         if (btn) {
             btn.classList.toggle('loading', loading);
             (btn as HTMLButtonElement).disabled = loading;
         }
 
-        const bar = $('#progress-bar') as HTMLInputElement | null;
-        if (bar) {
-            bar.disabled = loading;
-            bar.classList.toggle('loading', loading);
+        const track = $('#progress-track');
+        if (track) {
+            track.classList.toggle('loading', loading);
         }
     }
 
