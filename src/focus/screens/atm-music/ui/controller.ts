@@ -177,4 +177,14 @@ export class AtmMusicController {
 
     // Public API for external integration
     public search(query: string) { this.searchUI.setQuery(query); this.performSearch(query); }
+
+    /** Navigate to player (if a track is loaded) or results (if a search was made). */
+    public goToMusic() {
+        if (this.currentIndex > -1) {
+            this.showScreen('player');
+        } else if (this.hasCachedSearch) {
+            this.showScreen('results');
+        }
+        // else: already on search screen, nothing to do
+    }
 }

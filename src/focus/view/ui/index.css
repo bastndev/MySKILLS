@@ -217,6 +217,15 @@ body.vscode-light .results-query-input::-webkit-search-cancel-button {
     cursor: default;
 }
 
+#qa-music-label {
+    border-radius: 3px;
+    transition: opacity 0.15s ease;
+}
+
+#qa-music-label:hover {
+    opacity: 0.75;
+}
+
 .qa-btn[disabled] {
     pointer-events: none;
     cursor: default;
