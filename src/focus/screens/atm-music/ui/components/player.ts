@@ -10,6 +10,7 @@ export class MusicPlayerUI {
     private isMuted = false;
     private isLoopEnabled = false;
     private suppressPlaybackEvents = false;
+    private isSeeking = false;
     private pendingTrack: Track | null = null;
 
     constructor(
@@ -207,7 +208,16 @@ export class MusicPlayerUI {
         $('#next-btn')?.addEventListener('click', () => this.onNext());
         $('#volume-btn')?.addEventListener('click', () => this.toggleMute());
         $('#repeat-btn')?.addEventListener('click', () => this.toggleLoop());
-        $('#progress-bar')?.addEventListener('input', (e: any) => this.seek(e.target.value));
+        const bar = $('#progress-bar') as HTMLInputElement | null;
+        if (bar) {
+            // Freeze the progress loop while the user is dragging
+            bar.addEventListener('mousedown', () => { this.isSeeking = true; });
+            bar.addEventListener('touchstart', () => { this.isSeeking = true; }, { passive: true });
+            bar.addEventListener('input', (e: any) => this.seek(e.target.value));
+            // Resume the loop once the user lets go
+            bar.addEventListener('mouseup', () => { this.isSeeking = false; });
+            bar.addEventListener('touchend', () => { this.isSeeking = false; });
+        }
     }
 
     private togglePlayback() {
@@ -232,8 +242,20 @@ export class MusicPlayerUI {
 
     private seek(value: string) {
         const val = Number(value) / 1000;
-        if (this.audioPlayer && this.audioPlayer.duration && isFinite(this.audioPlayer.duration)) {
-            this.audioPlayer.currentTime = val * this.audioPlayer.duration;
+
+        // Prefer the real audio duration; fall back to the visible total-time label
+        let dur = this.audioPlayer.duration;
+        if (!isFinite(dur) || !dur || dur < 1) {
+            const totalStr = $('#total-time')?.textContent || '0:00';
+            const [m, s] = totalStr.split(':').map(Number);
+            dur = (m * 60) + (s || 0);
+        }
+
+        if (this.audioPlayer && dur > 0) {
+            this.audioPlayer.currentTime = val * dur;
+            // Update the timer display immediately so it feels responsive
+            const curEl = $('#current-time');
+            if (curEl) curEl.textContent = formatDuration(Math.floor(val * dur));
         }
     }
 
@@ -252,7 +274,7 @@ export class MusicPlayerUI {
                 dur = totalSecs > 0 ? totalSecs : 1; 
             }
 
-            if (cur !== undefined && dur) {
+            if (cur !== undefined && dur && !this.isSeeking) {
                 const bar = $('#progress-bar') as HTMLInputElement | null;
                 if (bar) bar.value = String((cur / dur) * 1000);
                 $('#current-time')!.textContent = formatDuration(Math.floor(cur));
