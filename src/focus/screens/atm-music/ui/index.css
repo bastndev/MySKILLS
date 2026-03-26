@@ -315,6 +315,16 @@
     cursor: pointer;
 }
 
+.progress-bar.loading {
+    cursor: default !important;
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.progress-bar.loading::-webkit-slider-thumb {
+    cursor: default !important;
+}
+
 .progress-bar::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 10px;

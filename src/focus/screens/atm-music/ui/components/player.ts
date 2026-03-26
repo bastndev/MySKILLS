@@ -292,6 +292,12 @@ export class MusicPlayerUI {
             btn.classList.toggle('loading', loading);
             (btn as HTMLButtonElement).disabled = loading;
         }
+
+        const bar = $('#progress-bar') as HTMLInputElement | null;
+        if (bar) {
+            bar.disabled = loading;
+            bar.classList.toggle('loading', loading);
+        }
     }
 
     private updateIcons() {
