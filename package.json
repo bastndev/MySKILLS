@@ -1,12 +1,12 @@
 {
-  "name": "rene",
-  "displayName": "R E N E",
+  "name": "myskills",
+  "displayName": "MySKILLS",
   "description": "Available now: VSCode • Antigravity • Cursor • Windsurf • Trae.ai • Kiro & (Firebase Studio)... 雨",
   "version": "0.0.1",
   "publisher": "bastndev",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
@@ -76,8 +76,8 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "22.x",
-    "@types/vscode": "^1.74.0",
+    "@types/node": "25.7.0",
+    "@types/vscode": "^1.75.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
     "esbuild": "^0.27.2",
