@@ -30,10 +30,10 @@ export class YouTubeMusicViewProvider implements vscode.WebviewViewProvider {
 	private _getHtmlForWebview(webview: vscode.Webview) {
 		// Asset paths
 		const styles = [
-			['src', 'focus', 'shared', 'skeletons', 's-music', 'list.css'],
-			['src', 'focus', 'shared', 'skeletons', 's-music', 'play.css'],
-			['src', 'focus', 'view', 'ui', 'index.css'],
-			['src', 'focus', 'screens', 'atm-music', 'ui', 'index.css'],
+			['src', 'myskills', 'shared', 'skeletons', 's-music', 'list.css'],
+			['src', 'myskills', 'shared', 'skeletons', 's-music', 'play.css'],
+			['src', 'myskills', 'view', 'ui', 'index.css'],
+			['src', 'myskills', 'screens', 'atm-music', 'ui', 'index.css'],
 		];
 
 		const styleUris = styles.map(s => webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, ...s)));
@@ -49,7 +49,7 @@ export class YouTubeMusicViewProvider implements vscode.WebviewViewProvider {
 			`font-src ${webview.cspSource}`,
 		].join('; ');
 
-		const htmlPath = path.join(this._extensionUri.fsPath, 'src', 'focus', 'view', 'ui', 'index.html');
+		const htmlPath = path.join(this._extensionUri.fsPath, 'src', 'myskills', 'view', 'ui', 'index.html');
 		let html = fs.readFileSync(htmlPath, 'utf8');
 
 		const styleLinks = styleUris.map(uri => `<link rel="stylesheet" href="${uri}">`).join('\n');
