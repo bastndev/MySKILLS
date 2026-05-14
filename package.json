@@ -39,6 +39,15 @@
   },
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "myskills-activity",
+          "title": "My Skills",
+          "icon": "src/assets/svg/myskills.svg"
+        }
+      ]
+    },
     "views": {
       "explorer": [
         {
@@ -46,6 +55,13 @@
           "id": "rene-yt-music-view",
           "name": "ATMㅤㅤMUSIC ♪ ( TIME ~ GAME ) ",
           "icon": "$(music)"
+        }
+      ],
+      "myskills-activity": [
+        {
+          "type": "webview",
+          "id": "myskills-panel",
+          "name": "My Skills"
         }
       ]
     },
