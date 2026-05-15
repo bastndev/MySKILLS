@@ -27,8 +27,9 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'));
 		const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'ui', 'view.css'));
+		const globalUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'shared', 'styles', 'global.css'));
 
-		html = html.replace('<!-- STYLES -->', `<link href="${styleUri}" rel="stylesheet">`);
+		html = html.replace('<!-- STYLES -->', `<link href="${globalUri}" rel="stylesheet"><link href="${styleUri}" rel="stylesheet">`);
 		html = html.replace('<!-- SCRIPTS -->', `<script src="${scriptUri}"></script>`);
 
 		return html;

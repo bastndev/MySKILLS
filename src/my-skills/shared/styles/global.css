@@ -1,0 +1,5 @@
+:root {
+	--vscode-font-family: var(--vscode-font-family, sans-serif);
+	--vscode-editor-background: var(--vscode-editor-background, #1e1e1e);
+	--vscode-foreground: var(--vscode-foreground, #cccccc);
+}
