@@ -7,7 +7,25 @@
 	<!-- STYLES -->
 </head>
 <body>
-	<button id="btn" class="btn">Open Skills</button>
+	<nav class="slider-menu">
+		<button class="tab active" data-target="view-panel">VIEW</button>
+		<button class="tab" data-target="install-panel">INSTALL</button>
+		<button class="tab" data-target="create-panel">CREATE</button>
+		<div class="slider-indicator"></div>
+	</nav>
+
+	<div class="panels">
+		<div id="view-panel" class="panel active">
+			<button id="btn-view" class="btn-view-panel">Open Skills</button>
+		</div>
+		<div id="install-panel" class="panel">
+			<!-- INSTALL_PANEL -->
+		</div>
+		<div id="create-panel" class="panel">
+			<!-- CREATE_PANEL -->
+		</div>
+	</div>
+
 	<!-- SCRIPTS -->
 </body>
 </html>

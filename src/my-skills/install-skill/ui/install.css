@@ -1,0 +1,21 @@
+.btn-install-panel {
+	padding: 10px 24px;
+	font-size: 14px;
+	font-family: var(--vscode-font-family);
+	font-weight: 500;
+	color: #ffffff;
+	background: #2ea043; /* Green */
+	border: 1px solid transparent;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background 0.2s, transform 0.1s;
+}
+
+.btn-install-panel:hover {
+	background: #238636;
+	transform: translateY(-2px);
+}
+
+.btn-install-panel:active {
+	transform: translateY(0);
+}

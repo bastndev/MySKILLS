@@ -1,15 +1,82 @@
 body {
 	display: flex;
-	justify-content: center;
-	align-items: center;
+	flex-direction: column;
 	height: 100vh;
 	margin: 0;
 	background: transparent;
 	color: var(--vscode-foreground);
 	font-family: var(--vscode-font-family);
+	overflow: hidden;
 }
 
-.btn {
+.slider-menu {
+	display: flex;
+	position: relative;
+	border-bottom: 1px solid var(--vscode-panel-border, #444);
+	margin-bottom: 20px;
+}
+
+.tab {
+	flex: 1;
+	background: none;
+	border: none;
+	padding: 12px 0;
+	color: var(--vscode-foreground);
+	font-family: var(--vscode-font-family);
+	font-size: 13px;
+	font-weight: bold;
+	cursor: pointer;
+	outline: none;
+	text-transform: uppercase;
+	opacity: 0.7;
+	transition: opacity 0.2s;
+}
+
+.tab:hover {
+	opacity: 1;
+}
+
+.tab.active {
+	opacity: 1;
+	color: var(--vscode-textLink-foreground, #3794ff);
+}
+
+.slider-indicator {
+	position: absolute;
+	bottom: -1px;
+	left: 0;
+	height: 2px;
+	width: 33.333%;
+	background-color: var(--vscode-textLink-foreground, #3794ff);
+	transition: transform 0.3s ease;
+}
+
+.panels {
+	flex: 1;
+	position: relative;
+	overflow: hidden;
+}
+
+.panel {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease, visibility 0.3s ease;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.panel.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+.btn-view-panel {
 	padding: 10px 24px;
 	font-size: 14px;
 	font-family: var(--vscode-font-family);
@@ -19,23 +86,14 @@ body {
 	border: 1px solid var(--vscode-button-border, transparent);
 	border-radius: 6px;
 	cursor: pointer;
-	opacity: 0;
-	transform: translateY(10px);
-	animation: fadeIn 0.5s ease-out forwards;
+	transition: background 0.2s, transform 0.1s;
 }
 
-.btn:hover {
+.btn-view-panel:hover {
 	background: var(--vscode-button-hoverBackground, #5558e3);
 	transform: translateY(-2px);
 }
 
-.btn:active {
+.btn-view-panel:active {
 	transform: translateY(0);
-}
-
-@keyframes fadeIn {
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
 }

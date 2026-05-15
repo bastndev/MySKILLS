@@ -1,0 +1,21 @@
+.btn-create-panel {
+	padding: 10px 24px;
+	font-size: 14px;
+	font-family: var(--vscode-font-family);
+	font-weight: 500;
+	color: #ffffff;
+	background: #e36209; /* Orange */
+	border: 1px solid transparent;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background 0.2s, transform 0.1s;
+}
+
+.btn-create-panel:hover {
+	background: #cb5608;
+	transform: translateY(-2px);
+}
+
+.btn-create-panel:active {
+	transform: translateY(0);
+}
