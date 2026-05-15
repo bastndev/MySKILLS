@@ -43,7 +43,7 @@
         {
           "id": "myskills-activity",
           "title": "My Skills",
-          "icon": "src/assets/svg/logo.svg"
+          "icon": "src/my-skills/assets/svg/logo.svg"
         }
       ]
     },
@@ -53,7 +53,7 @@
           "type": "webview",
           "id": "myskills-panel",
           "name": "My Skills",
-          "icon": "src/assets/svg/logo.svg"
+          "icon": "src/my-skills/assets/svg/logo.svg"
         }
       ]
     }
