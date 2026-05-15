@@ -3,16 +3,16 @@
 	font-size: 14px;
 	font-family: var(--vscode-font-family);
 	font-weight: 500;
-	color: #ffffff;
-	background: #2ea043; /* Green */
-	border: 1px solid transparent;
+	color: var(--vscode-button-foreground, #ffffff);
+	background: var(--vscode-button-secondaryBackground, #2ea043);
+	border: 1px solid var(--vscode-button-border, transparent);
 	border-radius: 6px;
 	cursor: pointer;
 	transition: background 0.2s, transform 0.1s;
 }
 
 .btn-install-panel:hover {
-	background: #238636;
+	background: var(--vscode-button-secondaryHoverBackground, #238636);
 	transform: translateY(-2px);
 }
 

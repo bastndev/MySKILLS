@@ -3,16 +3,16 @@
 	font-size: 14px;
 	font-family: var(--vscode-font-family);
 	font-weight: 500;
-	color: #ffffff;
-	background: #e36209; /* Orange */
-	border: 1px solid transparent;
+	color: var(--vscode-button-foreground, #ffffff);
+	background: var(--vscode-button-secondaryBackground, #e36209);
+	border: 1px solid var(--vscode-button-border, transparent);
 	border-radius: 6px;
 	cursor: pointer;
 	transition: background 0.2s, transform 0.1s;
 }
 
 .btn-create-panel:hover {
-	background: #cb5608;
+	background: var(--vscode-button-secondaryHoverBackground, #cb5608);
 	transform: translateY(-2px);
 }
 
