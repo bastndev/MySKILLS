@@ -3,7 +3,9 @@
 out/**
 node_modules/**
 src/**
-!src/assets/svg/myskills.svg
+!src/my-skills/**/*.html
+!src/my-skills/**/*.css
+!src/my-skills/**/*.svg
 .gitignore
 .yarnrc
 esbuild.js
