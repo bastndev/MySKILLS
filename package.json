@@ -8,13 +8,10 @@
   "engines": {
     "vscode": "^1.75.0"
   },
-  "categories": [
-    "Other"
-  ],
+  "categories": ["Other"],
   "keywords": [
-    "Youtube Music",
-    "Pomodoro",
-    "Game One"
+    "Skills",
+    "AI"
   ],
   "icon": "icon.png",
   "galleryBanner": {
@@ -24,19 +21,20 @@
   "homepage": "https://github.com/bastndev/RENE#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bastndev/RENE"
+    "url": "https://github.com/bastndev/My-Skills"
   },
   "bugs": {
-    "url": "https://github.com/bastndev/RENE/issues"
+    "url": "https://github.com/bastndev/My-Skills/issues/new"
   },
   "author": {
     "name": "Gohit Bastian",
-    "email": "hello@gohit.xyz",
+    "email": "bastndev@gohit.xyz",
     "url": "https://www.gohit.xyz/me"
   },
   "sponsor": {
     "url": "https://github.com/sponsors/bastndev"
   },
+
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -84,8 +82,5 @@
     "npm-run-all": "^4.1.5",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
-  },
-  "dependencies": {
-    "NeteaseCloudMusicApi": "^4.30.0"
   }
 }
