@@ -1,4 +1,6 @@
 const createSurface = document.querySelector('.create-skill-surface') as HTMLElement | null;
+const createChat = document.querySelector('.create-chat') as HTMLElement | null;
+const createChatInput = document.querySelector('.create-chat-input') as HTMLTextAreaElement | null;
 
 if (createSurface) {
 	let pointerFrame = 0;
@@ -30,4 +32,13 @@ if (createSurface) {
 
 		createSurface.classList.remove('is-pointer-active');
 	});
+}
+
+if (createChat && createChatInput) {
+	const syncChatInputState = () => {
+		createChat.classList.toggle('has-message', createChatInput.value.trim().length > 0);
+	};
+
+	createChatInput.addEventListener('input', syncChatInputState);
+	syncChatInputState();
 }
