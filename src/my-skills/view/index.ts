@@ -1,4 +1,5 @@
 import { initInstallPanel } from '../screens/install-skill/ui/install';
+import { initOfficialPanel } from '../screens/install-skill/ui/panels/official-skill/official';
 
 type WebviewState = {
 	activeTab?: string;
@@ -118,3 +119,6 @@ window.addEventListener('message', event => {
 
 // ── Init install filter tabs ──────────────────────────────────────────
 initInstallPanel();
+
+// ── Init official skill panel ─────────────────────────────────────────
+initOfficialPanel();

@@ -3,48 +3,107 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	gap: 14px;
-	height: 100%;
-	padding: 32px 16px;
+	padding: 16px;
 	box-sizing: border-box;
+	height: 100%;
+	width: 100%;
 }
 
-.official-hello {
-	margin: 0;
-	font-family: var(--vscode-font-family);
-	font-size: 18px;
-	font-weight: 600;
-	color: var(--vscode-foreground, #cccccc);
+.official-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 12px;
+	width: 100%;
+	max-width: 400px;
+	position: relative;
 }
 
-.official-cta {
-	display: inline-flex;
+/* The Spotlight Wrapper */
+.official-card {
+	position: relative;
+	aspect-ratio: 1;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid transparent;
+	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 28px;
-	padding: 0 16px;
-	background: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 15%, transparent);
-	color: var(--vscode-focusBorder, #0078d4);
-	border: 1px solid color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 40%, transparent);
-	border-radius: 5px;
-	font-family: var(--vscode-font-family);
-	font-size: 12px;
-	font-weight: 600;
 	cursor: pointer;
-	transition: background 0.15s ease, border-color 0.15s ease;
+	overflow: hidden;
+	transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
-.official-cta:hover {
-	background: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 28%, transparent);
-	border-color: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 65%, transparent);
+/* The flashlight effect pseudo-element (border glow) */
+.official-card::before {
+	content: '';
+	position: absolute;
+	inset: -1px;
+	border-radius: inherit;
+	padding: 1px;
+	background: radial-gradient(
+		circle 60px at var(--mouse-x, -100px) var(--mouse-y, -100px),
+		color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 80%, transparent),
+		transparent 100%
+	);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	z-index: 2;
 }
 
-.official-cta:active {
-	transform: scale(0.97);
+/* Internal glow */
+.official-card::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: radial-gradient(
+		circle 60px at var(--mouse-x, -100px) var(--mouse-y, -100px),
+		color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 15%, transparent),
+		transparent 100%
+	);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	pointer-events: none;
+	z-index: 1;
 }
 
-.official-cta:focus-visible {
-	outline: 1px solid var(--vscode-focusBorder, #0078d4);
-	outline-offset: 2px;
+/* Show glow when grid is hovered */
+.official-grid:hover .official-card::before,
+.official-grid:hover .official-card::after {
+	opacity: 1;
+}
+
+/* Image inside the card */
+.official-card-icon {
+	width: 55%;
+	height: 55%;
+	object-fit: contain;
+	transition: transform 0.2s ease, filter 0.2s ease;
+	filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+	z-index: 3;
+}
+
+.official-card:hover .official-card-icon {
+	transform: scale(1.15);
+	filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)) brightness(1.1);
+}
+
+.official-card:hover {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+/* Selected state */
+.official-card.selected {
+	background: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 15%, transparent);
+	border-color: var(--vscode-focusBorder, #0078d4);
+}
+
+.official-card.selected::before,
+.official-card.selected::after {
+	opacity: 0 !important; /* Hide spotlight glow if selected, or keep it? Hiding is cleaner */
 }

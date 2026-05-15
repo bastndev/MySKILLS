@@ -59,7 +59,10 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 
 			const alltimeHtml  = fs.readFileSync(alltimePath,  'utf8');
 			const trendingHtml = fs.readFileSync(trendingPath, 'utf8');
-			const officialHtml = fs.readFileSync(officialPath, 'utf8');
+			let officialHtml = fs.readFileSync(officialPath, 'utf8');
+
+			const officialImagesUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'assets', 'images', 'official'));
+			officialHtml = officialHtml.replace('{{OFFICIAL_IMAGES_URI}}', officialImagesUri.toString());
 
 			// Substitute sub-panel placeholders inside the install shell
 			installHtml = installHtml.replace('<!-- ALLTIME_PANEL -->',  alltimeHtml);
