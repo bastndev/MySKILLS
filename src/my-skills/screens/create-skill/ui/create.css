@@ -1,4 +1,80 @@
+#create-panel.panel {
+	align-items: stretch;
+	justify-content: stretch;
+}
+
+.create-skill-surface {
+	--create-bg: var(--vscode-editor-background, #1e1e1e);
+	--create-dot: color-mix(in srgb, var(--vscode-foreground, #cccccc) 22%, transparent);
+	--create-dot-active: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 60%, transparent);
+	--create-glow: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 28%, transparent);
+	--create-glow-x: 50%;
+	--create-glow-y: 50%;
+
+	position: relative;
+	isolation: isolate;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	padding: 24px;
+	overflow: hidden;
+	background:
+		radial-gradient(circle, var(--create-dot) 1px, transparent 1.4px) 0 0 / 12px 12px,
+		var(--create-bg);
+}
+
+.create-skill-surface::before,
+.create-skill-surface::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.18s ease;
+}
+
+.create-skill-surface::before {
+	z-index: -1;
+	background:
+		radial-gradient(
+			170px circle at var(--create-glow-x) var(--create-glow-y),
+			var(--create-glow),
+			transparent 64%
+		);
+}
+
+.create-skill-surface::after {
+	z-index: -1;
+	background:
+		radial-gradient(circle, var(--create-dot-active) 1px, transparent 1.5px) 0 0 / 12px 12px;
+	mask-image:
+		radial-gradient(
+			150px circle at var(--create-glow-x) var(--create-glow-y),
+			#000 0%,
+			transparent 72%
+		);
+}
+
+.create-skill-surface.is-pointer-active::before,
+.create-skill-surface.is-pointer-active::after {
+	opacity: 1;
+}
+
+.create-skill-surface h1 {
+	margin: 0;
+	color: var(--vscode-foreground);
+	font-size: 22px;
+	line-height: 1.2;
+}
+
 .btn-create-panel {
+	position: relative;
+	z-index: 1;
 	padding: 10px 24px;
 	font-size: 14px;
 	font-family: var(--vscode-font-family);
