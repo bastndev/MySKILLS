@@ -38,10 +38,12 @@ export function initOfficialPanel() {
 			const gridView = document.getElementById('official-grid-view');
 			const listView = document.getElementById('official-list-view');
 			const listTitle = document.getElementById('official-list-title');
+			const listLogo = document.getElementById('official-list-logo') as HTMLImageElement;
 			const listSources = document.querySelectorAll('.official-list-source');
 
-			if (gridView && listView && listTitle) {
-				listTitle.textContent = `${displayName} Skills`;
+			if (gridView && listView && listTitle && listLogo) {
+				listTitle.textContent = displayName;
+				listLogo.src = `${baseUri}/${filename}`;
 				listSources.forEach(s => s.textContent = `${name}/skills`);
 				
 				gridView.hidden = true;

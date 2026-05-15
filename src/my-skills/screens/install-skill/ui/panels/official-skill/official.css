@@ -34,9 +34,32 @@
 .official-list-header {
 	display: flex;
 	align-items: center;
-	padding: 10px 16px;
-	border-bottom: 1px solid color-mix(in srgb, var(--vscode-foreground, #ccc) 10%, transparent);
+	padding: 10px 16px 0;
 	flex: 0 0 auto;
+}
+
+.official-list-hero {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 20px 12px;
+	flex: 0 0 auto;
+	border-bottom: 1px solid color-mix(in srgb, var(--vscode-foreground, #ccc) 8%, transparent);
+}
+
+.official-list-hero-logo {
+	width: 24px;
+	height: 24px;
+	object-fit: contain;
+}
+
+.official-list-hero-title {
+	margin: 0;
+	font-family: var(--vscode-editor-font-family, 'Menlo', 'Courier New', monospace);
+	font-size: 22px;
+	font-weight: 500;
+	color: var(--vscode-foreground, #ccc);
+	letter-spacing: -0.01em;
 }
 
 .official-back-btn {
@@ -45,10 +68,10 @@
 	gap: 6px;
 	background: transparent;
 	border: none;
-	color: var(--vscode-foreground, #ccc);
+	color: color-mix(in srgb, var(--vscode-foreground, #ccc) 70%, transparent);
 	font-family: var(--vscode-font-family);
-	font-size: 12px;
-	font-weight: 600;
+	font-size: 13px;
+	font-weight: 500;
 	cursor: pointer;
 	padding: 6px 8px;
 	border-radius: 5px;
