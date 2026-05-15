@@ -69,6 +69,55 @@
 	line-height: 1.2;
 }
 
+.create-help-card {
+	position: absolute;
+	top: 14px;
+	left: 14px;
+	right: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	min-height: 40px;
+	box-sizing: border-box;
+	padding: 7px 8px 7px 12px;
+	color: var(--vscode-foreground);
+	background: color-mix(in srgb, var(--create-bg) 76%, transparent);
+	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 16%, transparent);
+	border-radius: 8px;
+	box-shadow: 0 10px 30px color-mix(in srgb, #000000 18%, transparent);
+	backdrop-filter: blur(12px) saturate(130%);
+	-webkit-backdrop-filter: blur(12px) saturate(130%);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.create-help-button {
+	flex: 0 0 auto;
+	min-height: 28px;
+	padding: 0 10px;
+	color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+	background: color-mix(in srgb, var(--create-bg) 62%, transparent);
+	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 18%, transparent);
+	border-radius: 7px;
+	font-family: var(--vscode-font-family);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.create-help-button:hover {
+	color: var(--vscode-button-foreground, #ffffff);
+	background: var(--vscode-button-background, #0e639c);
+	border-color: var(--vscode-focusBorder, #0078d4);
+}
+
+.create-help-button:focus-visible {
+	outline: 1px solid var(--vscode-focusBorder, #0078d4);
+	outline-offset: 2px;
+}
+
 .btn-create-panel {
 	padding: 10px 24px;
 	font-size: 14px;
