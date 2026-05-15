@@ -49,31 +49,14 @@
       ]
     },
     "views": {
-      "explorer": [
-        {
-          "type": "webview",
-          "id": "rene-yt-music-view",
-          "name": "ATMㅤㅤMUSIC ♪ ( TIME ~ GAME ) ",
-          "icon": "$(music)"
-        }
-      ],
       "myskills-activity": [
         {
           "type": "webview",
           "id": "myskills-panel",
-          "name": "My Skills"
+          "name": "My Skills",
+          "icon": "src/assets/svg/myskills.svg"
         }
       ]
-    },
-    "configuration": {
-      "title": "ATM",
-      "properties": {
-        "rene.lastfmApiKey": {
-          "type": "string",
-          "default": "",
-          "description": "Last.FM API key for additional music metadata. Get yours at https://www.last.fm/api/account/create"
-        }
-      }
     }
   },
   "scripts": {

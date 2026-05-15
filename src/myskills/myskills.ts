@@ -41,7 +41,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	</style>
 </head>
 <body>
-	<div>Helo Skill</div>
+	<div>Helo Skill 2</div>
 </body>
 </html>`;
 	}
