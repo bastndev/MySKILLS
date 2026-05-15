@@ -93,6 +93,129 @@
 	line-height: 1.35;
 }
 
+.create-options {
+	width: min(100%, 260px);
+	display: grid;
+	gap: 10px;
+	margin-top: 8px;
+}
+
+.create-option-card {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	min-height: 54px;
+	box-sizing: border-box;
+	padding: 9px 12px;
+	overflow: hidden;
+	color: var(--vscode-foreground);
+	background: color-mix(in srgb, var(--create-bg) 84%, #000000 16%);
+	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 12%, transparent);
+	border-radius: 8px;
+	font-family: var(--vscode-font-family);
+	text-align: left;
+	cursor: pointer;
+	transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.create-option-card::before {
+	content: "";
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 3px;
+	background: var(--vscode-focusBorder, #0078d4);
+	opacity: 0;
+	transition: opacity 0.16s ease;
+}
+
+.create-option-card::after {
+	content: "›";
+	margin-left: auto;
+	color: var(--vscode-focusBorder, #0078d4);
+	font-size: 20px;
+	line-height: 1;
+	opacity: 0;
+	transform: translateX(-3px);
+	transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.create-option-card:hover {
+	background: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 12%, var(--create-bg));
+	border-color: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 70%, transparent);
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 18%, transparent),
+		0 10px 26px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 12%, transparent);
+	transform: translateY(-1px);
+}
+
+.create-option-card:hover::before,
+.create-option-card:hover::after {
+	opacity: 1;
+}
+
+.create-option-card:hover::after {
+	transform: translateX(0);
+}
+
+.create-option-card:focus-visible {
+	outline: 1px solid var(--vscode-focusBorder, #0078d4);
+	outline-offset: 2px;
+}
+
+.create-option-icon {
+	flex: 0 0 auto;
+	width: 30px;
+	height: 30px;
+	display: grid;
+	place-items: center;
+	color: color-mix(in srgb, var(--vscode-foreground, #cccccc) 66%, transparent);
+	background: color-mix(in srgb, var(--vscode-foreground, #cccccc) 8%, transparent);
+	border-radius: 7px;
+	transition: color 0.16s ease, background 0.16s ease;
+}
+
+.create-option-card:hover .create-option-icon {
+	color: var(--vscode-focusBorder, #0078d4);
+	background: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 16%, transparent);
+}
+
+.create-option-icon svg {
+	width: 16px;
+	height: 16px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.35;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.create-option-copy {
+	min-width: 0;
+	display: grid;
+	gap: 2px;
+}
+
+.create-option-title,
+.create-option-description {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.create-option-title {
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.create-option-description {
+	color: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 68%, transparent);
+	font-size: 12px;
+	line-height: 1.25;
+}
+
 .create-help-card {
 	position: absolute;
 	top: 14px;
