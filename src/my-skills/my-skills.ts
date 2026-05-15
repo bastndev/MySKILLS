@@ -61,7 +61,18 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			const createStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.css'));
 			const createPanelHtml = createHtml.replace('{{CREATE_LOGO_URI}}', createLogoUri.toString());
 
-			const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} https:; font-src ${webview.cspSource};">`;
+			const csp = [
+				`<meta http-equiv="Content-Security-Policy" content="`,
+				`default-src 'none';`,
+				`base-uri 'none';`,
+				`form-action 'none';`,
+				`object-src 'none';`,
+				`style-src ${webview.cspSource};`,
+				`script-src 'nonce-${nonce}';`,
+				`img-src ${webview.cspSource};`,
+				`font-src ${webview.cspSource};`,
+				`">`,
+			].join(' ');
 
 			html = html.replace('<!-- CSP -->', csp);
 			html = html.replace('<!-- STYLES -->', `<link href="${globalUri}" rel="stylesheet"><link href="${viewStyleUri}" rel="stylesheet"><link href="${installStyleUri}" rel="stylesheet"><link href="${createStyleUri}" rel="stylesheet">`);

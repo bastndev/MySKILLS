@@ -45,6 +45,11 @@ body {
 	opacity: 1;
 }
 
+.tab:focus-visible {
+	outline: 1px solid var(--vscode-focusBorder, #0078d4);
+	outline-offset: -3px;
+}
+
 .tab.active {
 	opacity: 1;
 	color: var(--vscode-textLink-foreground, #3794ff);

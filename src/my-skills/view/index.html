@@ -8,21 +8,21 @@
 	<!-- STYLES -->
 </head>
 <body>
-	<nav class="slider-menu">
-		<button class="tab active" data-target="view-panel">VIEW</button>
-		<button class="tab" data-target="install-panel">INSTALL</button>
-		<button class="tab" data-target="create-panel">CREATE</button>
+	<nav class="slider-menu" aria-label="Skill sections" role="tablist">
+		<button id="view-tab" class="tab active" type="button" role="tab" aria-selected="true" aria-controls="view-panel" data-target="view-panel">VIEW</button>
+		<button id="install-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="install-panel" data-target="install-panel" tabindex="-1">INSTALL</button>
+		<button id="create-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="create-panel" data-target="create-panel" tabindex="-1">CREATE</button>
 		<div class="slider-indicator"></div>
 	</nav>
 
 	<div class="panels">
-		<div id="view-panel" class="panel active">
+		<div id="view-panel" class="panel active" role="tabpanel" aria-labelledby="view-tab">
 			<!-- VIEW_PANEL -->
 		</div>
-		<div id="install-panel" class="panel ">
+		<div id="install-panel" class="panel" role="tabpanel" aria-labelledby="install-tab" aria-hidden="true">
 			<!-- INSTALL_PANEL -->
 		</div>
-		<div id="create-panel" class="panel">
+		<div id="create-panel" class="panel" role="tabpanel" aria-labelledby="create-tab" aria-hidden="true">
 			<!-- CREATE_PANEL -->
 		</div>
 	</div>

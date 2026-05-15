@@ -1,11 +1,24 @@
 const createSurface = document.querySelector('.create-skill-surface') as HTMLElement | null;
 const createChat = document.querySelector('.create-chat') as HTMLElement | null;
 const createChatInput = document.querySelector('.create-chat-input') as HTMLTextAreaElement | null;
+const createChatSend = document.querySelector('.create-chat-send') as HTMLButtonElement | null;
 
-if (createSurface) {
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const canTrackPointer = window.matchMedia('(pointer: fine)');
+
+if (createSurface && canTrackPointer.matches && !prefersReducedMotion.matches) {
 	let pointerFrame = 0;
 	let pointerX = 0;
 	let pointerY = 0;
+
+	const clearPointerGlow = () => {
+		if (pointerFrame) {
+			cancelAnimationFrame(pointerFrame);
+			pointerFrame = 0;
+		}
+
+		createSurface.classList.remove('is-pointer-active');
+	};
 
 	createSurface.addEventListener('pointermove', event => {
 		const rect = createSurface.getBoundingClientRect();
@@ -22,21 +35,22 @@ if (createSurface) {
 			createSurface.style.setProperty('--create-glow-y', `${pointerY}px`);
 			pointerFrame = 0;
 		});
-	});
+	}, { passive: true });
 
-	createSurface.addEventListener('pointerleave', () => {
-		if (pointerFrame) {
-			cancelAnimationFrame(pointerFrame);
-			pointerFrame = 0;
-		}
-
-		createSurface.classList.remove('is-pointer-active');
-	});
+	createSurface.addEventListener('pointerleave', clearPointerGlow, { passive: true });
+	createSurface.addEventListener('pointercancel', clearPointerGlow, { passive: true });
 }
 
 if (createChat && createChatInput) {
 	const syncChatInputState = () => {
-		createChat.classList.toggle('has-message', createChatInput.value.trim().length > 0);
+		const hasMessage = createChatInput.value.trim().length > 0;
+
+		createChat.classList.toggle('has-message', hasMessage);
+
+		if (createChatSend) {
+			createChatSend.disabled = !hasMessage;
+			createChatSend.setAttribute('aria-disabled', String(!hasMessage));
+		}
 	};
 
 	createChatInput.addEventListener('input', syncChatInputState);
