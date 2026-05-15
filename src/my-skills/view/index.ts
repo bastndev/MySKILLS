@@ -1,8 +1,5 @@
 declare function acquireVsCodeApi(): { postMessage(message: unknown): void; getState(): unknown; setState(state: unknown): void };
 
-import '../screens/create-skill/ui/create';
-import '../screens/install-skill/ui/install';
-
 const vscodeApi = acquireVsCodeApi();
 
 const tabs = document.querySelectorAll('.tab');
@@ -33,7 +30,7 @@ function switchToTab(targetId: string) {
 	});
 }
 
-tabs.forEach((tab, index) => {
+tabs.forEach(tab => {
 	tab.addEventListener('click', () => {
 		const targetId = tab.getAttribute('data-target')!;
 		switchToTab(targetId);

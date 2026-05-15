@@ -34,32 +34,52 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 
 	private _getHtmlForWebview(webview: vscode.Webview, nonce: string): string {
 		const shellPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'index.html').fsPath;
-		let html = fs.readFileSync(shellPath, 'utf8');
 
-		const viewPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'my-skill', 'ui', 'view.html').fsPath;
-		const installPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.html').fsPath;
-		const createPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.html').fsPath;
+		let html: string;
+		try {
+			html = fs.readFileSync(shellPath, 'utf8');
+		} catch (err) {
+			console.error(`[MySkills] Failed to read shell HTML: ${err}`);
+			return this._errorHtml('Failed to load shell template');
+		}
 
-		const viewHtml = fs.readFileSync(viewPath, 'utf8');
-		const installHtml = fs.readFileSync(installPath, 'utf8');
-		const createHtml = fs.readFileSync(createPath, 'utf8');
+		try {
+			const viewPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'my-skill', 'ui', 'view.html').fsPath;
+			const installPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.html').fsPath;
+			const createPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.html').fsPath;
 
-		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'));
-		const globalUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'styles', 'global.css'));
-		const viewStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'my-skill', 'ui', 'view.css'));
-		const installStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.css'));
-		const createStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.css'));
+			const viewHtml = fs.readFileSync(viewPath, 'utf8');
+			const installHtml = fs.readFileSync(installPath, 'utf8');
+			const createHtml = fs.readFileSync(createPath, 'utf8');
 
-		const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} https:; font-src ${webview.cspSource};">`;
+			const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'));
+			const globalUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'styles', 'global.css'));
+			const viewStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'my-skill', 'ui', 'view.css'));
+			const installStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.css'));
+			const createStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.css'));
 
-		html = html.replace('<!-- CSP -->', csp);
-		html = html.replace('<!-- STYLES -->', `<link href="${globalUri}" rel="stylesheet"><link href="${viewStyleUri}" rel="stylesheet"><link href="${installStyleUri}" rel="stylesheet"><link href="${createStyleUri}" rel="stylesheet">`);
-		html = html.replace('<!-- VIEW_PANEL -->', viewHtml);
-		html = html.replace('<!-- INSTALL_PANEL -->', installHtml);
-		html = html.replace('<!-- CREATE_PANEL -->', createHtml);
-		html = html.replace('<!-- SCRIPTS -->', `<script nonce="${nonce}" src="${scriptUri}"></script>`);
+			const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} https:; font-src ${webview.cspSource};">`;
 
-		return html;
+			html = html.replace('<!-- CSP -->', csp);
+			html = html.replace('<!-- STYLES -->', `<link href="${globalUri}" rel="stylesheet"><link href="${viewStyleUri}" rel="stylesheet"><link href="${installStyleUri}" rel="stylesheet"><link href="${createStyleUri}" rel="stylesheet">`);
+			html = html.replace('<!-- VIEW_PANEL -->', viewHtml);
+			html = html.replace('<!-- INSTALL_PANEL -->', installHtml);
+			html = html.replace('<!-- CREATE_PANEL -->', createHtml);
+			html = html.replace('<!-- SCRIPTS -->', `<script nonce="${nonce}" src="${scriptUri}"></script>`);
+
+			return html;
+		} catch (err) {
+			console.error(`[MySkills] Failed to read screen template: ${err}`);
+			return this._errorHtml('Failed to load panel templates');
+		}
+	}
+
+	private _errorHtml(message: string): string {
+		return `<!DOCTYPE html><html><body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;color:var(--vscode-foreground,#ccc);background:var(--vscode-editor-background,#1e1e1e);"><p>${message}</p></body></html>`;
+	}
+
+	public dispose() {
+		this._view = undefined;
 	}
 }
 
