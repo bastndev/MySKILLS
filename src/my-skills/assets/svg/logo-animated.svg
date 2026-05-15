@@ -13,7 +13,26 @@
 		}
 
 		.logo-letter {
-			animation: logo-letter-soften 5.6s ease-in-out infinite;
+			animation:
+				logo-letter-soften 5.6s ease-in-out infinite,
+				logo-letter-float 3.8s ease-in-out infinite;
+			transform-origin: center;
+		}
+
+		.logo-glow {
+			animation:
+				logo-glow-pulse 4.5s ease-in-out infinite,
+				logo-glow-rotate 18s linear infinite;
+			transform-box: fill-box;
+			transform-origin: center;
+			mix-blend-mode: screen;
+		}
+
+		.logo-ring {
+			stroke-dasharray: 18 14;
+			animation:
+				logo-ring-dash 12s linear infinite,
+				logo-ring-opacity 5s ease-in-out infinite;
 		}
 
 		@keyframes logo-spin {
@@ -29,35 +48,94 @@
 			}
 
 			50% {
-				transform: scale(1.025);
+				transform: scale(1.03);
 			}
 		}
 
 		@keyframes logo-letter-soften {
 			0%,
 			100% {
-				opacity: 0.96;
+				opacity: 0.94;
+				filter: drop-shadow(0 0 0px rgba(255,255,255,0.0));
 			}
 
 			50% {
 				opacity: 1;
+				filter: drop-shadow(0 0 18px rgba(255,255,255,0.45));
+			}
+		}
+
+		@keyframes logo-letter-float {
+			0%,
+			100% {
+				transform: translateY(0px);
+			}
+
+			50% {
+				transform: translateY(-4px);
+			}
+		}
+
+		@keyframes logo-glow-pulse {
+			0%,
+			100% {
+				opacity: 0.25;
+				transform: scale(1);
+			}
+
+			50% {
+				opacity: 0.7;
+				transform: scale(1.12);
+			}
+		}
+
+		@keyframes logo-glow-rotate {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		@keyframes logo-ring-dash {
+			to {
+				stroke-dashoffset: -320;
+			}
+		}
+
+		@keyframes logo-ring-opacity {
+			0%,
+			100% {
+				opacity: 0.25;
+			}
+
+			50% {
+				opacity: 0.9;
 			}
 		}
 
 		@media (prefers-reduced-motion: reduce) {
 			.logo-rays,
 			.logo-core,
-			.logo-letter {
+			.logo-letter,
+			.logo-glow,
+			.logo-ring {
 				animation: none;
 			}
 		}
 	</style>
+
 	<defs>
 		<mask id="cutout">
 			<path fill="#fff" d="M0 0h1024v1024H0z"/>
 			<circle cx="512" cy="512" r="135" fill="#000"/>
 		</mask>
+
+		<radialGradient id="glowGradient">
+			<stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+			<stop offset="45%" stop-color="#d7d7ff" stop-opacity="0.35"/>
+			<stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+		</radialGradient>
 	</defs>
+
 	<g class="logo-rays" fill="#eaeaea" mask="url(#cutout)">
 		<rect width="30" height="360" x="497" y="80" rx="4"/>
 		<rect width="30" height="360" x="497" y="80" rx="4" transform="rotate(10 512 512)"/>
@@ -96,8 +174,27 @@
 		<rect width="30" height="360" x="497" y="80" rx="4" transform="rotate(340 512 512)"/>
 		<rect width="30" height="360" x="497" y="80" rx="4" transform="rotate(350 512 512)"/>
 	</g>
+
 	<g class="logo-core">
+		<circle cx="512" cy="512" r="158" fill="url(#glowGradient)" class="logo-glow"/>
+
+		<circle
+			cx="512"
+			cy="512"
+			r="148"
+			stroke="#ffffff"
+			stroke-width="3"
+			fill="none"
+			class="logo-ring"
+			opacity="0.45"
+		/>
+
 		<circle cx="512" cy="512" r="135" fill="#000"/>
-		<path class="logo-letter" fill="#f2f2f2" d="M433 620V428h41l38 76 38-76h41v192h-43V501l-28 57h-16l-28-57v119z"/>
+
+		<path
+			class="logo-letter"
+			fill="#f2f2f2"
+			d="M433 620V428h41l38 76 38-76h41v192h-43V501l-28 57h-16l-28-57v119z"
+		/>
 	</g>
 </svg>
