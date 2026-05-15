@@ -4,8 +4,9 @@
 }
 
 .create-skill-surface {
-	--create-bg: var(--vscode-editor-background, #1e1e1e);
-	--create-dot: color-mix(in srgb, var(--vscode-foreground, #cccccc) 26%, transparent);
+	--create-bg: var(--vscode-sideBar-background, var(--vscode-editor-background, #1e1e1e));
+	--create-dot-active: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 72%, transparent);
+	--create-glow: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 14%, transparent);
 	--create-glow-x: 50%;
 	--create-glow-y: 50%;
 
@@ -25,7 +26,6 @@
 	contain: paint;
 }
 
-.create-skill-surface::before,
 .create-skill-surface::after {
 	content: "";
 	position: absolute;
@@ -34,17 +34,18 @@
 	z-index: 0;
 }
 
-.create-skill-surface::before {
-	background:
-		radial-gradient(circle, var(--create-dot) 1px, transparent 1.4px) 0 0 / 12px 12px;
-}
-
 .create-skill-surface::after {
 	background:
 		radial-gradient(
-			72px circle at var(--create-glow-x) var(--create-glow-y),
-			var(--create-bg) 0%,
-			var(--create-bg) 54%,
+			90px circle at var(--create-glow-x) var(--create-glow-y),
+			var(--create-glow) 0%,
+			transparent 70%
+		),
+		radial-gradient(circle, var(--create-dot-active) 1px, transparent 1.5px) 0 0 / 12px 12px;
+	mask-image:
+		radial-gradient(
+			84px circle at var(--create-glow-x) var(--create-glow-y),
+			#000 0%,
 			transparent 78%
 		);
 	opacity: 0;
