@@ -5,7 +5,6 @@ const vscodeApi = acquireVsCodeApi();
 const tabs = document.querySelectorAll('.tab');
 const panels = document.querySelectorAll('.panel');
 const indicator = document.querySelector('.slider-indicator') as HTMLElement;
-const createSurface = document.querySelector('.create-skill-surface') as HTMLElement | null;
 
 function switchToTab(targetId: string) {
 	const tab = document.querySelector(`.tab[data-target="${targetId}"]`) as HTMLElement;
@@ -47,19 +46,3 @@ window.addEventListener('message', event => {
 		switchToTab(message.target);
 	}
 });
-
-if (createSurface) {
-	createSurface.addEventListener('pointermove', event => {
-		const rect = createSurface.getBoundingClientRect();
-		const x = event.clientX - rect.left;
-		const y = event.clientY - rect.top;
-
-		createSurface.style.setProperty('--create-glow-x', `${x}px`);
-		createSurface.style.setProperty('--create-glow-y', `${y}px`);
-		createSurface.classList.add('is-pointer-active');
-	});
-
-	createSurface.addEventListener('pointerleave', () => {
-		createSurface.classList.remove('is-pointer-active');
-	});
-}

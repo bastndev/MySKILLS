@@ -53,6 +53,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			const createHtml = fs.readFileSync(createPath, 'utf8');
 
 			const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'));
+			const createScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'create-skill.js'));
 			const globalUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'styles', 'global.css'));
 			const viewStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'my-skill', 'ui', 'view.css'));
 			const installStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.css'));
@@ -65,7 +66,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			html = html.replace('<!-- VIEW_PANEL -->', viewHtml);
 			html = html.replace('<!-- INSTALL_PANEL -->', installHtml);
 			html = html.replace('<!-- CREATE_PANEL -->', createHtml);
-			html = html.replace('<!-- SCRIPTS -->', `<script nonce="${nonce}" src="${scriptUri}"></script>`);
+			html = html.replace('<!-- SCRIPTS -->', `<script nonce="${nonce}" src="${scriptUri}"></script><script nonce="${nonce}" src="${createScriptUri}"></script>`);
 
 			return html;
 		} catch (err) {
