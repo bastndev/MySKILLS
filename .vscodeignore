@@ -15,3 +15,7 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+
+# gohitx
+public/**
+src/__test__/**
