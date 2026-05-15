@@ -1,6 +1,6 @@
 {
   "name": "myskills",
-  "displayName": "MySKILLS",
+  "displayName": "My Skills",
   "description": "Available now: VSCode • Antigravity • Cursor • Windsurf • Trae.ai • Kiro & (Firebase Studio)... 雨",
   "version": "0.0.1",
   "publisher": "bastndev",
@@ -8,68 +8,66 @@
   "engines": {
     "vscode": "^1.75.0"
   },
-  "categories": [
-    "Other"
-  ],
+  "categories": ["Other"],
   "keywords": [
-    "Youtube Music",
-    "Pomodoro",
-    "Game One"
+    "My Skills",
+    "Skills",
+    "AI"
   ],
   "icon": "icon.png",
   "galleryBanner": {
     "color": "#0a0a0a",
     "theme": "dark"
   },
-  "homepage": "https://github.com/bastndev/RENE#readme",
+  "homepage": "https://github.com/bastndev/My-Skills#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bastndev/RENE"
+    "url": "https://github.com/bastndev/My-Skills"
   },
   "bugs": {
-    "url": "https://github.com/bastndev/RENE/issues"
+    "url": "https://github.com/bastndev/My-Skills/issues/new"
   },
   "author": {
     "name": "Gohit Bastian",
-    "email": "hello@gohit.xyz",
+    "email": "bastndev@gohit.xyz",
     "url": "https://www.gohit.xyz/me"
   },
   "sponsor": {
     "url": "https://github.com/sponsors/bastndev"
   },
+
   "main": "./dist/extension.js",
   "contributes": {
-    "views": {
-      "explorer": [
+    "viewsContainers": {
+      "activitybar": [
         {
-          "type": "webview",
-          "id": "rene-yt-music-view",
-          "name": "ATMㅤㅤMUSIC ♪ ( TIME ~ GAME ) ",
-          "icon": "$(music)"
+          "id": "myskills-activity",
+          "title": "My Skills",
+          "icon": "src/assets/svg/logo.svg"
         }
       ]
     },
-    "configuration": {
-      "title": "ATM",
-      "properties": {
-        "rene.lastfmApiKey": {
-          "type": "string",
-          "default": "",
-          "description": "Last.FM API key for additional music metadata. Get yours at https://www.last.fm/api/account/create"
+    "views": {
+      "myskills-activity": [
+        {
+          "type": "webview",
+          "id": "myskills-panel",
+          "name": "My Skills",
+          "icon": "src/assets/svg/logo.svg"
         }
-      }
+      ]
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "vscode:prepublish": "bun run package",
+    "compile": "bun run check-types && bun run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "package": "bun run check-types && bun run lint && node esbuild.js --production",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "pretest": "bun run compile-tests && bun run compile && bun run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
     "test": "vscode-test"
@@ -85,8 +83,5 @@
     "npm-run-all": "^4.1.5",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
-  },
-  "dependencies": {
-    "NeteaseCloudMusicApi": "^4.30.0"
   }
 }

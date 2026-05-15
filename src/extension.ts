@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
-import { YouTubeMusicViewProvider } from './focus/focus';
+import { MySkillsViewProvider } from './my-skills';
 
 export function activate(context: vscode.ExtensionContext) {
 
-	console.log('Congratulations, your extension "rene" is now active!');
+	console.log('Congratulations, your extension "myskills" is now active!');
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(
-			'rene-yt-music-view',
-			new YouTubeMusicViewProvider(context.extensionUri),
+			MySkillsViewProvider.viewType,
+			new MySkillsViewProvider(context.extensionUri),
 			{ webviewOptions: { retainContextWhenHidden: true } }
 		)
 	);
