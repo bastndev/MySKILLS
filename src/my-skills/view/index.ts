@@ -42,7 +42,10 @@ tabs.forEach((tab, index) => {
 
 window.addEventListener('message', event => {
 	const message = event.data;
-	if (message.type === 'switch-tab') {
+	if (!message || typeof message !== 'object' || !('type' in message)) {
+		return;
+	}
+	if (message.type === 'switch-tab' && typeof message.target === 'string') {
 		switchToTab(message.target);
 	}
 });
