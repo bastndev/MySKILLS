@@ -22,15 +22,12 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview): string {
-		// Read the HTML file from disk
-		const htmlPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'ui', 'index.html').fsPath;
+		const htmlPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'ui', 'view.html').fsPath;
 		let html = fs.readFileSync(htmlPath, 'utf8');
 
-		// Generate Webview URIs for CSS and compiled JS
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'));
-		const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'ui', 'global.css'));
+		const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'ui', 'view.css'));
 
-		// Inject them into the HTML placeholders
 		html = html.replace('<!-- STYLES -->', `<link href="${styleUri}" rel="stylesheet">`);
 		html = html.replace('<!-- SCRIPTS -->', `<script src="${scriptUri}"></script>`);
 

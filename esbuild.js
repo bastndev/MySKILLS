@@ -39,7 +39,7 @@ async function main() {
 	});
 
 	const ctxWebview = await esbuild.context({
-		entryPoints: ['src/my-skills/view/ui/main.ts'],
+		entryPoints: ['src/my-skills/view/ui/view.ts'],
 		bundle: true,
 		format: 'iife',
 		minify: production,
