@@ -2,7 +2,7 @@
 
 ## What this is
 
-VS Code extension ("MySKILLS" / internal name "My-Skills"). A clean, blank canvas webview panel in the Activity Bar sidebar.
+VS Code extension ("My Skills" / internal name "My-Skills"). A clean, blank canvas webview panel in the Activity Bar sidebar.
 
 ## Build & verify
 
@@ -27,7 +27,7 @@ The build produces **one bundle** (`esbuild.js`):
 
 - `src/extension.ts` — activation entry, registers webview provider
 - `src/myskills/myskills.ts` — webview provider and HTML shell
-- `src/assets/svg/myskills.svg` — extension icons
+- `src/assets/svg/logo.svg` — extension icons
 
 ## Test setup
 
