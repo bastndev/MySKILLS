@@ -35,9 +35,20 @@ export function initOfficialPanel() {
 		grid.appendChild(card);
 
 		card.addEventListener('click', () => {
-			// Trigger transition to detail screen or installation flow
-			console.log(`Selected: ${name}`);
-			// TODO: Add vsCodeApi.postMessage to handle click
+			const gridView = document.getElementById('official-grid-view');
+			const listView = document.getElementById('official-list-view');
+			const listTitle = document.getElementById('official-list-title');
+			const listSources = document.querySelectorAll('.official-list-source');
+
+			if (gridView && listView && listTitle) {
+				listTitle.textContent = `${displayName} Skills`;
+				listSources.forEach(s => s.textContent = `${name}/skills`);
+				
+				gridView.hidden = true;
+				gridView.classList.remove('active');
+				listView.hidden = false;
+				listView.classList.add('active');
+			}
 		});
 	});
 
@@ -52,4 +63,18 @@ export function initOfficialPanel() {
 			(card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
 		});
 	});
+
+	const backBtn = document.getElementById('official-back-btn');
+	if (backBtn) {
+		backBtn.addEventListener('click', () => {
+			const gridView = document.getElementById('official-grid-view');
+			const listView = document.getElementById('official-list-view');
+			if (gridView && listView) {
+				listView.hidden = true;
+				listView.classList.remove('active');
+				gridView.hidden = false;
+				gridView.classList.add('active');
+			}
+		});
+	}
 }
