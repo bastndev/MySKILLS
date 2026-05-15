@@ -10,6 +10,7 @@
   },
   "categories": ["Other"],
   "keywords": [
+    "My Skills",
     "Skills",
     "AI"
   ],
@@ -18,7 +19,7 @@
     "color": "#0a0a0a",
     "theme": "dark"
   },
-  "homepage": "https://github.com/bastndev/RENE#readme",
+  "homepage": "https://github.com/bastndev/My-Skills#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/bastndev/My-Skills"
