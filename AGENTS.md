@@ -8,11 +8,11 @@ VS Code extension ("MySKILLS" / internal name "My-Skills"). A clean, blank canva
 
 ```
 bun install                  # dependencies (bun.lock present)
-npm run compile              # check-types + lint + esbuild build
-npm run package              # production build (minified, no sourcemaps)
-npm run lint                 # eslint src
-npm run check-types          # tsc --noEmit
-npm test                     # vscode-test (downloads VS Code, runs in extension host)
+bun run compile              # check-types + lint + esbuild build
+bun run package              # production build (minified, no sourcemaps)
+bun run lint                 # eslint src
+bun run check-types          # tsc --noEmit
+bun test                     # vscode-test (downloads VS Code, runs in extension host)
 ```
 
 `compile` is the main verification step — runs typecheck, lint, and build in sequence.
