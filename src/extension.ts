@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MySkillsViewProvider } from './my-skills/my-skills';
+import { MySkillsViewProvider } from './my-skills';
 
 export function activate(context: vscode.ExtensionContext) {
 
