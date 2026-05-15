@@ -121,6 +121,7 @@
 .install-filter.active {
 	color: var(--install-fg);
 	font-weight: 600;
+	background: color-mix(in srgb, var(--install-fg) 8%, transparent);
 }
 
 .install-filter:focus-visible {
