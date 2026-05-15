@@ -1,3 +1,20 @@
+:root {
+	--vscode-font-family: var(--vscode-font-family, sans-serif);
+	--vscode-editor-background: var(--vscode-editor-background, #1e1e1e);
+	--vscode-foreground: var(--vscode-foreground, #cccccc);
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	margin: 0;
+	background: transparent;
+	color: var(--vscode-foreground);
+	font-family: var(--vscode-font-family);
+	overflow: hidden;
+}
+
 .slider-menu {
 	display: flex;
 	position: relative;
