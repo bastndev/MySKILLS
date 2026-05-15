@@ -48,17 +48,32 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			const installPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.html').fsPath;
 			const createPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.html').fsPath;
 
-			const viewHtml = fs.readFileSync(viewPath, 'utf8');
-			const installHtml = fs.readFileSync(installPath, 'utf8');
-			const createHtml = fs.readFileSync(createPath, 'utf8');
+			// ── Install sub-panels ────────────────────────────────────────
+			const alltimePath  = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'panels', 'alltime-skill',  'alltime.html').fsPath;
+			const trendingPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'panels', 'trending-skill', 'trending.html').fsPath;
+			const officialPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'panels', 'official-skill', 'official.html').fsPath;
+
+			const viewHtml     = fs.readFileSync(viewPath, 'utf8');
+			let   installHtml  = fs.readFileSync(installPath, 'utf8');
+			const createHtml   = fs.readFileSync(createPath, 'utf8');
+
+			const alltimeHtml  = fs.readFileSync(alltimePath,  'utf8');
+			const trendingHtml = fs.readFileSync(trendingPath, 'utf8');
+			const officialHtml = fs.readFileSync(officialPath, 'utf8');
+
+			// Substitute sub-panel placeholders inside the install shell
+			installHtml = installHtml.replace('<!-- ALLTIME_PANEL -->',  alltimeHtml);
+			installHtml = installHtml.replace('<!-- TRENDING_PANEL -->', trendingHtml);
+			installHtml = installHtml.replace('<!-- OFFICIAL_PANEL -->', officialHtml);
 
 			const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'));
 			const createScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'create-skill.js'));
 			const createLogoUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'assets', 'svg', 'logo-animated.svg'));
 			const globalUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'styles', 'global.css'));
 			const viewStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'my-skill', 'ui', 'view.css'));
-			const installStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.css'));
-			const createStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.css'));
+			const installStyleUri  = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.css'));
+			const officialStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'panels', 'official-skill', 'official.css'));
+			const createStyleUri   = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.css'));
 			const createPanelHtml = createHtml.replace('{{CREATE_LOGO_URI}}', createLogoUri.toString());
 
 			const csp = [
@@ -75,9 +90,9 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			].join(' ');
 
 			html = html.replace('<!-- CSP -->', csp);
-			html = html.replace('<!-- STYLES -->', `<link href="${globalUri}" rel="stylesheet"><link href="${viewStyleUri}" rel="stylesheet"><link href="${installStyleUri}" rel="stylesheet"><link href="${createStyleUri}" rel="stylesheet">`);
+			html = html.replace('<!-- STYLES -->', `<link href="${globalUri}" rel="stylesheet"><link href="${viewStyleUri}" rel="stylesheet"><link href="${installStyleUri}" rel="stylesheet"><link href="${officialStyleUri}" rel="stylesheet"><link href="${createStyleUri}" rel="stylesheet">`);
 			html = html.replace('<!-- VIEW_PANEL -->', viewHtml);
-			html = html.replace('<!-- INSTALL_PANEL -->', installHtml);
+			html = html.replace('<!-- INSTALL_PANEL -->', installHtml); // already has sub-panels injected above
 			html = html.replace('<!-- CREATE_PANEL -->', createPanelHtml);
 			html = html.replace('<!-- SCRIPTS -->', `<script nonce="${nonce}" src="${scriptUri}"></script><script nonce="${nonce}" src="${createScriptUri}"></script>`);
 

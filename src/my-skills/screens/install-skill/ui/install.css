@@ -149,6 +149,24 @@
 	letter-spacing: 0.02em;
 }
 
+/* ── Sub-Panel Containers ────────────────────────────────────────────── */
+.install-panel {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	overflow: hidden;
+	min-height: 0;
+}
+
+.install-panel[hidden] {
+	display: none;
+}
+
+.install-panel--official {
+	justify-content: center;
+	align-items: center;
+}
+
 /* ── Skills List ─────────────────────────────────────────────────────── */
 .install-list {
 	flex: 1;

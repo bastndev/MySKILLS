@@ -1,6 +1,9 @@
+import { initInstallPanel } from '../screens/install-skill/ui/install';
+
 type WebviewState = {
 	activeTab?: string;
 };
+
 
 type VsCodeApi = {
 	getState(): unknown;
@@ -112,3 +115,6 @@ window.addEventListener('message', event => {
 		switchToTab(message.target);
 	}
 });
+
+// ── Init install filter tabs ──────────────────────────────────────────
+initInstallPanel();
