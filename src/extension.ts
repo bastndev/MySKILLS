@@ -5,10 +5,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Congratulations, your extension "myskills" is now active!');
 
+	const provider = new MySkillsViewProvider(context.extensionUri);
+
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(
 			MySkillsViewProvider.viewType,
-			new MySkillsViewProvider(context.extensionUri),
+			provider,
 			{ webviewOptions: { retainContextWhenHidden: true } }
 		)
 	);

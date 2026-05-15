@@ -3,7 +3,9 @@
 out/**
 node_modules/**
 src/**
-!src/assets/svg/myskills.svg
+!src/my-skills/**/*.html
+!src/my-skills/**/*.css
+!src/my-skills/**/*.svg
 .gitignore
 .yarnrc
 esbuild.js
@@ -13,3 +15,10 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+
+# gohitx
+public/**
+src/__test__/**
+ARCHITECTURE.md
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md

@@ -3,8 +3,7 @@ package.json
 tsconfig.json
 
 # src/extension.ts
-src/extensions/
+src/my-skills/view/
 
 # Others
-REAMDE.md
-src/myskills/view/
+README.md

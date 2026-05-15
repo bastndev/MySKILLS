@@ -39,7 +39,7 @@ async function main() {
 	});
 
 	const ctxWebview = await esbuild.context({
-		entryPoints: ['src/my-skills/view/ui/view.ts'],
+		entryPoints: ['src/my-skills/view/index.ts'],
 		bundle: true,
 		format: 'iife',
 		minify: production,
@@ -51,12 +51,26 @@ async function main() {
 		plugins: [esbuildProblemMatcherPlugin],
 	});
 
+	const ctxCreateSkill = await esbuild.context({
+		entryPoints: ['src/my-skills/screens/create-skill/ui/create.ts'],
+		bundle: true,
+		format: 'iife',
+		minify: production,
+		sourcemap: !production,
+		sourcesContent: false,
+		platform: 'browser',
+		outfile: 'dist/create-skill.js',
+		logLevel: 'silent',
+		plugins: [esbuildProblemMatcherPlugin],
+	});
+
 	if (watch) {
-		await Promise.all([ctxExtension.watch(), ctxWebview.watch()]);
+		await Promise.all([ctxExtension.watch(), ctxWebview.watch(), ctxCreateSkill.watch()]);
 	} else {
-		await Promise.all([ctxExtension.rebuild(), ctxWebview.rebuild()]);
+		await Promise.all([ctxExtension.rebuild(), ctxWebview.rebuild(), ctxCreateSkill.rebuild()]);
 		await ctxExtension.dispose();
 		await ctxWebview.dispose();
+		await ctxCreateSkill.dispose();
 	}
 }
 

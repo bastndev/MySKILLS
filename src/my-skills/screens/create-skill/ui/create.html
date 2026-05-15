@@ -1,0 +1,82 @@
+<div class="container create-skill-surface">
+	<div class="create-help-card" aria-label="Need more help">
+		<span>Need more help?</span>
+		<button class="create-help-button" type="button">Support</button>
+	</div>
+
+	<div class="create-main">
+		<div class="create-hero">
+			<img class="create-hero-logo" src="{{CREATE_LOGO_URI}}" alt="My Skills" decoding="async" draggable="false">
+			<h1>Create Skills</h1>
+			<p>Build a skill for your workflow.</p>
+		</div>
+
+		<div class="create-options" aria-label="Create file options">
+			<button class="create-option-card" type="button" aria-label="Create AGENTS.md">
+				<span class="create-option-icon" aria-hidden="true">
+					<svg viewBox="0 0 16 16" focusable="false">
+						<path d="M4 2.5h5.25L12 5.25v8.25H4z"/>
+						<path d="M9 2.75V5.5h2.75"/>
+						<path d="M6 8h4M6 10.25h4"/>
+					</svg>
+				</span>
+				<span class="create-option-copy">
+					<span class="create-option-title">AGENTS.md</span>
+					<span class="create-option-description">Define agent behavior</span>
+				</span>
+			</button>
+
+			<button class="create-option-card" type="button" aria-label="Create DESIGN.md">
+				<span class="create-option-icon" aria-hidden="true">
+					<svg viewBox="0 0 16 16" focusable="false">
+						<path d="M3 12.5h10"/>
+						<path d="M5 3.5h6v6H5z"/>
+						<path d="M6.5 11.5 8 9.5l1.5 2"/>
+					</svg>
+				</span>
+				<span class="create-option-copy">
+					<span class="create-option-title">DESIGN.md</span>
+					<span class="create-option-description">Set visual rules</span>
+				</span>
+			</button>
+
+			<button class="create-option-card" type="button" aria-label="Create .agents directory">
+				<span class="create-option-icon" aria-hidden="true">
+					<svg viewBox="0 0 16 16" focusable="false">
+						<path d="M3.5 4.5h3l1 1h5v6h-9z"/>
+						<path d="M5.5 8h5"/>
+						<path d="M8 6.75V9.25"/>
+					</svg>
+				</span>
+				<span class="create-option-copy">
+					<span class="create-option-title">.agents/</span>
+					<span class="create-option-description">Set up local agents</span>
+				</span>
+			</button>
+		</div>
+	</div>
+
+	<div class="create-chat" aria-label="Create skill chat">
+		<textarea class="create-chat-input" rows="2" placeholder="What can we help you with?"></textarea>
+		<div class="create-chat-toolbar">
+			<button class="create-chat-ask" type="button">
+				<span aria-hidden="true">
+					<svg viewBox="0 0 16 16" focusable="false">
+						<path d="m4.25 10.75-.75 2.75 2.75-.75 6.25-6.25-2-2z"/>
+						<path d="m9.5 5.5 2 2"/>
+					</svg>
+				</span>
+				Ask
+			</button>
+
+			<div class="create-chat-actions">
+				<button class="create-chat-send" type="button" aria-label="Send message">
+					<svg viewBox="0 0 16 16" focusable="false">
+						<path d="M8 12.5v-9"/>
+						<path d="M4.5 7 8 3.5 11.5 7"/>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

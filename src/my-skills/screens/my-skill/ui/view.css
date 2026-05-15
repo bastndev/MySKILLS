@@ -1,15 +1,4 @@
-body {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
-	margin: 0;
-	background: transparent;
-	color: var(--vscode-foreground);
-	font-family: var(--vscode-font-family);
-}
-
-.btn {
+.btn-view-panel {
 	padding: 10px 24px;
 	font-size: 14px;
 	font-family: var(--vscode-font-family);
@@ -19,23 +8,14 @@ body {
 	border: 1px solid var(--vscode-button-border, transparent);
 	border-radius: 6px;
 	cursor: pointer;
-	opacity: 0;
-	transform: translateY(10px);
-	animation: fadeIn 0.5s ease-out forwards;
+	transition: background 0.2s, transform 0.1s;
 }
 
-.btn:hover {
+.btn-view-panel:hover {
 	background: var(--vscode-button-hoverBackground, #5558e3);
 	transform: translateY(-2px);
 }
 
-.btn:active {
+.btn-view-panel:active {
 	transform: translateY(0);
-}
-
-@keyframes fadeIn {
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
 }
