@@ -41,8 +41,8 @@
 	border-radius: inherit;
 	padding: 1px;
 	background: radial-gradient(
-		circle 60px at var(--mouse-x, -100px) var(--mouse-y, -100px),
-		color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 80%, transparent),
+		circle 90px at var(--mouse-x, -100px) var(--mouse-y, -100px),
+		var(--vscode-focusBorder, #0078d4),
 		transparent 100%
 	);
 	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -62,8 +62,8 @@
 	inset: 0;
 	border-radius: inherit;
 	background: radial-gradient(
-		circle 60px at var(--mouse-x, -100px) var(--mouse-y, -100px),
-		color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 15%, transparent),
+		circle 90px at var(--mouse-x, -100px) var(--mouse-y, -100px),
+		color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 30%, transparent),
 		transparent 100%
 	);
 	opacity: 0;
@@ -94,16 +94,10 @@
 }
 
 .official-card:hover {
-	background: rgba(255, 255, 255, 0.05);
+	background: rgba(255, 255, 255, 0.08);
 }
 
-/* Selected state */
-.official-card.selected {
-	background: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 15%, transparent);
-	border-color: var(--vscode-focusBorder, #0078d4);
-}
-
-.official-card.selected::before,
-.official-card.selected::after {
-	opacity: 0 !important; /* Hide spotlight glow if selected, or keep it? Hiding is cleaner */
+/* Click animation */
+.official-card:active {
+	transform: scale(0.95);
 }

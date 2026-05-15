@@ -35,8 +35,9 @@ export function initOfficialPanel() {
 		grid.appendChild(card);
 
 		card.addEventListener('click', () => {
-			grid.querySelectorAll('.official-card').forEach(c => c.classList.remove('selected'));
-			card.classList.add('selected');
+			// Trigger transition to detail screen or installation flow
+			console.log(`Selected: ${name}`);
+			// TODO: Add vsCodeApi.postMessage to handle click
 		});
 	});
 
