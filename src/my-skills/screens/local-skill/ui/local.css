@@ -97,9 +97,8 @@
 	flex: 1 1 auto;
 	min-width: 0;
 	padding: 5px 8px;
-	background: transparent;
+	background: linear-gradient(90deg, var(--local-accent), transparent) left bottom / 100% 2px no-repeat;
 	border: none;
-	border-bottom: 2px solid var(--local-accent);
 	color: var(--local-fg);
 	font-family: var(--vscode-font-family);
 	font-size: 12px;
