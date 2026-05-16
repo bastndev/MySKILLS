@@ -108,13 +108,13 @@ function updateGitignoreSkillState(content: string, skillId: string, enabled: bo
 
 	const allLines = splitLines(normalizedContent);
 	allLines.splice(block.startIndex + 1, block.lines.length, ...nextLines);
-	return `${allLines.join('\n')}\n`;
+	return formatManagedBlockSpacing(allLines).join('\n');
 }
 
 function appendManagedBlock(content: string, skillId: string): string {
 	const prefix = content.trim().length === 0
 		? ''
-		: content.endsWith('\n') ? content : `${content}\n`;
+		: content.endsWith('\n\n') ? content : content.endsWith('\n') ? `${content}\n` : `${content}\n\n`;
 
 	return `${prefix}${BLOCK_BEGIN}\n${skillId}\n${BLOCK_END}\n`;
 }
@@ -170,6 +170,30 @@ function splitLines(content: string): string[] {
 
 function normalizeLineEndings(content: string): string {
 	return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+}
+
+function formatManagedBlockSpacing(lines: string[]): string[] {
+	const startIndex = lines.findIndex(line => line.trim() === BLOCK_BEGIN);
+	if (startIndex === -1) {
+		return [...lines, ''];
+	}
+
+	const nextLines = [...lines];
+	if (startIndex > 0 && nextLines[startIndex - 1] !== '') {
+		nextLines.splice(startIndex, 0, '');
+	}
+
+	const adjustedStartIndex = nextLines.findIndex(line => line.trim() === BLOCK_BEGIN);
+	const endIndex = nextLines.findIndex((line, index) => index > adjustedStartIndex && line.trim() === BLOCK_END);
+	if (endIndex !== -1 && nextLines[endIndex + 1] !== '') {
+		nextLines.splice(endIndex + 1, 0, '');
+	}
+
+	while (nextLines.length > 0 && nextLines[nextLines.length - 1] === '') {
+		nextLines.pop();
+	}
+
+	return [...nextLines, ''];
 }
 
 function isRootSkillFile(value: string): value is typeof ROOT_SKILL_FILES[number] {
