@@ -134,7 +134,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 
 		const panel = vscode.window.createWebviewPanel(
 			'myskills.createGuide',
-			'My Skills: Get help',
+			'My Skills: Support',
 			vscode.ViewColumn.One,
 			{
 				enableScripts: true,
@@ -184,7 +184,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			'<meta charset="UTF-8">',
 			'<meta name="viewport" content="width=device-width, initial-scale=1.0">',
 			`<meta http-equiv="Content-Security-Policy" content="${csp}">`,
-			'<title>My Skills: Get help</title>',
+			'<title>My Skills: Support</title>',
 			`<link href="${guideStyleUri}" rel="stylesheet">`,
 			'</head>',
 			'<body>',
