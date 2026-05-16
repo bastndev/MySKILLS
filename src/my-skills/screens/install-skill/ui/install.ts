@@ -9,13 +9,14 @@
  */
 
 export function initInstallPanel(): void {
-	const installPanel = document.getElementById('install-panel');
-	if (!installPanel) {
-		return; // install panel not in the DOM yet — skip
+	// The install surface is the real container — there is no #install-panel element.
+	const installSurface = document.querySelector<HTMLElement>('.install-surface');
+	if (!installSurface) {
+		return; // install surface not in the DOM yet — skip
 	}
 
-	const filters = installPanel.querySelectorAll<HTMLButtonElement>('.install-filter[data-filter]');
-	const panels  = installPanel.querySelectorAll<HTMLElement>('.install-panel');
+	const filters = installSurface.querySelectorAll<HTMLButtonElement>('.install-filter[data-filter]');
+	const panels  = installSurface.querySelectorAll<HTMLElement>('.install-panel');
 
 	if (!filters.length || !panels.length) {
 		return;
@@ -24,6 +25,12 @@ export function initInstallPanel(): void {
 	filters.forEach((btn) => {
 		btn.addEventListener('click', () => {
 			const target = btn.dataset.filter; // 'all' | 'trending' | 'official'
+
+			// Clear search input if active
+			const searchInput = document.getElementById('install-search-input') as HTMLInputElement | null;
+			if (searchInput) {
+				searchInput.value = '';
+			}
 
 			// ── Update filter buttons ──────────────────────────────────────
 			filters.forEach((f) => {

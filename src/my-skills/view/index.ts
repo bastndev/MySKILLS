@@ -1,5 +1,6 @@
 import { initInstallPanel } from '../screens/install-skill/ui/install';
 import { initOfficialPanel } from '../screens/install-skill/ui/panels/official-skill/official';
+import { initSearchPanel } from '../screens/install-skill/ui/search/search';
 
 type WebviewState = {
 	activeTab?: string;
@@ -122,3 +123,6 @@ initInstallPanel();
 
 // ── Init official skill panel ─────────────────────────────────────────
 initOfficialPanel();
+
+// ── Init search panel ───────────────────────────────────────────────
+initSearchPanel();

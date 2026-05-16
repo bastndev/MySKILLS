@@ -1,0 +1,46 @@
+/* ── Search Results List ─────────────────────────────────────────────── */
+/* The search panel reuses .install-list / .install-item from install.css */
+/* so no extra list styles are needed here.                                */
+
+/* ── [hidden] guard ──────────────────────────────────────────────────── */
+/* CSS display rules (flex, block…) win over the HTML [hidden] attribute  */
+/* by specificity. These overrides restore the expected hide behaviour.   */
+#install-search-results[hidden],
+#install-search-empty[hidden],
+#install-search-count[hidden] {
+	display: none !important;
+}
+
+/* ── Empty State ─────────────────────────────────────────────────────── */
+.install-search-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 40px 16px;
+	flex: 1;
+	color: var(--install-muted);
+	font-family: var(--vscode-font-family);
+	font-size: 13px;
+	text-align: center;
+	opacity: 0.75;
+}
+
+.install-search-empty-icon {
+	width: 28px;
+	height: 28px;
+	color: var(--install-muted);
+	opacity: 0.6;
+}
+
+/* ── Search count label ──────────────────────────────────────────────── */
+.install-search-count {
+	display: block;
+	padding: 6px 12px 2px;
+	font-size: 11px;
+	color: var(--install-muted);
+	font-family: var(--vscode-font-family);
+	opacity: 0.7;
+	user-select: none;
+}
