@@ -305,17 +305,17 @@
 	box-sizing: border-box;
 	padding: 14px 14px 12px;
 	background: color-mix(in srgb, var(--create-bg) 82%, #000000 18%);
-	border: 1px solid color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 76%, transparent);
+	border: 1px solid color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 48%, transparent);
 	border-radius: 12px;
 	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 12%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 7%, transparent),
 		0 12px 34px color-mix(in srgb, #000000 28%, transparent);
 }
 
 .create-chat:focus-within {
-	border-color: var(--vscode-focusBorder, #0078d4);
+	border-color: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 72%, transparent);
 	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 26%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 14%, transparent),
 		0 12px 34px color-mix(in srgb, #000000 28%, transparent);
 }
 
