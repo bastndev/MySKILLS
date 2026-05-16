@@ -104,7 +104,23 @@
 	display: block;
 	margin-bottom: 4px;
 	filter: drop-shadow(0 18px 28px color-mix(in srgb, #000000 30%, transparent));
+	animation: create-logo-float 4.8s ease-in-out infinite;
 	user-select: none;
+}
+
+@keyframes create-logo-float {
+	0%,
+	100% {
+		filter: drop-shadow(0 18px 28px color-mix(in srgb, #000000 30%, transparent));
+		transform: translateY(0) scale(1);
+	}
+
+	50% {
+		filter:
+			drop-shadow(0 22px 32px color-mix(in srgb, #000000 34%, transparent))
+			drop-shadow(0 0 12px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 28%, transparent));
+		transform: translateY(-4px) scale(1.015);
+	}
 }
 
 .create-hero p {
@@ -502,6 +518,7 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.create-skill-surface::after,
+	.create-hero-logo,
 	.create-option-card,
 	.create-option-card::before,
 	.create-option-card::after,
@@ -512,6 +529,11 @@
 	.create-chat-send,
 	.btn-create-panel {
 		transition: none;
+	}
+
+	.create-hero-logo {
+		animation: none;
+		transform: none;
 	}
 
 	.create-option-card:hover,
