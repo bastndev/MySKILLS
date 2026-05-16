@@ -44,7 +44,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		}
 
 		try {
-			const viewPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'my-skill', 'ui', 'view.html').fsPath;
+			const localPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'local-skill', 'ui', 'local.html').fsPath;
 			const installPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.html').fsPath;
 			const createPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'ui', 'create.html').fsPath;
 
@@ -54,7 +54,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			const officialPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'panels', 'official-skill', 'official.html').fsPath;
 			const searchPath   = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'search', 'search.html').fsPath;
 
-			const viewHtml     = fs.readFileSync(viewPath, 'utf8');
+			const localHtml    = fs.readFileSync(localPath, 'utf8');
 			let   installHtml  = fs.readFileSync(installPath, 'utf8');
 			const createHtml   = fs.readFileSync(createPath, 'utf8');
 
@@ -80,7 +80,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			const createScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'create-skill.js'));
 			const createLogoUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'assets', 'svg', 'logo-animated.svg'));
 			const globalUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'view', 'styles', 'global.css'));
-			const viewStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'my-skill', 'ui', 'view.css'));
+			const localStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'local-skill', 'ui', 'local.css'));
 			const installStyleUri  = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'install.css'));
 			const officialStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'panels', 'official-skill', 'official.css'));
 			const searchStyleUri   = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'search', 'search.css'));
@@ -101,8 +101,8 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			].join(' ');
 
 			html = html.replace('<!-- CSP -->', csp);
-			html = html.replace('<!-- STYLES -->', `<link href="${globalUri}" rel="stylesheet"><link href="${viewStyleUri}" rel="stylesheet"><link href="${installStyleUri}" rel="stylesheet"><link href="${officialStyleUri}" rel="stylesheet"><link href="${searchStyleUri}" rel="stylesheet"><link href="${createStyleUri}" rel="stylesheet">`);
-			html = html.replace('<!-- VIEW_PANEL -->', viewHtml);
+			html = html.replace('<!-- STYLES -->', `<link href="${globalUri}" rel="stylesheet"><link href="${localStyleUri}" rel="stylesheet"><link href="${installStyleUri}" rel="stylesheet"><link href="${officialStyleUri}" rel="stylesheet"><link href="${searchStyleUri}" rel="stylesheet"><link href="${createStyleUri}" rel="stylesheet">`);
+			html = html.replace('<!-- LOCAL_PANEL -->', localHtml);
 			html = html.replace('<!-- INSTALL_PANEL -->', installHtml); // already has sub-panels injected above
 			html = html.replace('<!-- CREATE_PANEL -->', createPanelHtml);
 			html = html.replace('<!-- SCRIPTS -->', `<script nonce="${nonce}" src="${scriptUri}"></script><script nonce="${nonce}" src="${createScriptUri}"></script>`);

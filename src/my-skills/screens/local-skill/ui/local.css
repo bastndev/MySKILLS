@@ -1,5 +1,5 @@
 /* ── Panel override ──────────────────────────────────────────────────── */
-#view-panel.panel {
+#local-panel.panel {
 	align-items: stretch;
 	justify-content: stretch;
 }

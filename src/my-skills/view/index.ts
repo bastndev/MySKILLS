@@ -1,7 +1,7 @@
 import { initInstallPanel } from '../screens/install-skill/ui/install';
 import { initOfficialPanel } from '../screens/install-skill/ui/panels/official-skill/official';
 import { initSearchPanel } from '../screens/install-skill/ui/search/search';
-import { initLocalPanel } from '../screens/my-skill/ui/view';
+import { initLocalPanel } from '../screens/local-skill/ui/local';
 
 type WebviewState = {
 	activeTab?: string;

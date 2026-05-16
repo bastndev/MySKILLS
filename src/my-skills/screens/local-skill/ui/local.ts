@@ -1,5 +1,5 @@
 /**
- * view.ts — LOCAL panel logic
+ * local.ts — LOCAL panel logic
  *
  * Manages the list of skills installed in the current workspace.
  * Data is mocked here; replace `MOCK_SKILLS` with a real VS Code
@@ -254,7 +254,7 @@ export function initLocalPanel(): void {
 	// ── "Browse skills →" CTA → switch to INSTALL tab ────────────────
 	if (gotoInstall) {
 		gotoInstall.addEventListener('click', () => {
-			// Trigger the install tab — same mechanism as postMessage in my-skills.ts
+			// Trigger the install tab using the main tab switcher.
 			const installTab = document.querySelector<HTMLButtonElement>('[data-target="install-panel"]');
 			installTab?.click();
 		});
