@@ -150,7 +150,7 @@
 	width: 3px;
 	background: var(--vscode-focusBorder, #0078d4);
 	opacity: 0;
-	transition: opacity 0.16s ease;
+	transition: opacity 0.2s ease;
 }
 
 .create-option-card::after {
@@ -160,22 +160,28 @@
 	font-size: 20px;
 	line-height: 1;
 	opacity: 0;
-	transform: translateX(-3px);
-	transition: opacity 0.16s ease, transform 0.16s ease;
+	transform: translateX(-2px);
+	transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .create-option-card:hover {
-	background: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 12%, var(--create-bg));
+	background:
+		linear-gradient(
+			90deg,
+			color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 22%, transparent) 0%,
+			color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 10%, transparent) 44%,
+			transparent 100%
+		),
+		color-mix(in srgb, var(--create-bg) 84%, #000000 16%);
 	border-color: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 70%, transparent);
 	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 18%, transparent),
-		0 10px 26px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 12%, transparent);
-	transform: translateY(-1px);
+		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 14%, transparent),
+		0 8px 20px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 8%, transparent);
 }
 
 .create-option-card:hover::before,
 .create-option-card:hover::after {
-	opacity: 1;
+	opacity: 0.9;
 }
 
 .create-option-card:hover::after {
