@@ -1,5 +1,79 @@
-<div class="container">
-	<h1>Hello Skills</h1>
+<div class="local-surface">
 
-	<button id="btn-view" class="btn-view-panel">Open Skills</button>
+	<!-- ── Header ── -->
+	<div class="local-header">
+		<div class="local-header-top">
+			<div class="local-header-info">
+				<span class="local-workspace-label">Current workspace</span>
+				<span class="local-workspace-name" id="local-workspace-name">my-project</span>
+			</div>
+			<button class="local-refresh-btn" id="local-refresh-btn" type="button" aria-label="Refresh skill list">
+				<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+					<path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2"/>
+					<path d="M10.5 2v3h3"/>
+				</svg>
+			</button>
+		</div>
+
+		<!-- ── Stats bar ── -->
+		<div class="local-stats" id="local-stats">
+			<div class="local-stat">
+				<span class="local-stat-value" id="stat-total">0</span>
+				<span class="local-stat-label">installed</span>
+			</div>
+			<div class="local-stat-divider"></div>
+			<div class="local-stat">
+				<span class="local-stat-value local-stat-value--update" id="stat-updates">0</span>
+				<span class="local-stat-label">updates</span>
+			</div>
+			<div class="local-stat-divider"></div>
+			<div class="local-stat">
+				<span class="local-stat-value local-stat-value--agent" id="stat-agents">0</span>
+				<span class="local-stat-label">agents</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- ── Filter row ── -->
+	<div class="local-filter-row">
+		<div class="local-filter-tabs" role="tablist" aria-label="Filter local skills">
+			<button class="local-tab active" type="button" role="tab" aria-selected="true" data-local-filter="all">All</button>
+			<button class="local-tab" type="button" role="tab" aria-selected="false" data-local-filter="agent">Agent</button>
+			<button class="local-tab" type="button" role="tab" aria-selected="false" data-local-filter="design">Design</button>
+			<button class="local-tab" type="button" role="tab" aria-selected="false" data-local-filter="config">Config</button>
+		</div>
+		<button class="local-sort-btn" id="local-sort-btn" type="button" aria-label="Sort skills">
+			<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+				<path d="M2 4.5h12M4 8h8M6 11.5h4"/>
+			</svg>
+			<span class="local-sort-label" id="local-sort-label">A–Z</span>
+		</button>
+	</div>
+
+	<!-- ── Skill list ── -->
+	<ul id="local-list" class="local-list" role="list" aria-label="Installed skills" aria-live="polite">
+		<!-- Injected by view.ts -->
+	</ul>
+
+	<!-- ── Empty state (no skills at all) ── -->
+	<div id="local-empty" class="local-empty" hidden>
+		<div class="local-empty-icon-wrap">
+			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+				<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+				<path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/>
+			</svg>
+		</div>
+		<span class="local-empty-title">No skills installed</span>
+		<span class="local-empty-subtitle">Browse the marketplace to add skills to this workspace</span>
+		<button class="local-empty-cta" id="local-goto-install" type="button">Browse skills →</button>
+	</div>
+
+	<!-- ── Filter empty state ── -->
+	<div id="local-filter-empty" class="local-empty" hidden>
+		<svg class="local-filter-empty-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+			<path d="M2 4.5h12M4 8h8M6 11.5h4"/>
+		</svg>
+		<span class="local-empty-title">No skills in this category</span>
+	</div>
+
 </div>

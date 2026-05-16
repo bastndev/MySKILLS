@@ -1,21 +1,563 @@
-.btn-view-panel {
-	padding: 10px 24px;
-	font-size: 14px;
+/* ── Panel override ──────────────────────────────────────────────────── */
+#view-panel.panel {
+	align-items: stretch;
+	justify-content: stretch;
+}
+
+/* ── Surface ─────────────────────────────────────────────────────────── */
+.local-surface {
+	--local-bg:       var(--vscode-sideBar-background, var(--vscode-editor-background, #1e1e1e));
+	--local-fg:       var(--vscode-foreground, #cccccc);
+	--local-muted:    var(--vscode-descriptionForeground, #888888);
+	--local-accent:   var(--vscode-focusBorder, #0078d4);
+	--local-border:   color-mix(in srgb, var(--local-fg) 10%, transparent);
+	--local-hover-bg: var(--vscode-list-hoverBackground, color-mix(in srgb, var(--local-fg) 6%, transparent));
+	--local-green:    var(--vscode-testing-iconPassed, #4ec9b0);
+	--local-orange:   var(--vscode-statusBarItem-warningBackground, #cc6633);
+	--local-purple:   var(--vscode-symbolIcon-functionForeground, #b48ead);
+
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: var(--local-bg);
+	box-sizing: border-box;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+.local-header {
+	flex: 0 0 auto;
+	padding: 14px 12px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.local-header-top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.local-header-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.local-workspace-label {
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--local-muted);
 	font-family: var(--vscode-font-family);
-	font-weight: 500;
-	color: var(--vscode-button-foreground, #ffffff);
-	background: var(--vscode-button-background, #6366f1);
-	border: 1px solid var(--vscode-button-border, transparent);
+}
+
+.local-workspace-name {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--local-fg);
+	font-family: var(--vscode-editor-font-family, 'Menlo', 'Courier New', monospace);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ── Refresh button ──────────────────────────────────────────────────── */
+.local-refresh-btn {
+	flex: 0 0 auto;
+	width: 26px;
+	height: 26px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	background: transparent;
+	border: 1px solid var(--local-border);
 	border-radius: 6px;
+	color: var(--local-muted);
 	cursor: pointer;
-	transition: background 0.2s, transform 0.1s;
+	transition: color 0.16s ease, border-color 0.16s ease, background 0.16s ease, transform 0.4s ease;
 }
 
-.btn-view-panel:hover {
-	background: var(--vscode-button-hoverBackground, #5558e3);
-	transform: translateY(-2px);
+.local-refresh-btn:hover {
+	color: var(--local-fg);
+	border-color: color-mix(in srgb, var(--local-fg) 22%, transparent);
+	background: var(--local-hover-bg);
 }
 
-.btn-view-panel:active {
-	transform: translateY(0);
+.local-refresh-btn:focus-visible {
+	outline: 1px solid var(--local-accent);
+	outline-offset: 2px;
+}
+
+.local-refresh-btn.is-spinning svg {
+	animation: local-spin 0.7s linear infinite;
+}
+
+.local-refresh-btn svg {
+	width: 13px;
+	height: 13px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+@keyframes local-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* ── Stats bar ───────────────────────────────────────────────────────── */
+.local-stats {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	padding: 8px 10px;
+	background: color-mix(in srgb, var(--local-fg) 4%, transparent);
+	border: 1px solid var(--local-border);
+	border-radius: 8px;
+}
+
+.local-stat {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1px;
+}
+
+.local-stat-divider {
+	width: 1px;
+	height: 24px;
+	background: var(--local-border);
+}
+
+.local-stat-value {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--local-fg);
+	font-variant-numeric: tabular-nums;
+	font-family: var(--vscode-editor-font-family, 'Menlo', monospace);
+	line-height: 1;
+	transition: color 0.2s ease;
+}
+
+.local-stat-value--update {
+	color: var(--local-orange);
+}
+
+.local-stat-value--agent {
+	color: var(--local-accent);
+}
+
+.local-stat-label {
+	font-size: 10px;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--local-muted);
+	font-family: var(--vscode-font-family);
+}
+
+/* ── Filter row ──────────────────────────────────────────────────────── */
+.local-filter-row {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
+	padding: 8px 12px 0;
+	border-bottom: 1px solid var(--local-border);
+	padding-bottom: 0;
+}
+
+.local-filter-tabs {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.local-tab {
+	display: inline-flex;
+	align-items: center;
+	padding: 5px 8px;
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	color: var(--local-muted);
+	font-family: var(--vscode-font-family);
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: color 0.15s ease, border-color 0.15s ease;
+	margin-bottom: -1px;
+}
+
+.local-tab:hover {
+	color: var(--local-fg);
+}
+
+.local-tab.active {
+	color: var(--local-fg);
+	font-weight: 600;
+	border-bottom-color: var(--local-accent);
+}
+
+.local-tab:focus-visible {
+	outline: 1px solid var(--local-accent);
+	outline-offset: 2px;
+}
+
+/* ── Sort button ─────────────────────────────────────────────────────── */
+.local-sort-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 7px;
+	background: transparent;
+	border: 1px solid var(--local-border);
+	border-radius: 5px;
+	color: var(--local-muted);
+	font-family: var(--vscode-font-family);
+	font-size: 11px;
+	font-weight: 500;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+	margin-bottom: 4px;
+}
+
+.local-sort-btn:hover {
+	color: var(--local-fg);
+	border-color: color-mix(in srgb, var(--local-fg) 22%, transparent);
+	background: var(--local-hover-bg);
+}
+
+.local-sort-btn:focus-visible {
+	outline: 1px solid var(--local-accent);
+	outline-offset: 2px;
+}
+
+.local-sort-btn svg {
+	width: 12px;
+	height: 12px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+	stroke-linecap: round;
+}
+
+/* ── Skill list ──────────────────────────────────────────────────────── */
+.local-list {
+	flex: 1;
+	overflow-y: auto;
+	margin: 0;
+	padding: 6px 0 16px;
+	list-style: none;
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--local-fg) 18%, transparent) transparent;
+}
+
+.local-list::-webkit-scrollbar { width: 4px; }
+.local-list::-webkit-scrollbar-track { background: transparent; }
+.local-list::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, var(--local-fg) 18%, transparent);
+	border-radius: 4px;
+}
+
+/* ── Skill item ──────────────────────────────────────────────────────── */
+.local-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	cursor: pointer;
+	transition: background 0.14s ease;
+	position: relative;
+}
+
+.local-item:hover {
+	background: var(--local-hover-bg);
+}
+
+/* Left accent stripe on hover */
+.local-item::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 6px;
+	bottom: 6px;
+	width: 2px;
+	border-radius: 1px;
+	background: var(--local-accent);
+	opacity: 0;
+	transition: opacity 0.14s ease;
+}
+
+.local-item:hover::before {
+	opacity: 1;
+}
+
+/* ── Skill type badge icon ───────────────────────────────────────────── */
+.local-item-badge {
+	flex: 0 0 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 6px;
+	background: color-mix(in srgb, var(--local-fg) 7%, transparent);
+	transition: background 0.14s ease;
+}
+
+.local-item:hover .local-item-badge {
+	background: color-mix(in srgb, var(--local-accent) 14%, transparent);
+}
+
+.local-item-badge svg {
+	width: 14px;
+	height: 14px;
+	fill: none;
+	stroke: var(--local-muted);
+	stroke-width: 1.4;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	transition: stroke 0.14s ease;
+}
+
+.local-item:hover .local-item-badge svg {
+	stroke: var(--local-accent);
+}
+
+/* ── Skill info ──────────────────────────────────────────────────────── */
+.local-item-info {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.local-item-name {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--local-fg);
+	font-family: var(--vscode-editor-font-family, 'Menlo', 'Courier New', monospace);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.local-item-meta {
+	font-size: 11px;
+	color: var(--local-muted);
+	font-family: var(--vscode-font-family);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ── Update badge ────────────────────────────────────────────────────── */
+.local-item-update {
+	flex: 0 0 auto;
+	font-size: 10px;
+	font-weight: 700;
+	padding: 2px 6px;
+	border-radius: 99px;
+	background: color-mix(in srgb, var(--local-orange) 15%, transparent);
+	color: var(--local-orange);
+	border: 1px solid color-mix(in srgb, var(--local-orange) 35%, transparent);
+	white-space: nowrap;
+}
+
+/* ── Actions (shown on hover via CSS grid trick) ─────────────────────── */
+.local-item-actions {
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-areas: 'slot';
+	align-items: center;
+	justify-items: end;
+}
+
+.local-item-version {
+	grid-area: slot;
+	font-size: 11px;
+	font-weight: 500;
+	color: color-mix(in srgb, var(--local-muted) 70%, transparent);
+	font-variant-numeric: tabular-nums;
+	font-family: var(--vscode-editor-font-family, monospace);
+	white-space: nowrap;
+	transition: opacity 0.14s ease;
+}
+
+.local-item-remove-btn {
+	grid-area: slot;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	padding: 0;
+	background: color-mix(in srgb, #ff4444 12%, transparent);
+	color: #ff6b6b;
+	border: 1px solid color-mix(in srgb, #ff4444 30%, transparent);
+	border-radius: 5px;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.14s ease, background 0.14s ease;
+}
+
+.local-item-remove-btn svg {
+	width: 11px;
+	height: 11px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.6;
+	stroke-linecap: round;
+}
+
+.local-item:hover .local-item-version {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.local-item:hover .local-item-remove-btn {
+	opacity: 1;
+}
+
+.local-item-remove-btn:hover {
+	background: color-mix(in srgb, #ff4444 22%, transparent);
+}
+
+.local-item-remove-btn:focus-visible {
+	outline: 1px solid #ff4444;
+	outline-offset: 2px;
+	opacity: 1;
+}
+
+/* ── Section separator ───────────────────────────────────────────────── */
+.local-section-label {
+	padding: 10px 12px 4px;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+	color: var(--local-muted);
+	font-family: var(--vscode-font-family);
+	user-select: none;
+}
+
+/* ── Empty states ────────────────────────────────────────────────────── */
+.local-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	flex: 1;
+	padding: 32px 20px;
+	text-align: center;
+}
+
+.local-empty[hidden],
+#local-filter-empty[hidden] {
+	display: none !important;
+}
+
+.local-empty-icon-wrap {
+	width: 44px;
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--local-fg) 6%, transparent);
+	margin-bottom: 4px;
+}
+
+.local-empty-icon-wrap svg {
+	width: 22px;
+	height: 22px;
+	fill: none;
+	stroke: var(--local-muted);
+	stroke-width: 1.4;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	opacity: 0.6;
+}
+
+.local-filter-empty-icon {
+	width: 22px;
+	height: 22px;
+	fill: none;
+	stroke: var(--local-muted);
+	stroke-width: 1.5;
+	stroke-linecap: round;
+	opacity: 0.5;
+}
+
+.local-empty-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--local-fg);
+	font-family: var(--vscode-font-family);
+}
+
+.local-empty-subtitle {
+	font-size: 12px;
+	color: var(--local-muted);
+	font-family: var(--vscode-font-family);
+	max-width: 200px;
+	line-height: 1.4;
+}
+
+.local-empty-cta {
+	margin-top: 8px;
+	padding: 6px 14px;
+	background: color-mix(in srgb, var(--local-accent) 14%, transparent);
+	color: var(--local-accent);
+	border: 1px solid color-mix(in srgb, var(--local-accent) 35%, transparent);
+	border-radius: 6px;
+	font-family: var(--vscode-font-family);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.local-empty-cta:hover {
+	background: color-mix(in srgb, var(--local-accent) 22%, transparent);
+	border-color: color-mix(in srgb, var(--local-accent) 55%, transparent);
+}
+
+.local-empty-cta:focus-visible {
+	outline: 1px solid var(--local-accent);
+	outline-offset: 2px;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+	.local-refresh-btn,
+	.local-tab,
+	.local-sort-btn,
+	.local-item,
+	.local-item::before,
+	.local-item-badge,
+	.local-item-badge svg,
+	.local-item-version,
+	.local-item-remove-btn,
+	.local-empty-cta {
+		transition: none;
+	}
+
+	.local-refresh-btn.is-spinning svg {
+		animation: none;
+	}
 }
