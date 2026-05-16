@@ -21,7 +21,7 @@ const vscodeApi = acquireVsCodeApi();
 const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.tab'));
 const panels = Array.from(document.querySelectorAll<HTMLElement>('.panel'));
 const indicator = document.querySelector<HTMLElement>('.slider-indicator');
-const createGuideButton = document.querySelector<HTMLButtonElement>('[data-create-guide-button]');
+const createSupportButton = document.querySelector<HTMLButtonElement>('[data-create-support-button]');
 
 function isWebviewState(value: unknown): value is WebviewState {
 	if (!value || typeof value !== 'object') {
@@ -121,8 +121,8 @@ window.addEventListener('message', event => {
 	}
 });
 
-createGuideButton?.addEventListener('click', () => {
-	vscodeApi.postMessage({ type: 'createSkill.openGuide' });
+createSupportButton?.addEventListener('click', () => {
+	vscodeApi.postMessage({ type: 'createSkill.openSupport' });
 });
 
 // ── Init install filter tabs ──────────────────────────────────────────

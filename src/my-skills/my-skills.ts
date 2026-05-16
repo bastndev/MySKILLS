@@ -4,7 +4,7 @@ import * as fs from 'fs';
 export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'myskills-panel';
 	private _view?: vscode.WebviewView;
-	private _guidePanel?: vscode.WebviewPanel;
+	private _supportPanel?: vscode.WebviewPanel;
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
@@ -25,8 +25,8 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		};
 
 		webviewView.webview.onDidReceiveMessage(message => {
-			if (isWebviewMessage(message) && message.type === 'createSkill.openGuide') {
-				this._openCreateSkillGuide();
+			if (isWebviewMessage(message) && message.type === 'createSkill.openSupport') {
+				this._openCreateSkillSupport();
 			}
 		});
 
@@ -126,14 +126,14 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		return `<!DOCTYPE html><html><body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;color:var(--vscode-foreground,#ccc);background:var(--vscode-editor-background,#1e1e1e);"><p>${message}</p></body></html>`;
 	}
 
-	private _openCreateSkillGuide() {
-		if (this._guidePanel) {
-			this._guidePanel.reveal(vscode.ViewColumn.One);
+	private _openCreateSkillSupport() {
+		if (this._supportPanel) {
+			this._supportPanel.reveal(vscode.ViewColumn.One);
 			return;
 		}
 
 		const panel = vscode.window.createWebviewPanel(
-			'myskills.createGuide',
+			'myskills.createSupport',
 			'My Skills: Support',
 			vscode.ViewColumn.One,
 			{
@@ -143,29 +143,29 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			},
 		);
 
-		this._guidePanel = panel;
+		this._supportPanel = panel;
 		panel.iconPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'assets', 'svg', 'logo.svg');
-		panel.webview.html = this._getCreateSkillGuideHtml(panel.webview, getNonce());
+		panel.webview.html = this._getCreateSkillSupportHtml(panel.webview, getNonce());
 		panel.onDidDispose(() => {
-			this._guidePanel = undefined;
+			this._supportPanel = undefined;
 		});
 	}
 
-	private _getCreateSkillGuideHtml(webview: vscode.Webview, nonce: string): string {
-		const guidePath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'guide', 'guide.html').fsPath;
+	private _getCreateSkillSupportHtml(webview: vscode.Webview, nonce: string): string {
+		const supportPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'support', 'support.html').fsPath;
 
 		let content: string;
 		try {
-			content = fs.readFileSync(guidePath, 'utf8');
+			content = fs.readFileSync(supportPath, 'utf8');
 		} catch (err) {
-			console.error(`[MySkills] Failed to read create guide template: ${err}`);
-			return this._errorHtml('Failed to load create guide');
+			console.error(`[MySkills] Failed to read create support template: ${err}`);
+			return this._errorHtml('Failed to load create support');
 		}
 
-		const guideStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'guide', 'guide.css'));
-		const guideScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'create-skill-guide.js'));
-		const guideLogoUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'assets', 'svg', 'logo-animated.svg'));
-		const guideHtml = content.replace('{{CREATE_GUIDE_LOGO_URI}}', guideLogoUri.toString());
+		const supportStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'support', 'support.css'));
+		const supportScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'create-skill-support.js'));
+		const supportLogoUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'assets', 'svg', 'logo-animated.svg'));
+		const supportHtml = content.replace('{{CREATE_SUPPORT_LOGO_URI}}', supportLogoUri.toString());
 		const csp = [
 			`default-src 'none';`,
 			`base-uri 'none';`,
@@ -185,11 +185,11 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			'<meta name="viewport" content="width=device-width, initial-scale=1.0">',
 			`<meta http-equiv="Content-Security-Policy" content="${csp}">`,
 			'<title>My Skills: Support</title>',
-			`<link href="${guideStyleUri}" rel="stylesheet">`,
+			`<link href="${supportStyleUri}" rel="stylesheet">`,
 			'</head>',
 			'<body>',
-			guideHtml,
-			`<script nonce="${nonce}" src="${guideScriptUri}"></script>`,
+			supportHtml,
+			`<script nonce="${nonce}" src="${supportScriptUri}"></script>`,
 			'</body>',
 			'</html>',
 		].join('');
@@ -197,8 +197,8 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 
 	public dispose() {
 		this._view = undefined;
-		this._guidePanel?.dispose();
-		this._guidePanel = undefined;
+		this._supportPanel?.dispose();
+		this._supportPanel = undefined;
 	}
 }
 
