@@ -296,7 +296,8 @@
 }
 
 .create-chat {
-	width: var(--create-content-width);
+	width: calc(100% + 20px);
+	margin-inline: -10px;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
