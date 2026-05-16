@@ -209,8 +209,8 @@
 }
 
 .local-item-badge {
-	flex: 0 0 28px;
-	height: 28px;
+	flex: 0 0 26px;
+	height: 26px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -221,8 +221,8 @@
 }
 
 .local-item-badge--folder {
-	flex-basis: 32px;
-	height: 32px;
+	flex-basis: 30px;
+	height: 30px;
 }
 
 .local-item:hover .local-item-badge {
@@ -230,8 +230,8 @@
 }
 
 .local-item-badge svg {
-	width: 18px;
-	height: 18px;
+	width: 16px;
+	height: 16px;
 	fill: none;
 	stroke: var(--local-muted);
 	stroke-width: 1.4;
@@ -241,8 +241,8 @@
 }
 
 .local-item-badge--folder svg {
-	width: 18px;
-	height: 18px;
+	width: 16px;
+	height: 16px;
 }
 
 .local-item-badge svg [fill="currentColor"] {
