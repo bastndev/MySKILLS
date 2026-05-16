@@ -28,89 +28,10 @@
 /* ── Header ──────────────────────────────────────────────────────────── */
 .local-header {
 	flex: 0 0 auto;
-	padding: 14px 12px 0;
+	padding: 10px 12px 0;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-}
-
-.local-header-top {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 8px;
-}
-
-.local-header-info {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	min-width: 0;
-}
-
-.local-workspace-label {
-	font-size: 10px;
-	font-weight: 600;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	color: var(--local-muted);
-	font-family: var(--vscode-font-family);
-}
-
-.local-workspace-name {
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--local-fg);
-	font-family: var(--vscode-editor-font-family, 'Menlo', 'Courier New', monospace);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-/* ── Refresh button ──────────────────────────────────────────────────── */
-.local-refresh-btn {
-	flex: 0 0 auto;
-	width: 26px;
-	height: 26px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0;
-	background: transparent;
-	border: 1px solid var(--local-border);
-	border-radius: 6px;
-	color: var(--local-muted);
-	cursor: pointer;
-	transition: color 0.16s ease, border-color 0.16s ease, background 0.16s ease, transform 0.4s ease;
-}
-
-.local-refresh-btn:hover {
-	color: var(--local-fg);
-	border-color: color-mix(in srgb, var(--local-fg) 22%, transparent);
-	background: var(--local-hover-bg);
-}
-
-.local-refresh-btn:focus-visible {
-	outline: 1px solid var(--local-accent);
-	outline-offset: 2px;
-}
-
-.local-refresh-btn.is-spinning svg {
-	animation: local-spin 0.7s linear infinite;
-}
-
-.local-refresh-btn svg {
-	width: 13px;
-	height: 13px;
-	fill: none;
-	stroke: currentColor;
-	stroke-width: 1.5;
-	stroke-linecap: round;
-	stroke-linejoin: round;
-}
-
-@keyframes local-spin {
-	to { transform: rotate(360deg); }
 }
 
 /* ── Stats bar ───────────────────────────────────────────────────────── */
@@ -544,7 +465,6 @@
 
 /* ── Reduced motion ──────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-	.local-refresh-btn,
 	.local-tab,
 	.local-sort-btn,
 	.local-item,
@@ -555,9 +475,5 @@
 	.local-item-remove-btn,
 	.local-empty-cta {
 		transition: none;
-	}
-
-	.local-refresh-btn.is-spinning svg {
-		animation: none;
 	}
 }

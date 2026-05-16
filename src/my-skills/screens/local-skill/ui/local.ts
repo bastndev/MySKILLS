@@ -174,7 +174,6 @@ export function initLocalPanel(): void {
 	const statTotal     = document.getElementById('stat-total')        as HTMLElement | null;
 	const statUpdates   = document.getElementById('stat-updates')      as HTMLElement | null;
 	const statAgents    = document.getElementById('stat-agents')       as HTMLElement | null;
-	const refreshBtn    = document.getElementById('local-refresh-btn') as HTMLButtonElement | null;
 	const sortBtn       = document.getElementById('local-sort-btn')    as HTMLButtonElement | null;
 	const sortLabel     = document.getElementById('local-sort-label')  as HTMLElement | null;
 	const gotoInstall   = document.getElementById('local-goto-install') as HTMLButtonElement | null;
@@ -237,19 +236,6 @@ export function initLocalPanel(): void {
 			rerender();
 		}
 	});
-
-	// ── Refresh (spin animation + re-render) ─────────────────────────
-	if (refreshBtn) {
-		refreshBtn.addEventListener('click', () => {
-			refreshBtn.classList.add('is-spinning');
-			// In a real extension this would await a message to the host
-			setTimeout(() => {
-				refreshBtn.classList.remove('is-spinning');
-				// skills = fetchedSkills; // future: replace mock
-				rerender();
-			}, 700);
-		});
-	}
 
 	// ── "Browse skills →" CTA → switch to INSTALL tab ────────────────
 	if (gotoInstall) {
