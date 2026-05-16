@@ -1,5 +1,5 @@
 const SKILLS = [
-	'anthropics.png', 'apollographql.png', 'auth0.png', 'browserbase.png',
+	'anthropics.png','vercel.png', 'apollographql.png', 'auth0.png', 'browserbase.png',
 	'callstackincubator.png', 'clickhouse.png', 'cloudflare.png', 'coderabbitai.png',
 	'composiohq.png', 'datadog-labs.png', 'duckdb.png', 'expo.png', 'figma.png',
 	'firebase.png', 'firecrawl.png', 'flutter.png', 'getsentry.png', 'google-gemini.png',
