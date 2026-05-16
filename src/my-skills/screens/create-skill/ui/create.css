@@ -110,7 +110,7 @@
 .create-hero p {
 	max-width: 220px;
 	margin: 0;
-	color: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 62%, transparent);
+	color: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 78%, transparent);
 	font-size: 13px;
 	font-weight: 400;
 	line-height: 1.35;
