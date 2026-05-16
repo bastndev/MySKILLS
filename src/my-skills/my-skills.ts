@@ -4,6 +4,7 @@ import * as fs from 'fs';
 export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'myskills-panel';
 	private _view?: vscode.WebviewView;
+	private _guidePanel?: vscode.WebviewPanel;
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
@@ -22,6 +23,12 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			enableScripts: true,
 			localResourceRoots: [this._extensionUri],
 		};
+
+		webviewView.webview.onDidReceiveMessage(message => {
+			if (isWebviewMessage(message) && message.type === 'createSkill.openGuide') {
+				this._openCreateSkillGuide();
+			}
+		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, nonce);
 	}
@@ -119,9 +126,84 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		return `<!DOCTYPE html><html><body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;color:var(--vscode-foreground,#ccc);background:var(--vscode-editor-background,#1e1e1e);"><p>${message}</p></body></html>`;
 	}
 
+	private _openCreateSkillGuide() {
+		if (this._guidePanel) {
+			this._guidePanel.reveal(vscode.ViewColumn.One);
+			return;
+		}
+
+		const panel = vscode.window.createWebviewPanel(
+			'myskills.createGuide',
+			'My Skills: Get help',
+			vscode.ViewColumn.One,
+			{
+				enableScripts: true,
+				localResourceRoots: [this._extensionUri],
+				retainContextWhenHidden: true,
+			},
+		);
+
+		this._guidePanel = panel;
+		panel.iconPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'assets', 'svg', 'logo.svg');
+		panel.webview.html = this._getCreateSkillGuideHtml(panel.webview, getNonce());
+		panel.onDidDispose(() => {
+			this._guidePanel = undefined;
+		});
+	}
+
+	private _getCreateSkillGuideHtml(webview: vscode.Webview, nonce: string): string {
+		const guidePath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'guide', 'guide.html').fsPath;
+
+		let content: string;
+		try {
+			content = fs.readFileSync(guidePath, 'utf8');
+		} catch (err) {
+			console.error(`[MySkills] Failed to read create guide template: ${err}`);
+			return this._errorHtml('Failed to load create guide');
+		}
+
+		const guideStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'create-skill', 'guide', 'guide.css'));
+		const guideScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'create-skill-guide.js'));
+		const guideLogoUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'assets', 'svg', 'logo-animated.svg'));
+		const guideHtml = content.replace('{{CREATE_GUIDE_LOGO_URI}}', guideLogoUri.toString());
+		const csp = [
+			`default-src 'none';`,
+			`base-uri 'none';`,
+			`form-action 'none';`,
+			`object-src 'none';`,
+			`style-src ${webview.cspSource};`,
+			`script-src 'nonce-${nonce}';`,
+			`img-src ${webview.cspSource};`,
+			`font-src ${webview.cspSource};`,
+		].join(' ');
+
+		return [
+			'<!DOCTYPE html>',
+			'<html lang="en">',
+			'<head>',
+			'<meta charset="UTF-8">',
+			'<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+			`<meta http-equiv="Content-Security-Policy" content="${csp}">`,
+			'<title>My Skills: Get help</title>',
+			`<link href="${guideStyleUri}" rel="stylesheet">`,
+			'</head>',
+			'<body>',
+			guideHtml,
+			`<script nonce="${nonce}" src="${guideScriptUri}"></script>`,
+			'</body>',
+			'</html>',
+		].join('');
+	}
+
 	public dispose() {
 		this._view = undefined;
+		this._guidePanel?.dispose();
+		this._guidePanel = undefined;
 	}
+}
+
+function isWebviewMessage(value: unknown): value is { type: string } {
+	return Boolean(value) && typeof value === 'object' && typeof (value as { type?: unknown }).type === 'string';
 }
 
 function getNonce(): string {
