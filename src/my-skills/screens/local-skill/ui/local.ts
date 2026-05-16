@@ -11,6 +11,18 @@ const SKILL_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false
 	<path d="M5.5 8h5M8 6.75V9.25"/>
 </svg>`;
 
+const DUPLICATE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+	<path d="M5 5.5h6.5v7H5z"/>
+	<path d="M3.5 10.5h-1v-7H9v1"/>
+</svg>`;
+
+const DELETE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+	<path d="M3.5 4.5h9"/>
+	<path d="M6.5 4.5v-1h3v1"/>
+	<path d="M5 6.5l.45 6h5.1l.45-6"/>
+	<path d="M7 7.5v3.5M9 7.5v3.5"/>
+</svg>`;
+
 function escHtml(s: string): string {
 	return s
 		.replace(/&/g, '&amp;')
@@ -32,6 +44,12 @@ function renderSkill(skill: LocalSkill): string {
 				<span class="local-item-meta">${escHtml(skill.source)}</span>
 			</div>
 			<div class="local-item-actions">
+				<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
+					${DUPLICATE_ICON}
+				</button>
+				<button class="local-item-action local-item-action--danger" type="button" aria-label="Delete ${escHtml(skill.name)}" title="Delete" data-action="delete" data-skill-id="${escHtml(skill.id)}">
+					${DELETE_ICON}
+				</button>
 				<label class="local-item-switch" aria-label="${escHtml(switchLabel)}">
 					<input type="checkbox" role="switch" data-toggle-id="${escHtml(skill.id)}" ${skill.enabled ? 'checked' : ''}>
 					<span class="local-item-switch-track" aria-hidden="true"></span>
@@ -170,6 +188,15 @@ export function initLocalPanel(vscodeApi: VsCodeApi): void {
 			id: input.dataset.toggleId ?? '',
 			enabled: input.checked,
 		});
+	});
+
+	listEl.addEventListener('click', event => {
+		const action = (event.target as Element).closest<HTMLButtonElement>('[data-action]');
+		if (!action) {
+			return;
+		}
+
+		action.blur();
 	});
 
 	if (gotoInstall) {

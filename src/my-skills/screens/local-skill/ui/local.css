@@ -265,6 +265,59 @@
 	flex: 0 0 auto;
 	display: flex;
 	align-items: center;
+	gap: 4px;
+}
+
+.local-item-action {
+	width: 24px;
+	height: 24px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 5px;
+	background: transparent;
+	color: var(--local-muted);
+	cursor: pointer;
+	opacity: 0;
+	transform: translateX(4px);
+	transition: opacity 0.14s ease, transform 0.14s ease, color 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+}
+
+.local-item:hover .local-item-action,
+.local-item:focus-within .local-item-action {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+.local-item-action:hover {
+	color: var(--local-accent);
+	background: color-mix(in srgb, var(--local-accent) 12%, transparent);
+	border-color: color-mix(in srgb, var(--local-accent) 24%, transparent);
+}
+
+.local-item-action--danger:hover {
+	color: var(--vscode-errorForeground, #f14c4c);
+	background: color-mix(in srgb, var(--vscode-errorForeground, #f14c4c) 12%, transparent);
+	border-color: color-mix(in srgb, var(--vscode-errorForeground, #f14c4c) 24%, transparent);
+}
+
+.local-item-action:focus-visible {
+	opacity: 1;
+	transform: translateX(0);
+	outline: 1px solid var(--local-accent);
+	outline-offset: 2px;
+}
+
+.local-item-action svg {
+	width: 13px;
+	height: 13px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.45;
+	stroke-linecap: round;
+	stroke-linejoin: round;
 }
 
 .local-item-switch {
@@ -408,6 +461,7 @@
 	.local-sort-btn,
 	.local-item,
 	.local-item::before,
+	.local-item-action,
 	.local-item-badge,
 	.local-item-badge svg,
 	.local-item-switch-track,
