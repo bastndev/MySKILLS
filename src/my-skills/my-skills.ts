@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { getWorkspaceRootSkills, setWorkspaceRootSkillEnabled } from './screens/local-skill/core/local-skills';
+import { ROOT_SKILL_FILE_NAMES, getWorkspaceRootSkills, setWorkspaceRootSkillEnabled } from './screens/local-skill/core/local-skills';
 import type { LocalSkillSetEnabledMessage, LocalSkillsRequestMessage } from './screens/local-skill/core/types';
 
 export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'myskills-panel';
 	private _view?: vscode.WebviewView;
 	private _supportPanel?: vscode.WebviewPanel;
-	private _gitignoreWatcher?: vscode.FileSystemWatcher;
+	private _localSkillWatchers: vscode.FileSystemWatcher[] = [];
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
@@ -40,7 +40,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, nonce);
-		this._watchWorkspaceGitignore();
+		this._watchWorkspaceLocalSkills();
 	}
 
 	public switchTab(target: string) {
@@ -59,30 +59,36 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	private async _setLocalSkillEnabled(message: LocalSkillSetEnabledMessage) {
-		await setWorkspaceRootSkillEnabled(message.id, message.enabled);
-		await this._postLocalSkills();
+		try {
+			await setWorkspaceRootSkillEnabled(message.id, message.enabled);
+		} catch (err) {
+			console.error(`[MySkills] Failed to update .gitignore: ${err}`);
+			void vscode.window.showErrorMessage('My Skills could not update .gitignore.');
+		} finally {
+			await this._postLocalSkills();
+		}
 	}
 
-	private _watchWorkspaceGitignore() {
-		this._gitignoreWatcher?.dispose();
-		this._gitignoreWatcher = undefined;
+	private _watchWorkspaceLocalSkills() {
+		this._localSkillWatchers.forEach(watcher => watcher.dispose());
+		this._localSkillWatchers = [];
 
 		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
 		if (!workspaceFolder) {
 			return;
 		}
 
-		const pattern = new vscode.RelativePattern(workspaceFolder, '.gitignore');
-		const watcher = vscode.workspace.createFileSystemWatcher(pattern);
-		const refresh = () => {
-			void this._postLocalSkills();
-		};
+		const refresh = () => { void this._postLocalSkills(); };
+		const watchedFiles = ['.gitignore', ...ROOT_SKILL_FILE_NAMES];
 
-		watcher.onDidCreate(refresh);
-		watcher.onDidChange(refresh);
-		watcher.onDidDelete(refresh);
+		this._localSkillWatchers = watchedFiles.map(fileName => {
+			const watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workspaceFolder, fileName));
+			watcher.onDidCreate(refresh);
+			watcher.onDidChange(refresh);
+			watcher.onDidDelete(refresh);
 
-		this._gitignoreWatcher = watcher;
+			return watcher;
+		});
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview, nonce: string): string {
@@ -245,8 +251,8 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		this._view = undefined;
 		this._supportPanel?.dispose();
 		this._supportPanel = undefined;
-		this._gitignoreWatcher?.dispose();
-		this._gitignoreWatcher = undefined;
+		this._localSkillWatchers.forEach(watcher => watcher.dispose());
+		this._localSkillWatchers = [];
 	}
 }
 

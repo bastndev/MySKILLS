@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import type { LocalSkill } from './types';
 
 const ROOT_SKILL_FILES = ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'DESIGN.md'] as const;
+export const ROOT_SKILL_FILE_NAMES: readonly string[] = ROOT_SKILL_FILES;
 const GITIGNORE_FILE = '.gitignore';
 const BLOCK_BEGIN = '# My Skills: begin';
 const BLOCK_END = '# My Skills: end';
@@ -10,6 +11,11 @@ interface GitignoreBlock {
 	lines: string[];
 	startIndex: number;
 	endIndex: number;
+}
+
+interface GitignoreText {
+	content: string;
+	eol: '\n' | '\r\n';
 }
 
 export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
@@ -55,10 +61,10 @@ export async function setWorkspaceRootSkillEnabled(skillId: string, enabled: boo
 	}
 
 	const gitignoreUri = vscode.Uri.joinPath(workspaceFolder.uri, GITIGNORE_FILE);
-	const content = await readTextFile(gitignoreUri);
-	const nextContent = updateGitignoreSkillState(content, skillId, enabled);
+	const text = await readGitignoreText(gitignoreUri);
+	const nextContent = updateGitignoreSkillState(text.content, skillId, enabled, text.eol);
 
-	if (nextContent === content) {
+	if (nextContent === text.content) {
 		return;
 	}
 
@@ -66,8 +72,8 @@ export async function setWorkspaceRootSkillEnabled(skillId: string, enabled: boo
 }
 
 async function getDisabledSkillIds(workspaceUri: vscode.Uri): Promise<Set<string>> {
-	const content = await readTextFile(vscode.Uri.joinPath(workspaceUri, GITIGNORE_FILE));
-	const block = findGitignoreBlock(content);
+	const text = await readGitignoreText(vscode.Uri.joinPath(workspaceUri, GITIGNORE_FILE));
+	const block = findGitignoreBlock(text.content);
 	const disabled = new Set<string>();
 
 	if (!block) {
@@ -84,7 +90,7 @@ async function getDisabledSkillIds(workspaceUri: vscode.Uri): Promise<Set<string
 	return disabled;
 }
 
-function updateGitignoreSkillState(content: string, skillId: string, enabled: boolean): string {
+function updateGitignoreSkillState(content: string, skillId: string, enabled: boolean, eol: '\n' | '\r\n'): string {
 	const normalizedContent = normalizeLineEndings(content);
 	const block = findGitignoreBlock(normalizedContent);
 
@@ -93,7 +99,7 @@ function updateGitignoreSkillState(content: string, skillId: string, enabled: bo
 			return normalizedContent;
 		}
 
-		return appendManagedBlock(normalizedContent, skillId);
+		return withLineEndings(appendManagedBlock(normalizedContent, skillId), eol);
 	}
 
 	const nextLines = [...block.lines];
@@ -108,7 +114,7 @@ function updateGitignoreSkillState(content: string, skillId: string, enabled: bo
 
 	const allLines = splitLines(normalizedContent);
 	allLines.splice(block.startIndex + 1, block.lines.length, ...nextLines);
-	return formatManagedBlockSpacing(allLines).join('\n');
+	return withLineEndings(formatManagedBlockSpacing(allLines).join('\n'), eol);
 }
 
 function appendManagedBlock(content: string, skillId: string): string {
@@ -150,12 +156,16 @@ function parseManagedSkillLine(line: string): { skillId: string; commented: bool
 	return { skillId: candidate, commented };
 }
 
-async function readTextFile(uri: vscode.Uri): Promise<string> {
+async function readGitignoreText(uri: vscode.Uri): Promise<GitignoreText> {
 	try {
 		const bytes = await vscode.workspace.fs.readFile(uri);
-		return new TextDecoder().decode(bytes);
+		const content = new TextDecoder().decode(bytes);
+		return {
+			content,
+			eol: content.includes('\r\n') ? '\r\n' : '\n',
+		};
 	} catch {
-		return '';
+		return { content: '', eol: '\n' };
 	}
 }
 
@@ -170,6 +180,10 @@ function splitLines(content: string): string[] {
 
 function normalizeLineEndings(content: string): string {
 	return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+}
+
+function withLineEndings(content: string, eol: '\n' | '\r\n'): string {
+	return eol === '\n' ? content : content.replace(/\n/g, eol);
 }
 
 function formatManagedBlockSpacing(lines: string[]): string[] {
