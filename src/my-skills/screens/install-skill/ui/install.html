@@ -1,6 +1,5 @@
 <div class="install-surface">
 
-	<!-- ── Search ── -->
 	<div class="install-header">
 		<label class="install-search-box" for="install-search-input">
 			<svg class="install-search-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -18,37 +17,32 @@
 			>
 		</label>
 
-		<!-- ── Filters ── -->
 		<div class="install-filters" role="tablist" aria-label="Filter skills">
-			<button class="install-filter active" type="button" role="tab" aria-selected="true" data-filter="all" aria-controls="install-panel-all">
+			<button id="install-filter-all" class="install-filter active" type="button" role="tab" aria-selected="true" data-filter="all" aria-controls="install-panel-all">
 				All Time
 			</button>
-			<button class="install-filter" type="button" role="tab" aria-selected="false" data-filter="trending" aria-controls="install-panel-trending">
+			<button id="install-filter-trending" class="install-filter" type="button" role="tab" aria-selected="false" data-filter="trending" aria-controls="install-panel-trending">
 				Trending <span class="install-filter-badge">24h</span>
 			</button>
-			<button class="install-filter" type="button" role="tab" aria-selected="false" data-filter="official" aria-controls="install-panel-official">
+			<button id="install-filter-official" class="install-filter" type="button" role="tab" aria-selected="false" data-filter="official" aria-controls="install-panel-official">
 				@ Official
 			</button>
 		</div>
 	</div>
 
-	<!-- ── Panel: All Time (default, visible) ── -->
 	<div id="install-panel-all" class="install-panel" role="tabpanel" aria-labelledby="install-filter-all">
 		<!-- ALLTIME_PANEL -->
 	</div>
 
-	<!-- ── Panel: Trending ── -->
-	<div id="install-panel-trending" class="install-panel" role="tabpanel" aria-labelledby="install-filter-trending" hidden>
+	<div id="install-panel-trending" class="install-panel" role="tabpanel" aria-labelledby="install-filter-trending" aria-hidden="true" hidden>
 		<!-- TRENDING_PANEL -->
 	</div>
 
-	<!-- ── Panel: Official ── -->
-	<div id="install-panel-official" class="install-panel install-panel--official" role="tabpanel" aria-labelledby="install-filter-official" hidden>
+	<div id="install-panel-official" class="install-panel install-panel--official" role="tabpanel" aria-labelledby="install-filter-official" aria-hidden="true" hidden>
 		<!-- OFFICIAL_PANEL -->
 	</div>
 
-	<!-- ── Panel: Search ── -->
-	<div id="install-panel-search" class="install-panel" role="tabpanel" hidden>
+	<div id="install-panel-search" class="install-panel" role="tabpanel" aria-hidden="true" hidden>
 		<!-- SEARCH_PANEL -->
 	</div>
 

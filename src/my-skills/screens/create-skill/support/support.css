@@ -1,0 +1,274 @@
+:root {
+	--support-bg: var(--vscode-editor-background, #101112);
+	--support-card: color-mix(in srgb, var(--support-bg) 82%, #ffffff 6%);
+	--support-border: color-mix(in srgb, var(--vscode-foreground, #cccccc) 13%, transparent);
+	--support-muted: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 72%, transparent);
+	--support-accent: var(--vscode-focusBorder, #0078d4);
+	--support-accent-soft: color-mix(in srgb, var(--support-accent) 16%, transparent);
+	--support-font: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	--support-mono: var(--vscode-editor-font-family, "Menlo", "Consolas", "Courier New", monospace);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	min-height: 100vh;
+	margin: 0;
+	color: var(--vscode-foreground, #cccccc);
+	background:
+		radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--support-accent) 26%, transparent), transparent 28rem),
+		linear-gradient(135deg, color-mix(in srgb, var(--support-bg) 92%, #ffffff 3%), var(--support-bg));
+	font-family: var(--support-font);
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.create-support-shell {
+	width: min(100%, 1040px);
+	margin: 0 auto;
+	padding: 56px 28px 72px;
+}
+
+.create-support-hero {
+	position: relative;
+	overflow: hidden;
+	padding: clamp(28px, 6vw, 58px);
+	border: 1px solid var(--support-border);
+	border-radius: 28px;
+	background:
+		linear-gradient(135deg, color-mix(in srgb, var(--support-accent) 16%, transparent), transparent 42%),
+		color-mix(in srgb, var(--support-bg) 74%, #000000 26%);
+	box-shadow: 0 28px 80px color-mix(in srgb, #000000 34%, transparent);
+}
+
+.create-support-hero::after {
+	content: "";
+	position: absolute;
+	right: -120px;
+	bottom: -160px;
+	width: 360px;
+	height: 360px;
+	border-radius: 999px;
+	background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--vscode-foreground, #ffffff) 42%, transparent) 0 4deg, transparent 4deg 8deg);
+	opacity: 0.18;
+	pointer-events: none;
+}
+
+.create-support-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 34px;
+	padding: 5px 12px 5px 6px;
+	border: 1px solid var(--support-border);
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--support-bg) 72%, #ffffff 8%);
+	color: var(--support-muted);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.create-support-badge img {
+	width: 24px;
+	height: 24px;
+}
+
+.create-support-hero h1 {
+	max-width: 680px;
+	margin: 28px 0 0;
+	color: var(--vscode-foreground, #ffffff);
+	font-size: clamp(38px, 8vw, 82px);
+	font-weight: 760;
+	line-height: 0.92;
+	letter-spacing: -0.06em;
+}
+
+.create-support-hero p {
+	max-width: 560px;
+	margin: 22px 0 0;
+	color: var(--support-muted);
+	font-size: clamp(16px, 2vw, 20px);
+	line-height: 1.55;
+}
+
+.create-support-actions {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 30px;
+}
+
+.create-support-primary,
+.create-support-secondary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 42px;
+	padding: 0 16px;
+	border-radius: 999px;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.create-support-primary {
+	color: var(--vscode-button-foreground, #ffffff);
+	background: var(--vscode-button-background, #0e639c);
+}
+
+.create-support-secondary {
+	border: 1px solid var(--support-border);
+	background: color-mix(in srgb, var(--support-bg) 70%, #ffffff 7%);
+}
+
+.create-support-section {
+	margin-top: 42px;
+}
+
+.create-support-section-heading p {
+	margin: 0 0 8px;
+	color: var(--support-accent);
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.create-support-section-heading h2 {
+	max-width: 720px;
+	margin: 0;
+	font-size: clamp(24px, 4vw, 40px);
+	line-height: 1.02;
+	letter-spacing: -0.04em;
+}
+
+.create-support-grid,
+.create-support-tutorials {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 14px;
+	margin-top: 20px;
+}
+
+.create-support-card,
+.create-support-tutorial,
+.create-support-example {
+	border: 1px solid var(--support-border);
+	border-radius: 18px;
+	background: var(--support-card);
+	box-shadow: 0 18px 48px color-mix(in srgb, #000000 18%, transparent);
+}
+
+.create-support-card {
+	min-height: 190px;
+	padding: 20px;
+}
+
+.create-support-card-index {
+	color: var(--support-accent);
+	font-family: var(--support-mono);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.create-support-card h3,
+.create-support-example h3 {
+	margin: 18px 0 0;
+	font-size: 20px;
+	letter-spacing: -0.03em;
+}
+
+.create-support-card p,
+.create-support-example p,
+.create-support-tutorial small {
+	color: var(--support-muted);
+	line-height: 1.5;
+}
+
+.create-support-example {
+	display: grid;
+	grid-template-columns: 0.8fr 1.2fr;
+	gap: 1px;
+	overflow: hidden;
+	margin-top: 20px;
+	background: var(--support-border);
+}
+
+.create-support-example > div {
+	padding: 22px;
+	background: var(--support-card);
+}
+
+.create-support-example h3 {
+	margin-top: 0;
+}
+
+.create-support-example code {
+	font-family: var(--support-mono);
+	font-size: 0.94em;
+}
+
+.create-support-tutorials {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.create-support-tutorial {
+	display: grid;
+	gap: 10px;
+	padding: 20px;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+
+.create-support-tutorial span {
+	width: fit-content;
+	padding: 4px 8px;
+	color: var(--support-accent);
+	background: var(--support-accent-soft);
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.create-support-tutorial strong {
+	font-size: 18px;
+	letter-spacing: -0.03em;
+}
+
+.create-support-tutorial:focus-visible,
+.create-support-primary:focus-visible,
+.create-support-secondary:focus-visible {
+	outline: 1px solid var(--support-accent);
+	outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+	.create-support-shell {
+		padding: 28px 16px 48px;
+	}
+
+	.create-support-grid,
+	.create-support-tutorials,
+	.create-support-example {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}

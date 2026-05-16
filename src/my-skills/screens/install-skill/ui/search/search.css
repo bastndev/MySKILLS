@@ -1,17 +1,9 @@
-/* ── Search Results List ─────────────────────────────────────────────── */
-/* The search panel reuses .install-list / .install-item from install.css */
-/* so no extra list styles are needed here.                                */
-
-/* ── [hidden] guard ──────────────────────────────────────────────────── */
-/* CSS display rules (flex, block…) win over the HTML [hidden] attribute  */
-/* by specificity. These overrides restore the expected hide behaviour.   */
 #install-search-results[hidden],
 #install-search-empty[hidden],
 #install-search-count[hidden] {
 	display: none !important;
 }
 
-/* ── Empty State ─────────────────────────────────────────────────────── */
 .install-search-empty {
 	display: flex;
 	flex-direction: column;
@@ -34,7 +26,6 @@
 	opacity: 0.6;
 }
 
-/* ── Search count label ──────────────────────────────────────────────── */
 .install-search-count {
 	display: block;
 	padding: 6px 12px 2px;

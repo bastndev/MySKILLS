@@ -24,6 +24,7 @@
 	overflow: hidden;
 	background: var(--create-bg);
 	contain: paint;
+	font-family: var(--myskills-ui-font);
 }
 
 .create-skill-surface::after {
@@ -71,8 +72,11 @@
 .create-skill-surface h1 {
 	margin: 0;
 	color: var(--vscode-foreground);
-	font-size: 18px;
+	font-family: var(--myskills-ui-font);
+	font-size: 17px;
+	font-weight: 700;
 	line-height: 1.2;
+	letter-spacing: 0;
 }
 
 .create-main {
@@ -106,8 +110,9 @@
 .create-hero p {
 	max-width: 220px;
 	margin: 0;
-	color: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 62%, transparent);
+	color: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 78%, transparent);
 	font-size: 13px;
+	font-weight: 400;
 	line-height: 1.35;
 }
 
@@ -132,7 +137,7 @@
 	background: color-mix(in srgb, var(--create-bg) 84%, #000000 16%);
 	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 12%, transparent);
 	border-radius: 8px;
-	font-family: var(--vscode-font-family);
+	font-family: var(--myskills-ui-font);
 	text-align: left;
 	cursor: pointer;
 	transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
@@ -145,7 +150,7 @@
 	width: 3px;
 	background: var(--vscode-focusBorder, #0078d4);
 	opacity: 0;
-	transition: opacity 0.16s ease;
+	transition: opacity 0.2s ease;
 }
 
 .create-option-card::after {
@@ -155,22 +160,28 @@
 	font-size: 20px;
 	line-height: 1;
 	opacity: 0;
-	transform: translateX(-3px);
-	transition: opacity 0.16s ease, transform 0.16s ease;
+	transform: translateX(-2px);
+	transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .create-option-card:hover {
-	background: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 12%, var(--create-bg));
+	background:
+		linear-gradient(
+			90deg,
+			color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 22%, transparent) 0%,
+			color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 10%, transparent) 44%,
+			transparent 100%
+		),
+		color-mix(in srgb, var(--create-bg) 84%, #000000 16%);
 	border-color: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 70%, transparent);
 	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 18%, transparent),
-		0 10px 26px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 12%, transparent);
-	transform: translateY(-1px);
+		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 14%, transparent),
+		0 8px 20px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 8%, transparent);
 }
 
 .create-option-card:hover::before,
 .create-option-card:hover::after {
-	opacity: 1;
+	opacity: 0.9;
 }
 
 .create-option-card:hover::after {
@@ -225,12 +236,15 @@
 .create-option-title {
 	font-size: 13px;
 	font-weight: 700;
+	font-family: var(--myskills-mono-font);
 	line-height: 1.2;
+	letter-spacing: 0;
 }
 
 .create-option-description {
 	color: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 68%, transparent);
 	font-size: 12px;
+	font-weight: 400;
 	line-height: 1.25;
 }
 
@@ -252,6 +266,7 @@
 	-webkit-backdrop-filter: blur(12px) saturate(130%);
 	font-size: 13px;
 	font-weight: 600;
+	font-family: var(--myskills-ui-font);
 }
 
 .create-help-button {
@@ -262,7 +277,7 @@
 	background: color-mix(in srgb, var(--create-bg) 62%, transparent);
 	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 18%, transparent);
 	border-radius: 7px;
-	font-family: var(--vscode-font-family);
+	font-family: var(--myskills-ui-font);
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
@@ -281,31 +296,32 @@
 }
 
 .create-chat {
-	width: var(--create-content-width);
+	width: calc(100% + 20px);
+	margin-inline: -10px;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	min-height: 100px;
+	min-height: 92px;
 	box-sizing: border-box;
 	padding: 14px 14px 12px;
 	background: color-mix(in srgb, var(--create-bg) 82%, #000000 18%);
-	border: 1px solid color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 76%, transparent);
+	border: 1px solid color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 48%, transparent);
 	border-radius: 12px;
 	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 12%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 7%, transparent),
 		0 12px 34px color-mix(in srgb, #000000 28%, transparent);
 }
 
 .create-chat:focus-within {
-	border-color: var(--vscode-focusBorder, #0078d4);
+	border-color: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 72%, transparent);
 	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 26%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 14%, transparent),
 		0 12px 34px color-mix(in srgb, #000000 28%, transparent);
 }
 
 .create-chat-input {
 	width: 100%;
-	min-height: 38px;
+	min-height: 32px;
 	box-sizing: border-box;
 	padding: 0;
 	resize: none;
@@ -313,8 +329,8 @@
 	background: transparent;
 	border: 0;
 	outline: 0;
-	font-family: var(--vscode-font-family);
-	font-size: 14px;
+	font-family: var(--myskills-ui-font);
+	font-size: 13px;
 	line-height: 1.4;
 	scrollbar-width: thin;
 }
@@ -336,7 +352,7 @@
 	align-items: center;
 	justify-content: center;
 	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 14%, transparent);
-	font-family: var(--vscode-font-family);
+	font-family: var(--myskills-ui-font);
 	cursor: pointer;
 	transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
 }
@@ -420,7 +436,7 @@
 .btn-create-panel {
 	padding: 10px 24px;
 	font-size: 14px;
-	font-family: var(--vscode-font-family);
+	font-family: var(--myskills-ui-font);
 	font-weight: 500;
 	color: var(--vscode-button-foreground, #ffffff);
 	background: var(--vscode-button-secondaryBackground, #e36209);

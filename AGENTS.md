@@ -6,13 +6,14 @@ Use `bun` (not npm/yarn/pnpm). The lockfile is `bun.lock`. All scripts in `packa
 
 ## Build
 
-Three separate esbuild entrypoints, each with different targets:
+Four separate esbuild entrypoints, each with different targets:
 
 | Source | Output | Format | Platform |
 |---|---|---|---|
 | `src/extension.ts` | `dist/extension.js` | CJS | Node |
 | `src/my-skills/view/index.ts` | `dist/webview.js` | IIFE | Browser |
 | `src/my-skills/screens/create-skill/ui/create.ts` | `dist/create-skill.js` | IIFE | Browser |
+| `src/my-skills/screens/create-skill/support/support.ts` | `dist/create-skill-support.js` | IIFE | Browser |
 
 - `dist/` is gitignored — you must build before launch or test.
 - `vscode` is marked external in the extension bundle (provided by the host).
@@ -35,16 +36,17 @@ bun run test           # vscode-test (runs pretest: compile-tests → compile �
 ### Extension host (`dist/extension.js`)
 
 - Entry: `src/extension.ts` — registers a single `WebviewViewProvider` in the activity bar.
-- The provider (`src/my-skills/my-skills.ts`) assembles the webview HTML at runtime by reading `.html` templates from `src/my-skills/screens/**/ui/**` via `fs.readFileSync`.
+- The provider (`src/my-skills/my-skills.ts`) assembles webview HTML at runtime by reading `.html` templates from `src/my-skills/screens/**` via `fs.readFileSync`.
 - CSS and JS file URIs are injected via `webview.asWebviewUri()` into the shell template.
 - CSP is set: scripts require a nonce, styles/images/fonts use `vscode.cspSource`.
 
-### Webview client (`dist/webview.js`, `dist/create-skill.js`)
+### Webview client (`dist/webview.js`, `dist/create-skill.js`, `dist/create-skill-support.js`)
 
 - Tab-based SPA with three panels: CREATE, INSTALL, LOCAL.
 - INSTALL has sub-panels: All Time, Trending, Official.
 - All DOM querying/manipulation is vanilla TS (no framework).
 - `create-skill.js` is loaded as a **separate bundle** alongside `webview.js` (both injected via separate `<script>` tags in the shell HTML).
+- `create-skill-support.js` is loaded only by the CREATE support `WebviewPanel`.
 
 ### HTML templates are NOT bundled
 

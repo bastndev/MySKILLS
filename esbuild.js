@@ -64,13 +64,27 @@ async function main() {
 		plugins: [esbuildProblemMatcherPlugin],
 	});
 
+	const ctxCreateSkillSupport = await esbuild.context({
+		entryPoints: ['src/my-skills/screens/create-skill/support/support.ts'],
+		bundle: true,
+		format: 'iife',
+		minify: production,
+		sourcemap: !production,
+		sourcesContent: false,
+		platform: 'browser',
+		outfile: 'dist/create-skill-support.js',
+		logLevel: 'silent',
+		plugins: [esbuildProblemMatcherPlugin],
+	});
+
 	if (watch) {
-		await Promise.all([ctxExtension.watch(), ctxWebview.watch(), ctxCreateSkill.watch()]);
+		await Promise.all([ctxExtension.watch(), ctxWebview.watch(), ctxCreateSkill.watch(), ctxCreateSkillSupport.watch()]);
 	} else {
-		await Promise.all([ctxExtension.rebuild(), ctxWebview.rebuild(), ctxCreateSkill.rebuild()]);
+		await Promise.all([ctxExtension.rebuild(), ctxWebview.rebuild(), ctxCreateSkill.rebuild(), ctxCreateSkillSupport.rebuild()]);
 		await ctxExtension.dispose();
 		await ctxWebview.dispose();
 		await ctxCreateSkill.dispose();
+		await ctxCreateSkillSupport.dispose();
 	}
 }
 

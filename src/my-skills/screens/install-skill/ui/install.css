@@ -1,10 +1,8 @@
-/* ── Panel Override ─────────────────────────────────────────────────── */
 #install-panel.panel {
 	align-items: stretch;
 	justify-content: stretch;
 }
 
-/* ── Surface ─────────────────────────────────────────────────────────── */
 .install-surface {
 	--install-bg: var(--vscode-sideBar-background, var(--vscode-editor-background, #1e1e1e));
 	--install-accent: var(--vscode-focusBorder, #0078d4);
@@ -23,16 +21,14 @@
 	box-sizing: border-box;
 }
 
-/* ── Header ──────────────────────────────────────────────────────────── */
 .install-header {
 	flex: 0 0 auto;
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 15px;
 	padding: 12px 12px 0;
 }
 
-/* ── Search Box ──────────────────────────────────────────────────────── */
 .install-search-box {
 	display: flex;
 	align-items: center;
@@ -46,6 +42,10 @@
 	border-radius: 7px;
 	cursor: text;
 	transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.install-search-box:hover {
+	border-color: color-mix(in srgb, var(--install-fg) 18%, transparent);
 }
 
 .install-search-box:focus-within {
@@ -87,12 +87,11 @@
 	-webkit-appearance: none;
 }
 
-/* ── Filter Bar ──────────────────────────────────────────────────────── */
 .install-filters {
 	display: flex;
 	align-items: center;
 	gap: 2px;
-	padding: 8px 0 0;
+	padding: 0;
 	border-bottom: 1px solid var(--install-border);
 }
 
@@ -119,9 +118,9 @@
 }
 
 .install-filter.active {
-	color: var(--install-fg);
+	color: var(--install-accent);
 	font-weight: 600;
-	background: color-mix(in srgb, var(--install-fg) 8%, transparent);
+	background: color-mix(in srgb, var(--install-accent) 12%, transparent);
 }
 
 .install-filter:focus-visible {
@@ -136,7 +135,7 @@
 }
 
 .install-filter.active .install-filter-count {
-	color: var(--install-muted);
+	color: color-mix(in srgb, var(--install-accent) 80%, var(--install-muted));
 }
 
 .install-filter-badge {
@@ -149,7 +148,6 @@
 	letter-spacing: 0.02em;
 }
 
-/* ── Sub-Panel Containers ────────────────────────────────────────────── */
 .install-panel {
 	display: flex;
 	flex-direction: column;
@@ -167,7 +165,6 @@
 	align-items: center;
 }
 
-/* ── Skills List ─────────────────────────────────────────────────────── */
 .install-list {
 	flex: 1;
 	overflow-y: auto;
@@ -191,7 +188,6 @@
 	border-radius: 4px;
 }
 
-/* ── Single Skill Item ───────────────────────────────────────────────── */
 .install-item {
 	display: flex;
 	align-items: center;
@@ -205,16 +201,17 @@
 	background: var(--install-hover-bg);
 }
 
-.install-item:hover .install-downloads {
+.install-item:hover .install-downloads,
+.install-item:focus-within .install-downloads {
 	opacity: 0;
 	pointer-events: none;
 }
 
-.install-item:hover .install-btn {
+.install-item:hover .install-btn,
+.install-item:focus-within .install-btn {
 	opacity: 1;
 }
 
-/* ── Rank Number ─────────────────────────────────────────────────────── */
 .install-rank {
 	flex: 0 0 22px;
 	text-align: right;
@@ -225,7 +222,6 @@
 	user-select: none;
 }
 
-/* ── Skill Info (name + source) ──────────────────────────────────────── */
 .install-info {
 	flex: 1;
 	min-width: 0;
@@ -253,10 +249,8 @@
 	font-family: var(--vscode-font-family);
 }
 
-/* ── Meta (downloads + install button) ──────────────────────────────── */
 .install-meta {
 	flex: 0 0 auto;
-	/* Single grid cell — both children overlap; opacity toggles on hover */
 	display: grid;
 	grid-template-areas: 'slot';
 	align-items: center;
@@ -283,7 +277,6 @@
 	opacity: 0.7;
 }
 
-/* ── Install Button ──────────────────────────────────────────────────── */
 .install-btn {
 	grid-area: slot;
 	display: inline-flex;
@@ -318,7 +311,6 @@
 	transform: scale(0.97);
 }
 
-/* ── Reduced Motion ──────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
 	.install-search-box,
 	.install-filter,

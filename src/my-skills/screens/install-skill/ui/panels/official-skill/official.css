@@ -76,11 +76,17 @@
 	padding: 6px 8px;
 	border-radius: 5px;
 	margin-left: -8px;
-	transition: background 0.15s ease;
+	transition: background 0.15s ease, color 0.15s ease;
 }
 
 .official-back-btn:hover {
-	background: color-mix(in srgb, var(--vscode-foreground, #ccc) 6%, transparent);
+	color: var(--vscode-focusBorder, #0078d4);
+}
+
+.official-back-btn:focus-visible {
+	color: var(--vscode-focusBorder, #0078d4);
+	outline: 1px solid var(--vscode-focusBorder, #0078d4);
+	outline-offset: 2px;
 }
 
 .official-grid {

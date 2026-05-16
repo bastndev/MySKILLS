@@ -1,6 +1,7 @@
 import { initInstallPanel } from '../screens/install-skill/ui/install';
 import { initOfficialPanel } from '../screens/install-skill/ui/panels/official-skill/official';
 import { initSearchPanel } from '../screens/install-skill/ui/search/search';
+import { initLocalPanel } from '../screens/local-skill/ui/local';
 
 type WebviewState = {
 	activeTab?: string;
@@ -10,6 +11,7 @@ type WebviewState = {
 type VsCodeApi = {
 	getState(): unknown;
 	setState(state: WebviewState): void;
+	postMessage(message: unknown): void;
 };
 
 declare function acquireVsCodeApi(): VsCodeApi;
@@ -19,6 +21,7 @@ const vscodeApi = acquireVsCodeApi();
 const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.tab'));
 const panels = Array.from(document.querySelectorAll<HTMLElement>('.panel'));
 const indicator = document.querySelector<HTMLElement>('.slider-indicator');
+const createSupportButton = document.querySelector<HTMLButtonElement>('[data-create-support-button]');
 
 function isWebviewState(value: unknown): value is WebviewState {
 	if (!value || typeof value !== 'object') {
@@ -118,6 +121,10 @@ window.addEventListener('message', event => {
 	}
 });
 
+createSupportButton?.addEventListener('click', () => {
+	vscodeApi.postMessage({ type: 'createSkill.openSupport' });
+});
+
 // ── Init install filter tabs ──────────────────────────────────────────
 initInstallPanel();
 
@@ -126,3 +133,6 @@ initOfficialPanel();
 
 // ── Init search panel ───────────────────────────────────────────────
 initSearchPanel();
+
+// ── Init local (installed) panel ─────────────────────────────────────
+initLocalPanel();
