@@ -26,10 +26,13 @@ export function initInstallPanel(): void {
 		btn.addEventListener('click', () => {
 			const target = btn.dataset.filter; // 'all' | 'trending' | 'official'
 
-			// Clear search input if active
+			// Clear search and hide search panel if active.
+			// Dispatching an 'input' event lets search.ts run its own
+			// hideSearchResults() so the count label also gets cleaned up.
 			const searchInput = document.getElementById('install-search-input') as HTMLInputElement | null;
-			if (searchInput) {
+			if (searchInput && searchInput.value !== '') {
 				searchInput.value = '';
+				searchInput.dispatchEvent(new Event('input', { bubbles: true }));
 			}
 
 			// ── Update filter buttons ──────────────────────────────────────
