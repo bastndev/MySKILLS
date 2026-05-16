@@ -33,8 +33,10 @@ function escHtml(s: string): string {
 }
 
 function renderSkill(skill: LocalSkill): string {
+	const switchLabel = `${skill.enabled ? 'Disable' : 'Enable'} ${skill.name}`;
+
 	return `
-		<li class="local-item" data-skill-id="${escHtml(skill.id)}">
+		<li class="local-item ${skill.enabled ? '' : 'local-item--disabled'}" data-skill-id="${escHtml(skill.id)}">
 			<span class="local-item-badge" aria-hidden="true">
 				${SKILL_ICON}
 			</span>
@@ -43,8 +45,8 @@ function renderSkill(skill: LocalSkill): string {
 				<span class="local-item-meta">${escHtml(skill.source)}</span>
 			</div>
 			<div class="local-item-actions">
-				<label class="local-item-switch" aria-label="${skill.enabled ? 'Disable' : 'Enable'} ${escHtml(skill.name)}">
-					<input type="checkbox" ${skill.enabled ? 'checked' : ''}>
+				<label class="local-item-switch" aria-label="${escHtml(switchLabel)}">
+					<input type="checkbox" role="switch" data-toggle-id="${escHtml(skill.id)}" ${skill.enabled ? 'checked' : ''}>
 					<span class="local-item-switch-track" aria-hidden="true"></span>
 				</label>
 			</div>
@@ -66,6 +68,12 @@ function getSorted(list: LocalSkill[]): LocalSkill[] {
 	});
 }
 
+function renderStats(statTotal: HTMLElement, statActive: HTMLElement, statDisabled: HTMLElement): void {
+	statTotal.textContent   = String(skills.length);
+	statActive.textContent   = String(skills.filter(s => s.enabled).length);
+	statDisabled.textContent = String(skills.filter(s => !s.enabled).length);
+}
+
 function render(
 	listEl:        HTMLUListElement,
 	emptyEl:       HTMLElement,
@@ -73,11 +81,8 @@ function render(
 	statActive:    HTMLElement,
 	statDisabled:  HTMLElement,
 ): void {
-	statTotal.textContent   = String(skills.length);
-	statActive.textContent   = String(skills.filter(s => s.enabled).length);
-	statDisabled.textContent = String(skills.filter(s => !s.enabled).length);
-
 	const sorted = getSorted(skills);
+	renderStats(statTotal, statActive, statDisabled);
 
 	if (skills.length === 0) {
 		listEl.innerHTML = '';
@@ -89,6 +94,27 @@ function render(
 	emptyEl.hidden = true;
 	listEl.hidden        = false;
 	listEl.innerHTML     = sorted.map(renderSkill).join('');
+}
+
+function updateSkillEnabled(
+	id: string,
+	enabled: boolean,
+	itemEl: HTMLElement | null,
+	inputEl: HTMLInputElement,
+	statTotal: HTMLElement,
+	statActive: HTMLElement,
+	statDisabled: HTMLElement,
+): void {
+	const skill = skills.find(candidate => candidate.id === id);
+	if (!skill) {
+		inputEl.checked = !enabled;
+		return;
+	}
+
+	skill.enabled = enabled;
+	itemEl?.classList.toggle('local-item--disabled', !enabled);
+	inputEl.closest('.local-item-switch')?.setAttribute('aria-label', `${enabled ? 'Disable' : 'Enable'} ${skill.name}`);
+	renderStats(statTotal, statActive, statDisabled);
 }
 
 export function initLocalPanel(): void {
@@ -118,6 +144,23 @@ export function initLocalPanel(): void {
 			rerender();
 		});
 	}
+
+	listEl.addEventListener('change', event => {
+		const input = (event.target as Element).closest<HTMLInputElement>('[data-toggle-id]');
+		if (!input) {
+			return;
+		}
+
+		updateSkillEnabled(
+			input.dataset.toggleId ?? '',
+			input.checked,
+			input.closest<HTMLElement>('.local-item'),
+			input,
+			statTotal,
+			statActive,
+			statDisabled,
+		);
+	});
 
 	if (gotoInstall) {
 		gotoInstall.addEventListener('click', () => {
