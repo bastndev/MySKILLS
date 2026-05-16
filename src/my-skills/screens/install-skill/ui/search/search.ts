@@ -1,23 +1,10 @@
-/**
- * search.ts — Install search overlay logic
- *
- * Reads skill items that are already rendered in the static panels
- * (All Time, Trending) and uses them as the search data source.
- * This means no separate fakeData to keep in sync — the DOM IS the data.
- *
- * When real API data arrives in the future, replace `collectSkillsFromDom`
- * with a fetch call and re-render using the same `renderItem` helper.
- */
-
 interface SkillRecord {
 	name: string;
 	source: string;
 	downloads: string;
 }
 
-/** Reads all .install-item nodes from the real panels and extracts their data. */
 function collectSkillsFromDom(): SkillRecord[] {
-	// Only scan the static data panels — not the search panel itself
 	const sourcePanels = document.querySelectorAll<HTMLElement>(
 		'#install-panel-all .install-item, #install-panel-trending .install-item'
 	);
@@ -77,8 +64,6 @@ export function initSearchPanel(): void {
 		return;
 	}
 
-	// Collect skill data from already-rendered panels (source of truth).
-	// Deferred so all panels are injected into the DOM before we scan.
 	let skillData: SkillRecord[] = [];
 
 	function ensureSkillData() {
@@ -90,14 +75,17 @@ export function initSearchPanel(): void {
 	function showSearchResults(query: string) {
 		ensureSkillData();
 
-		// Hide all other install panels while search is active
 		const allPanels = document.querySelectorAll<HTMLElement>('.install-panel:not(#install-panel-search)');
-		allPanels.forEach(p => { p.hidden = true; });
+		allPanels.forEach(p => {
+			p.hidden = true;
+			p.setAttribute('aria-hidden', 'true');
+		});
 		searchPanel!.hidden = false;
+		searchPanel!.setAttribute('aria-hidden', 'false');
 
 		const q = query.toLowerCase();
 		const filtered = skillData.filter(item =>
-			item.name.toLowerCase().includes(q)
+			item.name.toLowerCase().includes(q) || item.source.toLowerCase().includes(q)
 		);
 
 		if (filtered.length > 0) {
@@ -117,15 +105,16 @@ export function initSearchPanel(): void {
 
 	function hideSearchResults() {
 		searchPanel!.hidden = true;
+		searchPanel!.setAttribute('aria-hidden', 'true');
 		if (countEl) { countEl.hidden = true; }
 
-		// Restore the active tab's panel
 		const activeFilter = document.querySelector<HTMLButtonElement>('.install-filter.active');
 		if (activeFilter) {
 			const target      = activeFilter.dataset.filter;
 			const activePanel = document.getElementById(`install-panel-${target}`);
 			if (activePanel) {
 				activePanel.hidden = false;
+				activePanel.setAttribute('aria-hidden', 'false');
 			}
 		}
 	}
@@ -140,7 +129,6 @@ export function initSearchPanel(): void {
 		}
 	});
 
-	// Pressing Escape clears the search and restores the active panel
 	searchInput.addEventListener('keydown', (e) => {
 		if (e.key === 'Escape') {
 			searchInput.value = '';
