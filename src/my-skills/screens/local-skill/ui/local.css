@@ -97,6 +97,8 @@
 .local-section-tab {
 	display: inline-flex;
 	align-items: center;
+	flex: 1 1 auto;
+	min-width: 0;
 	padding: 5px 8px;
 	background: transparent;
 	border: none;
@@ -106,11 +108,14 @@
 	font-size: 12px;
 	font-weight: 600;
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	margin-bottom: -1px;
 }
 
 /* ── Sort button ─────────────────────────────────────────────────────── */
 .local-sort-btn {
+	flex: 0 0 auto;
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;

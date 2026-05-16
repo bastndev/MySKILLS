@@ -54,7 +54,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			const officialPath = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'panels', 'official-skill', 'official.html').fsPath;
 			const searchPath   = vscode.Uri.joinPath(this._extensionUri, 'src', 'my-skills', 'screens', 'install-skill', 'ui', 'search', 'search.html').fsPath;
 
-			const localHtml    = fs.readFileSync(localPath, 'utf8');
+			let localHtml      = fs.readFileSync(localPath, 'utf8');
 			let   installHtml  = fs.readFileSync(installPath, 'utf8');
 			const createHtml   = fs.readFileSync(createPath, 'utf8');
 
@@ -75,6 +75,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			installHtml = installHtml.replace('<!-- TRENDING_PANEL -->', trendingHtml);
 			installHtml = installHtml.replace('<!-- OFFICIAL_PANEL -->', officialHtml);
 			installHtml = installHtml.replace('<!-- SEARCH_PANEL -->', searchHtml);
+			localHtml = localHtml.replaceAll('{{LOCAL_WORKSPACE_NAME}}', escapeHtml(getWorkspaceName()));
 
 			const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'webview.js'));
 			const createScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'dist', 'create-skill.js'));
@@ -130,4 +131,16 @@ function getNonce(): string {
 		text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}
 	return text;
+}
+
+function getWorkspaceName(): string {
+	return vscode.workspace.name ?? vscode.workspace.workspaceFolders?.[0]?.name ?? 'Workspace';
+}
+
+function escapeHtml(value: string): string {
+	return value
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
 }
