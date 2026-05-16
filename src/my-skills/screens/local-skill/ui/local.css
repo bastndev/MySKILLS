@@ -280,69 +280,64 @@
 	white-space: nowrap;
 }
 
-/* ── Actions (shown on hover via CSS grid trick) ─────────────────────── */
+/* ── Actions ─────────────────────────────────────────────────────────── */
 .local-item-actions {
 	flex: 0 0 auto;
-	display: grid;
-	grid-template-areas: 'slot';
+	display: flex;
 	align-items: center;
-	justify-items: end;
 }
 
-.local-item-version {
-	grid-area: slot;
-	font-size: 11px;
-	font-weight: 500;
-	color: color-mix(in srgb, var(--local-muted) 70%, transparent);
-	font-variant-numeric: tabular-nums;
-	font-family: var(--vscode-editor-font-family, monospace);
-	white-space: nowrap;
-	transition: opacity 0.14s ease;
-}
-
-.local-item-remove-btn {
-	grid-area: slot;
+.local-item-switch {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 22px;
-	height: 22px;
+	width: 32px;
+	height: 18px;
 	padding: 0;
-	background: color-mix(in srgb, #ff4444 12%, transparent);
-	color: #ff6b6b;
-	border: 1px solid color-mix(in srgb, #ff4444 30%, transparent);
-	border-radius: 5px;
 	cursor: pointer;
-	opacity: 0;
-	transition: opacity 0.14s ease, background 0.14s ease;
 }
 
-.local-item-remove-btn svg {
-	width: 11px;
-	height: 11px;
-	fill: none;
-	stroke: currentColor;
-	stroke-width: 1.6;
-	stroke-linecap: round;
-}
-
-.local-item:hover .local-item-version {
+.local-item-switch input {
+	position: absolute;
 	opacity: 0;
 	pointer-events: none;
 }
 
-.local-item:hover .local-item-remove-btn {
-	opacity: 1;
+.local-item-switch-track {
+	position: relative;
+	width: 32px;
+	height: 18px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--local-muted) 22%, transparent);
+	border: 1px solid color-mix(in srgb, var(--local-fg) 13%, transparent);
+	transition: background 0.14s ease, border-color 0.14s ease;
 }
 
-.local-item-remove-btn:hover {
-	background: color-mix(in srgb, #ff4444 22%, transparent);
+.local-item-switch-track::after {
+	content: '';
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 10px;
+	height: 10px;
+	border-radius: 999px;
+	background: var(--local-muted);
+	transition: transform 0.14s ease, background 0.14s ease;
 }
 
-.local-item-remove-btn:focus-visible {
-	outline: 1px solid #ff4444;
+.local-item-switch input:checked + .local-item-switch-track {
+	background: color-mix(in srgb, var(--local-accent) 22%, transparent);
+	border-color: color-mix(in srgb, var(--local-accent) 45%, transparent);
+}
+
+.local-item-switch input:checked + .local-item-switch-track::after {
+	transform: translateX(14px);
+	background: var(--local-accent);
+}
+
+.local-item-switch:focus-within .local-item-switch-track {
+	outline: 1px solid var(--local-accent);
 	outline-offset: 2px;
-	opacity: 1;
 }
 
 /* ── Section separator ───────────────────────────────────────────────── */
@@ -441,8 +436,8 @@
 	.local-item::before,
 	.local-item-badge,
 	.local-item-badge svg,
-	.local-item-version,
-	.local-item-remove-btn,
+	.local-item-switch-track,
+	.local-item-switch-track::after,
 	.local-empty-cta {
 		transition: none;
 	}

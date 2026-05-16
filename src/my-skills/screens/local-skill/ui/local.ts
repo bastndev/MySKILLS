@@ -7,7 +7,7 @@
  *
  * Features:
  *  - Sort toggle (A–Z / Z–A / newest)
- *  - Hover: version number ↔ remove button (CSS grid trick)
+ *  - Visible enable/disable switch per skill
  *  - Stats bar (installed / active / disabled)
  *  - Empty state when no skills are installed
  *  - "Browse skills →" CTA switches to the INSTALL tab
@@ -21,7 +21,6 @@ interface LocalSkill {
 	id:        string;
 	name:      string;        // e.g. "AGENTS.md"
 	source:    string;        // e.g. "microsoft/skills"
-	version:   string;        // e.g. "1.2.0"
 	hasUpdate: boolean;
 	enabled:   boolean;
 	installedAt: number;      // timestamp for "newest" sort
@@ -30,14 +29,14 @@ interface LocalSkill {
 // ── Mock data (replace with real data from extension host) ─────────────
 
 const MOCK_SKILLS: LocalSkill[] = [
-	{ id: 's1',  name: 'AGENTS.md',           source: 'microsoft/skills',       version: 'v1.4.2', hasUpdate: true,  enabled: true,  installedAt: 1747000000 },
-	{ id: 's2',  name: 'typescript-expert',   source: 'mattpocock/skills',      version: 'v2.1.0', hasUpdate: false, enabled: true,  installedAt: 1746800000 },
-	{ id: 's3',  name: 'DESIGN.md',           source: 'bastndev/skills',        version: 'v1.0.1', hasUpdate: true,  enabled: true,  installedAt: 1746700000 },
-	{ id: 's4',  name: '.agents/',            source: 'bastndev/skills',        version: 'v1.2.0', hasUpdate: false, enabled: true,  installedAt: 1746600000 },
-	{ id: 's5',  name: 'accessibility',       source: 'bastndev/skills',        version: 'v1.1.3', hasUpdate: false, enabled: true,  installedAt: 1746500000 },
-	{ id: 's6',  name: 'find-skills',         source: 'vercel-labs/skills',     version: 'v3.0.0', hasUpdate: true,  enabled: false, installedAt: 1746400000 },
-	{ id: 's7',  name: 'gpt-image-2',         source: 'agentspace-so/skills',   version: 'v1.0.0', hasUpdate: false, enabled: true,  installedAt: 1746300000 },
-	{ id: 's8',  name: 'code-reviewer',       source: 'gh-actions/skills',      version: 'v2.3.1', hasUpdate: false, enabled: false, installedAt: 1746200000 },
+	{ id: 's1',  name: 'AGENTS.md',           source: 'microsoft/skills',       hasUpdate: true,  enabled: true,  installedAt: 1747000000 },
+	{ id: 's2',  name: 'typescript-expert',   source: 'mattpocock/skills',      hasUpdate: false, enabled: true,  installedAt: 1746800000 },
+	{ id: 's3',  name: 'DESIGN.md',           source: 'bastndev/skills',        hasUpdate: true,  enabled: true,  installedAt: 1746700000 },
+	{ id: 's4',  name: '.agents/',            source: 'bastndev/skills',        hasUpdate: false, enabled: true,  installedAt: 1746600000 },
+	{ id: 's5',  name: 'accessibility',       source: 'bastndev/skills',        hasUpdate: false, enabled: true,  installedAt: 1746500000 },
+	{ id: 's6',  name: 'find-skills',         source: 'vercel-labs/skills',     hasUpdate: true,  enabled: false, installedAt: 1746400000 },
+	{ id: 's7',  name: 'gpt-image-2',         source: 'agentspace-so/skills',   hasUpdate: false, enabled: true,  installedAt: 1746300000 },
+	{ id: 's8',  name: 'code-reviewer',       source: 'gh-actions/skills',      hasUpdate: false, enabled: false, installedAt: 1746200000 },
 ];
 
 const SKILL_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -71,17 +70,10 @@ function renderSkill(skill: LocalSkill): string {
 			</div>
 			${updateBadge}
 			<div class="local-item-actions">
-				<span class="local-item-version">${escHtml(skill.version)}</span>
-				<button
-					class="local-item-remove-btn"
-					type="button"
-					aria-label="Remove ${escHtml(skill.name)}"
-					data-remove-id="${escHtml(skill.id)}"
-				>
-					<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-						<path d="M4 4l8 8M12 4l-8 8"/>
-					</svg>
-				</button>
+				<label class="local-item-switch" aria-label="${skill.enabled ? 'Disable' : 'Enable'} ${escHtml(skill.name)}">
+					<input type="checkbox" ${skill.enabled ? 'checked' : ''}>
+					<span class="local-item-switch-track" aria-hidden="true"></span>
+				</label>
 			</div>
 		</li>
 	`;
@@ -163,31 +155,6 @@ export function initLocalPanel(): void {
 			rerender();
 		});
 	}
-
-	// ── Remove skill (delegated) ─────────────────────────────────────
-	listEl.addEventListener('click', e => {
-		const btn = (e.target as Element).closest<HTMLButtonElement>('[data-remove-id]');
-		if (!btn) { return; }
-		e.stopPropagation();
-
-		const id = btn.dataset.removeId;
-		if (!id) { return; }
-
-		// Animate item out before removing from data
-		const item = btn.closest<HTMLElement>('.local-item');
-		if (item) {
-			item.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-			item.style.opacity    = '0';
-			item.style.transform  = 'translateX(6px)';
-			setTimeout(() => {
-				skills = skills.filter(s => s.id !== id);
-				rerender();
-			}, 180);
-		} else {
-			skills = skills.filter(s => s.id !== id);
-			rerender();
-		}
-	});
 
 	// ── "Browse skills →" CTA → switch to INSTALL tab ────────────────
 	if (gotoInstall) {
