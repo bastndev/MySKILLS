@@ -69,7 +69,11 @@
 	transition: color 0.2s ease;
 }
 
-.local-stat-value--update {
+.local-stat-value--active {
+	color: var(--local-accent);
+}
+
+.local-stat-value--disabled {
 	color: var(--local-orange);
 }
 

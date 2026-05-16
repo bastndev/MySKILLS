@@ -8,7 +8,7 @@
  * Features:
  *  - Sort toggle (A–Z / Z–A / newest)
  *  - Hover: version number ↔ remove button (CSS grid trick)
- *  - Stats bar (total / updates)
+ *  - Stats bar (installed / active / disabled)
  *  - Empty state when no skills are installed
  *  - "Browse skills →" CTA switches to the INSTALL tab
  */
@@ -23,20 +23,21 @@ interface LocalSkill {
 	source:    string;        // e.g. "microsoft/skills"
 	version:   string;        // e.g. "1.2.0"
 	hasUpdate: boolean;
+	enabled:   boolean;
 	installedAt: number;      // timestamp for "newest" sort
 }
 
 // ── Mock data (replace with real data from extension host) ─────────────
 
 const MOCK_SKILLS: LocalSkill[] = [
-	{ id: 's1',  name: 'AGENTS.md',           source: 'microsoft/skills',       version: 'v1.4.2', hasUpdate: true,  installedAt: 1747000000 },
-	{ id: 's2',  name: 'typescript-expert',   source: 'mattpocock/skills',      version: 'v2.1.0', hasUpdate: false, installedAt: 1746800000 },
-	{ id: 's3',  name: 'DESIGN.md',           source: 'bastndev/skills',        version: 'v1.0.1', hasUpdate: true,  installedAt: 1746700000 },
-	{ id: 's4',  name: '.agents/',            source: 'bastndev/skills',        version: 'v1.2.0', hasUpdate: false, installedAt: 1746600000 },
-	{ id: 's5',  name: 'accessibility',       source: 'bastndev/skills',        version: 'v1.1.3', hasUpdate: false, installedAt: 1746500000 },
-	{ id: 's6',  name: 'find-skills',         source: 'vercel-labs/skills',     version: 'v3.0.0', hasUpdate: true,  installedAt: 1746400000 },
-	{ id: 's7',  name: 'gpt-image-2',         source: 'agentspace-so/skills',   version: 'v1.0.0', hasUpdate: false, installedAt: 1746300000 },
-	{ id: 's8',  name: 'code-reviewer',       source: 'gh-actions/skills',      version: 'v2.3.1', hasUpdate: false, installedAt: 1746200000 },
+	{ id: 's1',  name: 'AGENTS.md',           source: 'microsoft/skills',       version: 'v1.4.2', hasUpdate: true,  enabled: true,  installedAt: 1747000000 },
+	{ id: 's2',  name: 'typescript-expert',   source: 'mattpocock/skills',      version: 'v2.1.0', hasUpdate: false, enabled: true,  installedAt: 1746800000 },
+	{ id: 's3',  name: 'DESIGN.md',           source: 'bastndev/skills',        version: 'v1.0.1', hasUpdate: true,  enabled: true,  installedAt: 1746700000 },
+	{ id: 's4',  name: '.agents/',            source: 'bastndev/skills',        version: 'v1.2.0', hasUpdate: false, enabled: true,  installedAt: 1746600000 },
+	{ id: 's5',  name: 'accessibility',       source: 'bastndev/skills',        version: 'v1.1.3', hasUpdate: false, enabled: true,  installedAt: 1746500000 },
+	{ id: 's6',  name: 'find-skills',         source: 'vercel-labs/skills',     version: 'v3.0.0', hasUpdate: true,  enabled: false, installedAt: 1746400000 },
+	{ id: 's7',  name: 'gpt-image-2',         source: 'agentspace-so/skills',   version: 'v1.0.0', hasUpdate: false, enabled: true,  installedAt: 1746300000 },
+	{ id: 's8',  name: 'code-reviewer',       source: 'gh-actions/skills',      version: 'v2.3.1', hasUpdate: false, enabled: false, installedAt: 1746200000 },
 ];
 
 const SKILL_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -108,11 +109,13 @@ function render(
 	listEl:        HTMLUListElement,
 	emptyEl:       HTMLElement,
 	statTotal:     HTMLElement,
-	statUpdates:   HTMLElement,
+	statActive:    HTMLElement,
+	statDisabled:  HTMLElement,
 ): void {
 	// Stats always use the full unfiltered list
 	statTotal.textContent   = String(skills.length);
-	statUpdates.textContent = String(skills.filter(s => s.hasUpdate).length);
+	statActive.textContent   = String(skills.filter(s => s.enabled).length);
+	statDisabled.textContent = String(skills.filter(s => !s.enabled).length);
 
 	const sorted = getSorted(skills);
 
@@ -134,18 +137,19 @@ export function initLocalPanel(): void {
 	const listEl        = document.getElementById('local-list')        as HTMLUListElement | null;
 	const emptyEl       = document.getElementById('local-empty')       as HTMLElement | null;
 	const statTotal     = document.getElementById('stat-total')        as HTMLElement | null;
-	const statUpdates   = document.getElementById('stat-updates')      as HTMLElement | null;
+	const statActive    = document.getElementById('stat-active')       as HTMLElement | null;
+	const statDisabled  = document.getElementById('stat-disabled')     as HTMLElement | null;
 	const sortBtn       = document.getElementById('local-sort-btn')    as HTMLButtonElement | null;
 	const sortLabel     = document.getElementById('local-sort-label')  as HTMLElement | null;
 	const gotoInstall   = document.getElementById('local-goto-install') as HTMLButtonElement | null;
 
-	if (!listEl || !emptyEl || !statTotal || !statUpdates) {
+	if (!listEl || !emptyEl || !statTotal || !statActive || !statDisabled) {
 		return;
 	}
 
 	// ── Helper to re-render ──────────────────────────────────────────
 	const rerender = () =>
-		render(listEl, emptyEl, statTotal, statUpdates);
+		render(listEl, emptyEl, statTotal, statActive, statDisabled);
 
 	// ── Initial render ───────────────────────────────────────────────
 	rerender();
