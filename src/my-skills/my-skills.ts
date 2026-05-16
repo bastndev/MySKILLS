@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import { getWorkspaceRootSkills } from './screens/local-skill/core/local-skills';
+import type { LocalSkillsRequestMessage } from './screens/local-skill/core/types';
 
 export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'myskills-panel';
@@ -28,6 +30,9 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			if (isWebviewMessage(message) && message.type === 'createSkill.openSupport') {
 				this._openCreateSkillSupport();
 			}
+			if (isLocalSkillsRequestMessage(message)) {
+				void this._postLocalSkills();
+			}
 		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, nonce);
@@ -37,6 +42,15 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		if (this._view) {
 			this._view.webview.postMessage({ type: 'switch-tab', target });
 		}
+	}
+
+	private async _postLocalSkills() {
+		if (!this._view) {
+			return;
+		}
+
+		const skills = await getWorkspaceRootSkills();
+		await this._view.webview.postMessage({ type: 'localSkills.update', skills });
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview, nonce: string): string {
@@ -204,6 +218,10 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 
 function isWebviewMessage(value: unknown): value is { type: string } {
 	return Boolean(value) && typeof value === 'object' && typeof (value as { type?: unknown }).type === 'string';
+}
+
+function isLocalSkillsRequestMessage(value: unknown): value is LocalSkillsRequestMessage {
+	return isWebviewMessage(value) && value.type === 'localSkills.request';
 }
 
 function getNonce(): string {

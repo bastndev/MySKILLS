@@ -129,4 +129,4 @@ initOfficialPanel();
 initSearchPanel();
 
 // ── Init local (installed) panel ─────────────────────────────────────
-initLocalPanel();
+initLocalPanel(vscodeApi);

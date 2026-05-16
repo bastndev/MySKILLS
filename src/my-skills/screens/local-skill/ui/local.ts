@@ -1,23 +1,10 @@
-type SortMode  = 'az' | 'za' | 'newest';
+import type { LocalSkill, LocalSkillsUpdateMessage } from '../core/types';
 
-interface LocalSkill {
-	id:        string;
-	name:      string;
-	source:    string;
-	enabled:   boolean;
-	installedAt: number;
-}
+type SortMode = 'az' | 'za' | 'newest';
 
-const MOCK_SKILLS: LocalSkill[] = [
-	{ id: 's1', name: 'AGENTS.md',         source: 'microsoft/skills',     enabled: true,  installedAt: 1747000000 },
-	{ id: 's2', name: 'typescript-expert', source: 'mattpocock/skills',    enabled: true,  installedAt: 1746800000 },
-	{ id: 's3', name: 'DESIGN.md',         source: 'bastndev/skills',      enabled: true,  installedAt: 1746700000 },
-	{ id: 's4', name: '.agents/',          source: 'bastndev/skills',      enabled: true,  installedAt: 1746600000 },
-	{ id: 's5', name: 'accessibility',     source: 'bastndev/skills',      enabled: true,  installedAt: 1746500000 },
-	{ id: 's6', name: 'find-skills',       source: 'vercel-labs/skills',   enabled: false, installedAt: 1746400000 },
-	{ id: 's7', name: 'gpt-image-2',       source: 'agentspace-so/skills', enabled: true,  installedAt: 1746300000 },
-	{ id: 's8', name: 'code-reviewer',     source: 'gh-actions/skills',    enabled: false, installedAt: 1746200000 },
-];
+type VsCodeApi = {
+	postMessage(message: unknown): void;
+};
 
 const SKILL_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
 	<path d="M3.5 4.5h3l1 1h5v6h-9z"/>
@@ -54,10 +41,10 @@ function renderSkill(skill: LocalSkill): string {
 	`;
 }
 
-let skills:      LocalSkill[] = [...MOCK_SKILLS];
-let sortMode:     SortMode    = 'az';
+let skills: LocalSkill[] = [];
+let sortMode: SortMode = 'az';
 
-const SORT_CYCLE: SortMode[]      = ['az', 'za', 'newest'];
+const SORT_CYCLE: SortMode[] = ['az', 'za', 'newest'];
 const SORT_LABELS: Record<SortMode, string> = { az: 'A–Z', za: 'Z–A', newest: 'New' };
 
 function getSorted(list: LocalSkill[]): LocalSkill[] {
@@ -117,7 +104,14 @@ function updateSkillEnabled(
 	renderStats(statTotal, statActive, statDisabled);
 }
 
-export function initLocalPanel(): void {
+function isLocalSkillsUpdateMessage(value: unknown): value is LocalSkillsUpdateMessage {
+	return Boolean(value)
+		&& typeof value === 'object'
+		&& (value as { type?: unknown }).type === 'localSkills.update'
+		&& Array.isArray((value as { skills?: unknown }).skills);
+}
+
+export function initLocalPanel(vscodeApi: VsCodeApi): void {
 	const listEl        = document.getElementById('local-list')        as HTMLUListElement | null;
 	const emptyEl       = document.getElementById('local-empty')       as HTMLElement | null;
 	const statTotal     = document.getElementById('stat-total')        as HTMLElement | null;
@@ -135,6 +129,17 @@ export function initLocalPanel(): void {
 		render(listEl, emptyEl, statTotal, statActive, statDisabled);
 
 	rerender();
+
+	window.addEventListener('message', event => {
+		if (!isLocalSkillsUpdateMessage(event.data)) {
+			return;
+		}
+
+		skills = event.data.skills;
+		rerender();
+	});
+
+	vscodeApi.postMessage({ type: 'localSkills.request' });
 
 	if (sortBtn && sortLabel) {
 		sortBtn.addEventListener('click', () => {
