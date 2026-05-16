@@ -31,18 +31,32 @@ function escHtml(s: string): string {
 		.replace(/"/g, '&quot;');
 }
 
+function getSkillMeta(skill: LocalSkill): string {
+	if (skill.kind === 'folder') {
+		const segments = skill.id.split('/');
+		return segments.length > 1 ? segments.slice(0, -1).join('/') : skill.source;
+	}
+
+	return 'workspace root';
+}
+
 function renderSkill(skill: LocalSkill): string {
 	const switchLabel = `${skill.enabled ? 'Disable' : 'Enable'} ${skill.name}`;
 	const isFolder = skill.kind === 'folder';
+	const meta = getSkillMeta(skill);
+	const typeLabel = isFolder ? 'Folder' : 'File';
 
 	return `
-		<li class="local-item ${isFolder ? 'local-item--folder' : 'local-item--file'} ${skill.enabled ? '' : 'local-item--disabled'}" data-skill-id="${escHtml(skill.id)}">
+		<li class="local-item ${isFolder ? 'local-item--folder' : 'local-item--file'} ${skill.enabled ? '' : 'local-item--disabled'}" data-skill-id="${escHtml(skill.id)}" title="${escHtml(skill.id)}">
 			<span class="local-item-badge ${isFolder ? 'local-item-badge--folder' : 'local-item-badge--file'}" aria-hidden="true">
 				${isFolder ? FOLDER_ICON : skill.icon ?? ''}
 			</span>
 			<div class="local-item-info">
-				<span class="local-item-name">${escHtml(skill.name)}</span>
-				<span class="local-item-meta">${escHtml(skill.source)}</span>
+				<span class="local-item-name" title="${escHtml(skill.name)}">${escHtml(skill.name)}</span>
+				<span class="local-item-meta" title="${escHtml(skill.id)}">
+					<span class="local-item-kind">${typeLabel}</span>
+					<span class="local-item-path">${escHtml(meta)}</span>
+				</span>
 			</div>
 			<div class="local-item-actions">
 				<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
@@ -78,6 +92,38 @@ function renderStats(statTotal: HTMLElement, statActive: HTMLElement, statDisabl
 	statTotal.textContent   = String(skills.length);
 	statActive.textContent   = String(skills.filter(s => s.enabled).length);
 	statDisabled.textContent = String(skills.filter(s => !s.enabled).length);
+}
+
+function getSortedIds(list: LocalSkill[]): string[] {
+	return getSorted(list).map(skill => skill.id);
+}
+
+function hasSameRenderedOrder(currentSkills: LocalSkill[], nextSkills: LocalSkill[]): boolean {
+	const currentIds = getSortedIds(currentSkills);
+	const nextIds = getSortedIds(nextSkills);
+
+	return currentIds.length === nextIds.length
+		&& currentIds.every((id, index) => id === nextIds[index]);
+}
+
+function syncRenderedSkillState(
+	listEl: HTMLUListElement,
+	statTotal: HTMLElement,
+	statActive: HTMLElement,
+	statDisabled: HTMLElement,
+): void {
+	for (const skill of skills) {
+		const itemEl = listEl.querySelector<HTMLElement>(`[data-skill-id="${CSS.escape(skill.id)}"]`);
+		const inputEl = itemEl?.querySelector<HTMLInputElement>('[data-toggle-id]');
+
+		itemEl?.classList.toggle('local-item--disabled', !skill.enabled);
+		if (inputEl) {
+			inputEl.checked = skill.enabled;
+			inputEl.closest('.local-item-switch')?.setAttribute('aria-label', `${skill.enabled ? 'Disable' : 'Enable'} ${skill.name}`);
+		}
+	}
+
+	renderStats(statTotal, statActive, statDisabled);
 }
 
 function render(
@@ -154,8 +200,17 @@ export function initLocalPanel(vscodeApi: VsCodeApi): void {
 			return;
 		}
 
-		skills = event.data.skills;
-		rerender();
+		const nextSkills = event.data.skills;
+		const canSyncStateOnly = skills.length > 0
+			&& nextSkills.length > 0
+			&& hasSameRenderedOrder(skills, nextSkills);
+
+		skills = nextSkills;
+		if (canSyncStateOnly) {
+			syncRenderedSkillState(listEl, statTotal, statActive, statDisabled);
+		} else {
+			rerender();
+		}
 	});
 
 	vscodeApi.postMessage({ type: 'localSkills.request' });
