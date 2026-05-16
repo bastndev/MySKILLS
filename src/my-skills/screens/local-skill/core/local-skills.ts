@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
+import { ROOT_SKILL_FILES, ROOT_SKILL_FILE_NAMES } from './file-folder/file-skills';
 import type { LocalSkill } from './types';
 
-const ROOT_SKILL_FILES = ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'DESIGN.md'] as const;
-export const ROOT_SKILL_FILE_NAMES: readonly string[] = ROOT_SKILL_FILES;
+export { ROOT_SKILL_FILE_NAMES };
 const GITIGNORE_FILE = '.gitignore';
 const BLOCK_BEGIN = '# My Skills: begin';
 const BLOCK_END = '# My Skills: end';
