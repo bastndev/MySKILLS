@@ -11,6 +11,11 @@ const SKILL_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false
 	<path d="M5.5 8h5M8 6.75V9.25"/>
 </svg>`;
 
+const FOLDER_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+	<path d="M2.5 4.5h4l1.2 1.4h5.8v5.6a1 1 0 0 1-1 1h-10z"/>
+	<path d="M2.5 4.5v-1h4.2l1.1 1.4"/>
+</svg>`;
+
 const DUPLICATE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
 	<path d="M5 5.5h6.5v7H5z"/>
 	<path d="M3.5 10.5h-1v-7H9v1"/>
@@ -33,11 +38,12 @@ function escHtml(s: string): string {
 
 function renderSkill(skill: LocalSkill): string {
 	const switchLabel = `${skill.enabled ? 'Disable' : 'Enable'} ${skill.name}`;
+	const isFolder = skill.kind === 'folder';
 
 	return `
 		<li class="local-item ${skill.enabled ? '' : 'local-item--disabled'}" data-skill-id="${escHtml(skill.id)}">
-			<span class="local-item-badge" aria-hidden="true">
-				${SKILL_ICON}
+			<span class="local-item-badge ${isFolder ? 'local-item-badge--folder' : ''}" aria-hidden="true">
+				${isFolder ? FOLDER_ICON : SKILL_ICON}
 			</span>
 			<div class="local-item-info">
 				<span class="local-item-name">${escHtml(skill.name)}</span>

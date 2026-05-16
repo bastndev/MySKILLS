@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { ROOT_SKILL_FILE_NAMES, getWorkspaceRootSkills, setWorkspaceRootSkillEnabled } from './screens/local-skill/core/local-skills';
+import { ROOT_SKILL_FILE_NAMES, ROOT_SKILL_FOLDER_WATCH_PATTERNS, getWorkspaceRootSkills, setWorkspaceRootSkillEnabled } from './screens/local-skill/core/local-skills';
 import type { LocalSkillSetEnabledMessage, LocalSkillsRequestMessage } from './screens/local-skill/core/types';
 
 export class MySkillsViewProvider implements vscode.WebviewViewProvider {
@@ -79,7 +79,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		}
 
 		const refresh = () => { void this._postLocalSkills(); };
-		const watchedFiles = ['.gitignore', ...ROOT_SKILL_FILE_NAMES];
+		const watchedFiles = ['.gitignore', ...ROOT_SKILL_FILE_NAMES, ...ROOT_SKILL_FOLDER_WATCH_PATTERNS];
 
 		this._localSkillWatchers = watchedFiles.map(fileName => {
 			const watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workspaceFolder, fileName));

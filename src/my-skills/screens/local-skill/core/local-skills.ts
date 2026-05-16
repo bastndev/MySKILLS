@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import { ROOT_SKILL_FILES, ROOT_SKILL_FILE_NAMES } from './file-folder/file-skills';
+import { ROOT_SKILL_FOLDERS, ROOT_SKILL_FOLDER_WATCH_PATTERNS } from './file-folder/folder-skills';
 import type { LocalSkill } from './types';
 
 export { ROOT_SKILL_FILE_NAMES };
+export { ROOT_SKILL_FOLDER_WATCH_PATTERNS };
 const GITIGNORE_FILE = '.gitignore';
 const BLOCK_BEGIN = '# My Skills: begin';
 const BLOCK_END = '# My Skills: end';
@@ -25,7 +27,7 @@ export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
 	}
 
 	const disabledSkills = await getDisabledSkillIds(workspaceFolder.uri);
-	const checks = ROOT_SKILL_FILES.map(async (fileName): Promise<LocalSkill | undefined> => {
+	const fileChecks = ROOT_SKILL_FILES.map(async (fileName): Promise<LocalSkill | undefined> => {
 		const uri = vscode.Uri.joinPath(workspaceFolder.uri, fileName);
 
 		try {
@@ -38,6 +40,7 @@ export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
 				id: fileName,
 				name: fileName,
 				source: workspaceFolder.name,
+				kind: 'file',
 				enabled: !disabledSkills.has(fileName),
 				installedAt: stat.mtime,
 			};
@@ -45,13 +48,21 @@ export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
 			return undefined;
 		}
 	});
+	const folderChecks = ROOT_SKILL_FOLDERS.map(folder => getWorkspaceFolderSkills(workspaceFolder, folder, disabledSkills));
 
-	const results = await Promise.all(checks);
-	return results.filter((skill): skill is LocalSkill => Boolean(skill));
+	const [fileResults, folderResults] = await Promise.all([
+		Promise.all(fileChecks),
+		Promise.all(folderChecks),
+	]);
+
+	return [
+		...fileResults.filter((skill): skill is LocalSkill => Boolean(skill)),
+		...folderResults.flat(),
+	];
 }
 
 export async function setWorkspaceRootSkillEnabled(skillId: string, enabled: boolean): Promise<void> {
-	if (!isRootSkillFile(skillId)) {
+	if (!isSupportedSkillId(skillId)) {
 		return;
 	}
 
@@ -69,6 +80,42 @@ export async function setWorkspaceRootSkillEnabled(skillId: string, enabled: boo
 	}
 
 	await vscode.workspace.fs.writeFile(gitignoreUri, new TextEncoder().encode(nextContent));
+}
+
+async function getWorkspaceFolderSkills(
+	workspaceFolder: vscode.WorkspaceFolder,
+	folder: typeof ROOT_SKILL_FOLDERS[number],
+	disabledSkills: Set<string>,
+): Promise<LocalSkill[]> {
+	const folderUri = vscode.Uri.joinPath(workspaceFolder.uri, ...folder.split('/'));
+
+	try {
+		const entries = await vscode.workspace.fs.readDirectory(folderUri);
+		const checks = entries
+			.filter(([, type]) => type === vscode.FileType.Directory)
+			.map(async ([name]): Promise<LocalSkill | undefined> => {
+				const id = `${folder}/${name}`;
+				const uri = vscode.Uri.joinPath(folderUri, name);
+
+				try {
+					const stat = await vscode.workspace.fs.stat(uri);
+					return {
+						id,
+						name,
+						source: `${workspaceFolder.name}/${folder}`,
+						kind: 'folder',
+						enabled: !disabledSkills.has(id),
+						installedAt: stat.mtime,
+					};
+				} catch {
+					return undefined;
+				}
+			});
+		const results = await Promise.all(checks);
+		return results.filter((skill): skill is LocalSkill => Boolean(skill));
+	} catch {
+		return [];
+	}
 }
 
 async function getDisabledSkillIds(workspaceUri: vscode.Uri): Promise<Set<string>> {
@@ -149,7 +196,7 @@ function parseManagedSkillLine(line: string): { skillId: string; commented: bool
 	const commented = trimmed.startsWith('#');
 	const candidate = commented ? trimmed.slice(1).trim() : trimmed;
 
-	if (!isRootSkillFile(candidate)) {
+	if (!isSupportedSkillId(candidate)) {
 		return undefined;
 	}
 
@@ -212,4 +259,12 @@ function formatManagedBlockSpacing(lines: string[]): string[] {
 
 function isRootSkillFile(value: string): value is typeof ROOT_SKILL_FILES[number] {
 	return ROOT_SKILL_FILES.some(fileName => fileName === value);
+}
+
+function isRootSkillFolder(value: string): boolean {
+	return ROOT_SKILL_FOLDERS.some(folder => value.startsWith(`${folder}/`) && value.length > folder.length + 1);
+}
+
+function isSupportedSkillId(value: string): boolean {
+	return isRootSkillFile(value) || isRootSkillFolder(value);
 }

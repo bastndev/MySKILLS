@@ -215,6 +215,11 @@
 	transition: background 0.14s ease;
 }
 
+.local-item-badge--folder {
+	flex-basis: 32px;
+	height: 32px;
+}
+
 .local-item:hover .local-item-badge {
 	background: color-mix(in srgb, var(--local-accent) 14%, transparent);
 }
@@ -228,6 +233,11 @@
 	stroke-linecap: round;
 	stroke-linejoin: round;
 	transition: stroke 0.14s ease;
+}
+
+.local-item-badge--folder svg {
+	width: 18px;
+	height: 18px;
 }
 
 .local-item:hover .local-item-badge svg {

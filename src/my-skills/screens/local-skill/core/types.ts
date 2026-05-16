@@ -1,7 +1,10 @@
+export type LocalSkillKind = 'file' | 'folder';
+
 export interface LocalSkill {
 	id: string;
 	name: string;
 	source: string;
+	kind: LocalSkillKind;
 	enabled: boolean;
 	installedAt: number;
 }
