@@ -18,19 +18,12 @@ declare function acquireVsCodeApi(): VsCodeApi;
 
 const vscodeApi = acquireVsCodeApi();
 
+document.body.classList.add('is-initializing');
+
 const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.tab'));
 const panels = Array.from(document.querySelectorAll<HTMLElement>('.panel'));
 const indicator = document.querySelector<HTMLElement>('.slider-indicator');
 const createSupportButton = document.querySelector<HTMLButtonElement>('[data-create-support-button]');
-
-function isWebviewState(value: unknown): value is WebviewState {
-	if (!value || typeof value !== 'object') {
-		return false;
-	}
-
-	const activeTab = (value as WebviewState).activeTab;
-	return typeof activeTab === 'undefined' || typeof activeTab === 'string';
-}
 
 function switchToTab(targetId: string, persistState = true): boolean {
 	const tab = tabs.find(candidate => candidate.dataset.target === targetId);
@@ -55,6 +48,7 @@ function switchToTab(targetId: string, persistState = true): boolean {
 
 	panels.forEach(panel => {
 		const isSelected = panel.id === targetId;
+		panel.hidden = !isSelected;
 		panel.classList.toggle('active', isSelected);
 		panel.setAttribute('aria-hidden', String(!isSelected));
 	});
@@ -101,15 +95,15 @@ tabs.forEach((tab, index) => {
 	});
 });
 
-const savedState = vscodeApi.getState();
-const savedTarget = isWebviewState(savedState) ? savedState.activeTab : undefined;
 const fallbackTarget = tabs.find(tab => tab.classList.contains('active'))?.dataset.target ?? tabs[0]?.dataset.target;
 
-if (!savedTarget || !switchToTab(savedTarget, false)) {
-	if (fallbackTarget) {
-		switchToTab(fallbackTarget, false);
-	}
+if (fallbackTarget) {
+	switchToTab(fallbackTarget, false);
 }
+
+requestAnimationFrame(() => {
+	document.body.classList.remove('is-initializing');
+});
 
 window.addEventListener('message', event => {
 	const message = event.data;

@@ -16,6 +16,15 @@ body {
 	overflow: hidden;
 }
 
+[hidden] {
+	display: none !important;
+}
+
+body.is-initializing .panel,
+body.is-initializing .slider-indicator {
+	transition: none;
+}
+
 .slider-menu {
 	display: flex;
 	position: relative;
@@ -84,6 +93,10 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.panel[hidden] {
+	display: none;
 }
 
 .panel.active {
