@@ -87,7 +87,7 @@
 	justify-content: space-between;
 	gap: 6px;
 	padding: 8px 12px 0;
-	border-bottom: 1px solid var(--local-border);
+	border-bottom: 1px solid transparent;
 	padding-bottom: 0;
 }
 
