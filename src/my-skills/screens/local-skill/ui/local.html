@@ -13,22 +13,12 @@
 				<span class="local-stat-value local-stat-value--update" id="stat-updates">0</span>
 				<span class="local-stat-label">updates</span>
 			</div>
-			<div class="local-stat-divider"></div>
-			<div class="local-stat">
-				<span class="local-stat-value local-stat-value--agent" id="stat-agents">0</span>
-				<span class="local-stat-label">agents</span>
-			</div>
 		</div>
 	</div>
 
-	<!-- ── Filter row ── -->
-	<div class="local-filter-row">
-		<div class="local-filter-tabs" role="tablist" aria-label="Filter local skills">
-			<button class="local-tab active" type="button" role="tab" aria-selected="true" data-local-filter="all">All</button>
-			<button class="local-tab" type="button" role="tab" aria-selected="false" data-local-filter="agent">Agent</button>
-			<button class="local-tab" type="button" role="tab" aria-selected="false" data-local-filter="design">Design</button>
-			<button class="local-tab" type="button" role="tab" aria-selected="false" data-local-filter="config">Config</button>
-		</div>
+	<!-- ── List toolbar ── -->
+	<div class="local-list-toolbar">
+		<span class="local-section-tab">All</span>
 		<button class="local-sort-btn" id="local-sort-btn" type="button" aria-label="Sort skills">
 			<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
 				<path d="M2 4.5h12M4 8h8M6 11.5h4"/>
@@ -53,14 +43,6 @@
 		<span class="local-empty-title">No skills installed</span>
 		<span class="local-empty-subtitle">Browse the marketplace to add skills to this workspace</span>
 		<button class="local-empty-cta" id="local-goto-install" type="button">Browse skills →</button>
-	</div>
-
-	<!-- ── Filter empty state ── -->
-	<div id="local-filter-empty" class="local-empty" hidden>
-		<svg class="local-filter-empty-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-			<path d="M2 4.5h12M4 8h8M6 11.5h4"/>
-		</svg>
-		<span class="local-empty-title">No skills in this category</span>
 	</div>
 
 </div>

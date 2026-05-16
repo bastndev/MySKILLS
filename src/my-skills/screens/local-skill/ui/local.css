@@ -73,10 +73,6 @@
 	color: var(--local-orange);
 }
 
-.local-stat-value--agent {
-	color: var(--local-accent);
-}
-
 .local-stat-label {
 	font-size: 10px;
 	font-weight: 500;
@@ -86,8 +82,8 @@
 	font-family: var(--vscode-font-family);
 }
 
-/* ── Filter row ──────────────────────────────────────────────────────── */
-.local-filter-row {
+/* ── List toolbar ────────────────────────────────────────────────────── */
+.local-list-toolbar {
 	flex: 0 0 auto;
 	display: flex;
 	align-items: center;
@@ -98,42 +94,19 @@
 	padding-bottom: 0;
 }
 
-.local-filter-tabs {
-	display: flex;
-	align-items: center;
-	gap: 2px;
-}
-
-.local-tab {
+.local-section-tab {
 	display: inline-flex;
 	align-items: center;
 	padding: 5px 8px;
 	background: transparent;
 	border: none;
-	border-bottom: 2px solid transparent;
-	color: var(--local-muted);
+	border-bottom: 2px solid var(--local-accent);
+	color: var(--local-fg);
 	font-family: var(--vscode-font-family);
 	font-size: 12px;
-	font-weight: 500;
-	cursor: pointer;
-	white-space: nowrap;
-	transition: color 0.15s ease, border-color 0.15s ease;
-	margin-bottom: -1px;
-}
-
-.local-tab:hover {
-	color: var(--local-fg);
-}
-
-.local-tab.active {
-	color: var(--local-fg);
 	font-weight: 600;
-	border-bottom-color: var(--local-accent);
-}
-
-.local-tab:focus-visible {
-	outline: 1px solid var(--local-accent);
-	outline-offset: 2px;
+	white-space: nowrap;
+	margin-bottom: -1px;
 }
 
 /* ── Sort button ─────────────────────────────────────────────────────── */
@@ -387,8 +360,7 @@
 	text-align: center;
 }
 
-.local-empty[hidden],
-#local-filter-empty[hidden] {
+.local-empty[hidden] {
 	display: none !important;
 }
 
@@ -412,16 +384,6 @@
 	stroke-linecap: round;
 	stroke-linejoin: round;
 	opacity: 0.6;
-}
-
-.local-filter-empty-icon {
-	width: 22px;
-	height: 22px;
-	fill: none;
-	stroke: var(--local-muted);
-	stroke-width: 1.5;
-	stroke-linecap: round;
-	opacity: 0.5;
 }
 
 .local-empty-title {
@@ -465,7 +427,6 @@
 
 /* ── Reduced motion ──────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-	.local-tab,
 	.local-sort-btn,
 	.local-item,
 	.local-item::before,
