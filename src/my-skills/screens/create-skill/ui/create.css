@@ -24,6 +24,7 @@
 	overflow: hidden;
 	background: var(--create-bg);
 	contain: paint;
+	font-family: var(--myskills-ui-font);
 }
 
 .create-skill-surface::after {
@@ -71,8 +72,11 @@
 .create-skill-surface h1 {
 	margin: 0;
 	color: var(--vscode-foreground);
-	font-size: 18px;
+	font-family: var(--myskills-ui-font);
+	font-size: 17px;
+	font-weight: 700;
 	line-height: 1.2;
+	letter-spacing: 0;
 }
 
 .create-main {
@@ -108,6 +112,7 @@
 	margin: 0;
 	color: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 62%, transparent);
 	font-size: 13px;
+	font-weight: 400;
 	line-height: 1.35;
 }
 
@@ -132,7 +137,7 @@
 	background: color-mix(in srgb, var(--create-bg) 84%, #000000 16%);
 	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 12%, transparent);
 	border-radius: 8px;
-	font-family: var(--vscode-font-family);
+	font-family: var(--myskills-ui-font);
 	text-align: left;
 	cursor: pointer;
 	transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
@@ -225,12 +230,15 @@
 .create-option-title {
 	font-size: 13px;
 	font-weight: 700;
+	font-family: var(--myskills-mono-font);
 	line-height: 1.2;
+	letter-spacing: 0;
 }
 
 .create-option-description {
 	color: color-mix(in srgb, var(--vscode-descriptionForeground, var(--vscode-foreground, #cccccc)) 68%, transparent);
 	font-size: 12px;
+	font-weight: 400;
 	line-height: 1.25;
 }
 
@@ -252,6 +260,7 @@
 	-webkit-backdrop-filter: blur(12px) saturate(130%);
 	font-size: 13px;
 	font-weight: 600;
+	font-family: var(--myskills-ui-font);
 }
 
 .create-help-button {
@@ -262,7 +271,7 @@
 	background: color-mix(in srgb, var(--create-bg) 62%, transparent);
 	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 18%, transparent);
 	border-radius: 7px;
-	font-family: var(--vscode-font-family);
+	font-family: var(--myskills-ui-font);
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
@@ -313,8 +322,8 @@
 	background: transparent;
 	border: 0;
 	outline: 0;
-	font-family: var(--vscode-font-family);
-	font-size: 14px;
+	font-family: var(--myskills-ui-font);
+	font-size: 13px;
 	line-height: 1.4;
 	scrollbar-width: thin;
 }
@@ -336,7 +345,7 @@
 	align-items: center;
 	justify-content: center;
 	border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 14%, transparent);
-	font-family: var(--vscode-font-family);
+	font-family: var(--myskills-ui-font);
 	cursor: pointer;
 	transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
 }
@@ -420,7 +429,7 @@
 .btn-create-panel {
 	padding: 10px 24px;
 	font-size: 14px;
-	font-family: var(--vscode-font-family);
+	font-family: var(--myskills-ui-font);
 	font-weight: 500;
 	color: var(--vscode-button-foreground, #ffffff);
 	background: var(--vscode-button-secondaryBackground, #e36209);
