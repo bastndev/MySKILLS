@@ -14,3 +14,9 @@ export interface LocalSkillsUpdateMessage {
 export interface LocalSkillsRequestMessage {
 	type: 'localSkills.request';
 }
+
+export interface LocalSkillSetEnabledMessage {
+	type: 'localSkill.setEnabled';
+	id: string;
+	enabled: boolean;
+}

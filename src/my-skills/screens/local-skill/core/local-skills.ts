@@ -2,6 +2,15 @@ import * as vscode from 'vscode';
 import type { LocalSkill } from './types';
 
 const ROOT_SKILL_FILES = ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'DESIGN.md'] as const;
+const GITIGNORE_FILE = '.gitignore';
+const BLOCK_BEGIN = '# My Skills: begin';
+const BLOCK_END = '# My Skills: end';
+
+interface GitignoreBlock {
+	lines: string[];
+	startIndex: number;
+	endIndex: number;
+}
 
 export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
 	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -9,6 +18,7 @@ export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
 		return [];
 	}
 
+	const disabledSkills = await getDisabledSkillIds(workspaceFolder.uri);
 	const checks = ROOT_SKILL_FILES.map(async (fileName): Promise<LocalSkill | undefined> => {
 		const uri = vscode.Uri.joinPath(workspaceFolder.uri, fileName);
 
@@ -22,7 +32,7 @@ export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
 				id: fileName,
 				name: fileName,
 				source: workspaceFolder.name,
-				enabled: true,
+				enabled: !disabledSkills.has(fileName),
 				installedAt: stat.mtime,
 			};
 		} catch {
@@ -32,4 +42,136 @@ export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
 
 	const results = await Promise.all(checks);
 	return results.filter((skill): skill is LocalSkill => Boolean(skill));
+}
+
+export async function setWorkspaceRootSkillEnabled(skillId: string, enabled: boolean): Promise<void> {
+	if (!isRootSkillFile(skillId)) {
+		return;
+	}
+
+	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+	if (!workspaceFolder) {
+		return;
+	}
+
+	const gitignoreUri = vscode.Uri.joinPath(workspaceFolder.uri, GITIGNORE_FILE);
+	const content = await readTextFile(gitignoreUri);
+	const nextContent = updateGitignoreSkillState(content, skillId, enabled);
+
+	if (nextContent === content) {
+		return;
+	}
+
+	await vscode.workspace.fs.writeFile(gitignoreUri, new TextEncoder().encode(nextContent));
+}
+
+async function getDisabledSkillIds(workspaceUri: vscode.Uri): Promise<Set<string>> {
+	const content = await readTextFile(vscode.Uri.joinPath(workspaceUri, GITIGNORE_FILE));
+	const block = findGitignoreBlock(content);
+	const disabled = new Set<string>();
+
+	if (!block) {
+		return disabled;
+	}
+
+	for (const line of block.lines) {
+		const parsed = parseManagedSkillLine(line);
+		if (parsed && !parsed.commented) {
+			disabled.add(parsed.skillId);
+		}
+	}
+
+	return disabled;
+}
+
+function updateGitignoreSkillState(content: string, skillId: string, enabled: boolean): string {
+	const normalizedContent = normalizeLineEndings(content);
+	const block = findGitignoreBlock(normalizedContent);
+
+	if (!block) {
+		if (enabled) {
+			return normalizedContent;
+		}
+
+		return appendManagedBlock(normalizedContent, skillId);
+	}
+
+	const nextLines = [...block.lines];
+	const existingIndex = nextLines.findIndex(line => parseManagedSkillLine(line)?.skillId === skillId);
+	const nextLine = enabled ? `# ${skillId}` : skillId;
+
+	if (existingIndex === -1) {
+		nextLines.push(nextLine);
+	} else {
+		nextLines[existingIndex] = nextLine;
+	}
+
+	const allLines = splitLines(normalizedContent);
+	allLines.splice(block.startIndex + 1, block.lines.length, ...nextLines);
+	return `${allLines.join('\n')}\n`;
+}
+
+function appendManagedBlock(content: string, skillId: string): string {
+	const prefix = content.trim().length === 0
+		? ''
+		: content.endsWith('\n') ? content : `${content}\n`;
+
+	return `${prefix}${BLOCK_BEGIN}\n${skillId}\n${BLOCK_END}\n`;
+}
+
+function findGitignoreBlock(content: string): GitignoreBlock | undefined {
+	const lines = splitLines(content);
+	const startIndex = lines.findIndex(line => line.trim() === BLOCK_BEGIN);
+	if (startIndex === -1) {
+		return undefined;
+	}
+
+	const endIndex = lines.findIndex((line, index) => index > startIndex && line.trim() === BLOCK_END);
+	if (endIndex === -1) {
+		return undefined;
+	}
+
+	return {
+		lines: lines.slice(startIndex + 1, endIndex),
+		startIndex,
+		endIndex,
+	};
+}
+
+function parseManagedSkillLine(line: string): { skillId: string; commented: boolean } | undefined {
+	const trimmed = line.trim();
+	const commented = trimmed.startsWith('#');
+	const candidate = commented ? trimmed.slice(1).trim() : trimmed;
+
+	if (!isRootSkillFile(candidate)) {
+		return undefined;
+	}
+
+	return { skillId: candidate, commented };
+}
+
+async function readTextFile(uri: vscode.Uri): Promise<string> {
+	try {
+		const bytes = await vscode.workspace.fs.readFile(uri);
+		return new TextDecoder().decode(bytes);
+	} catch {
+		return '';
+	}
+}
+
+function splitLines(content: string): string[] {
+	const normalizedContent = normalizeLineEndings(content);
+	if (normalizedContent.length === 0) {
+		return [];
+	}
+
+	return normalizedContent.replace(/\n$/, '').split('\n');
+}
+
+function normalizeLineEndings(content: string): string {
+	return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+}
+
+function isRootSkillFile(value: string): value is typeof ROOT_SKILL_FILES[number] {
+	return ROOT_SKILL_FILES.some(fileName => fileName === value);
 }

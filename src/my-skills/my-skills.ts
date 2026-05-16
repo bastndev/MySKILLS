@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { getWorkspaceRootSkills } from './screens/local-skill/core/local-skills';
-import type { LocalSkillsRequestMessage } from './screens/local-skill/core/types';
+import { getWorkspaceRootSkills, setWorkspaceRootSkillEnabled } from './screens/local-skill/core/local-skills';
+import type { LocalSkillSetEnabledMessage, LocalSkillsRequestMessage } from './screens/local-skill/core/types';
 
 export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'myskills-panel';
@@ -33,6 +33,9 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			if (isLocalSkillsRequestMessage(message)) {
 				void this._postLocalSkills();
 			}
+			if (isLocalSkillSetEnabledMessage(message)) {
+				void this._setLocalSkillEnabled(message);
+			}
 		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, nonce);
@@ -51,6 +54,11 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 
 		const skills = await getWorkspaceRootSkills();
 		await this._view.webview.postMessage({ type: 'localSkills.update', skills });
+	}
+
+	private async _setLocalSkillEnabled(message: LocalSkillSetEnabledMessage) {
+		await setWorkspaceRootSkillEnabled(message.id, message.enabled);
+		await this._postLocalSkills();
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview, nonce: string): string {
@@ -222,6 +230,15 @@ function isWebviewMessage(value: unknown): value is { type: string } {
 
 function isLocalSkillsRequestMessage(value: unknown): value is LocalSkillsRequestMessage {
 	return isWebviewMessage(value) && value.type === 'localSkills.request';
+}
+
+function isLocalSkillSetEnabledMessage(value: unknown): value is LocalSkillSetEnabledMessage {
+	if (!isWebviewMessage(value) || value.type !== 'localSkill.setEnabled') {
+		return false;
+	}
+
+	const message = value as { id?: unknown; enabled?: unknown };
+	return typeof message.id === 'string' && typeof message.enabled === 'boolean';
 }
 
 function getNonce(): string {

@@ -165,6 +165,11 @@ export function initLocalPanel(vscodeApi: VsCodeApi): void {
 			statActive,
 			statDisabled,
 		);
+		vscodeApi.postMessage({
+			type: 'localSkill.setEnabled',
+			id: input.dataset.toggleId ?? '',
+			enabled: input.checked,
+		});
 	});
 
 	if (gotoInstall) {
