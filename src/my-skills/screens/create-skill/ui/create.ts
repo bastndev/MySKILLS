@@ -41,6 +41,11 @@ if (createSurface && canTrackPointer.matches && !prefersReducedMotion.matches) {
 	createSurface.addEventListener('pointercancel', clearPointerGlow, { passive: true });
 }
 
+if (createSurface && !prefersReducedMotion.matches) {
+	createSurface.classList.add('is-welcome');
+	window.setTimeout(() => createSurface.classList.remove('is-welcome'), 1400);
+}
+
 if (createChat && createChatInput) {
 	const syncChatInputState = () => {
 		const hasMessage = createChatInput.value.trim().length > 0;
