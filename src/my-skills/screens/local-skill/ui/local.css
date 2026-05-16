@@ -1,10 +1,8 @@
-/* ── Panel override ──────────────────────────────────────────────────── */
 #local-panel.panel {
 	align-items: stretch;
 	justify-content: stretch;
 }
 
-/* ── Surface ─────────────────────────────────────────────────────────── */
 .local-surface {
 	--local-bg:       var(--vscode-sideBar-background, var(--vscode-editor-background, #1e1e1e));
 	--local-fg:       var(--vscode-foreground, #cccccc);
@@ -12,9 +10,7 @@
 	--local-accent:   var(--vscode-focusBorder, #0078d4);
 	--local-border:   color-mix(in srgb, var(--local-fg) 10%, transparent);
 	--local-hover-bg: var(--vscode-list-hoverBackground, color-mix(in srgb, var(--local-fg) 6%, transparent));
-	--local-green:    var(--vscode-testing-iconPassed, #4ec9b0);
-	--local-orange:   var(--vscode-statusBarItem-warningBackground, #cc6633);
-	--local-purple:   var(--vscode-symbolIcon-functionForeground, #b48ead);
+	--local-disabled: color-mix(in srgb, var(--local-muted) 74%, transparent);
 
 	display: flex;
 	flex-direction: column;
@@ -25,7 +21,6 @@
 	box-sizing: border-box;
 }
 
-/* ── Header ──────────────────────────────────────────────────────────── */
 .local-header {
 	flex: 0 0 auto;
 	padding: 10px 12px 0;
@@ -34,7 +29,6 @@
 	gap: 10px;
 }
 
-/* ── Stats bar ───────────────────────────────────────────────────────── */
 .local-stats {
 	display: flex;
 	align-items: center;
@@ -74,7 +68,7 @@
 }
 
 .local-stat-value--disabled {
-	color: var(--local-orange);
+	color: var(--local-disabled);
 }
 
 .local-stat-label {
@@ -86,7 +80,6 @@
 	font-family: var(--vscode-font-family);
 }
 
-/* ── List toolbar ────────────────────────────────────────────────────── */
 .local-list-toolbar {
 	flex: 0 0 auto;
 	display: flex;
@@ -117,7 +110,6 @@
 	margin-bottom: -1px;
 }
 
-/* ── Sort button ─────────────────────────────────────────────────────── */
 .local-sort-btn {
 	flex: 0 0 auto;
 	display: inline-flex;
@@ -157,7 +149,6 @@
 	stroke-linecap: round;
 }
 
-/* ── Skill list ──────────────────────────────────────────────────────── */
 .local-list {
 	flex: 1;
 	overflow-y: auto;
@@ -175,7 +166,6 @@
 	border-radius: 4px;
 }
 
-/* ── Skill item ──────────────────────────────────────────────────────── */
 .local-item {
 	display: flex;
 	align-items: center;
@@ -190,7 +180,6 @@
 	background: var(--local-hover-bg);
 }
 
-/* Left accent stripe on hover */
 .local-item::before {
 	content: '';
 	position: absolute;
@@ -208,7 +197,6 @@
 	opacity: 1;
 }
 
-/* ── Skill type badge icon ───────────────────────────────────────────── */
 .local-item-badge {
 	flex: 0 0 28px;
 	height: 28px;
@@ -239,7 +227,6 @@
 	stroke: var(--local-accent);
 }
 
-/* ── Skill info ──────────────────────────────────────────────────────── */
 .local-item-info {
 	flex: 1;
 	min-width: 0;
@@ -267,20 +254,6 @@
 	text-overflow: ellipsis;
 }
 
-/* ── Update badge ────────────────────────────────────────────────────── */
-.local-item-update {
-	flex: 0 0 auto;
-	font-size: 10px;
-	font-weight: 700;
-	padding: 2px 6px;
-	border-radius: 99px;
-	background: color-mix(in srgb, var(--local-orange) 15%, transparent);
-	color: var(--local-orange);
-	border: 1px solid color-mix(in srgb, var(--local-orange) 35%, transparent);
-	white-space: nowrap;
-}
-
-/* ── Actions ─────────────────────────────────────────────────────────── */
 .local-item-actions {
 	flex: 0 0 auto;
 	display: flex;
@@ -340,19 +313,6 @@
 	outline-offset: 2px;
 }
 
-/* ── Section separator ───────────────────────────────────────────────── */
-.local-section-label {
-	padding: 10px 12px 4px;
-	font-size: 10px;
-	font-weight: 700;
-	letter-spacing: 0.07em;
-	text-transform: uppercase;
-	color: var(--local-muted);
-	font-family: var(--vscode-font-family);
-	user-select: none;
-}
-
-/* ── Empty states ────────────────────────────────────────────────────── */
 .local-empty {
 	display: flex;
 	flex-direction: column;
@@ -429,7 +389,6 @@
 	outline-offset: 2px;
 }
 
-/* ── Reduced motion ──────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
 	.local-sort-btn,
 	.local-item,
