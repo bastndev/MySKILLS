@@ -7,6 +7,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'myskills-panel';
 	private _view?: vscode.WebviewView;
 	private _supportPanel?: vscode.WebviewPanel;
+	private _gitignoreWatcher?: vscode.FileSystemWatcher;
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
@@ -39,6 +40,7 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, nonce);
+		this._watchWorkspaceGitignore();
 	}
 
 	public switchTab(target: string) {
@@ -59,6 +61,28 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	private async _setLocalSkillEnabled(message: LocalSkillSetEnabledMessage) {
 		await setWorkspaceRootSkillEnabled(message.id, message.enabled);
 		await this._postLocalSkills();
+	}
+
+	private _watchWorkspaceGitignore() {
+		this._gitignoreWatcher?.dispose();
+		this._gitignoreWatcher = undefined;
+
+		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+		if (!workspaceFolder) {
+			return;
+		}
+
+		const pattern = new vscode.RelativePattern(workspaceFolder, '.gitignore');
+		const watcher = vscode.workspace.createFileSystemWatcher(pattern);
+		const refresh = () => {
+			void this._postLocalSkills();
+		};
+
+		watcher.onDidCreate(refresh);
+		watcher.onDidChange(refresh);
+		watcher.onDidDelete(refresh);
+
+		this._gitignoreWatcher = watcher;
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview, nonce: string): string {
@@ -221,6 +245,8 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		this._view = undefined;
 		this._supportPanel?.dispose();
 		this._supportPanel = undefined;
+		this._gitignoreWatcher?.dispose();
+		this._gitignoreWatcher = undefined;
 	}
 }
 
