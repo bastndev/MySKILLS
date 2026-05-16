@@ -193,6 +193,14 @@
 	transition: opacity 0.14s ease;
 }
 
+.local-item--file::before {
+	background: var(--local-file-accent);
+}
+
+.local-item--folder::before {
+	background: var(--local-folder-accent);
+}
+
 .local-item:hover::before {
 	opacity: 1;
 }

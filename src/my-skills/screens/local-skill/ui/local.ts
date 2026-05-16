@@ -36,7 +36,7 @@ function renderSkill(skill: LocalSkill): string {
 	const isFolder = skill.kind === 'folder';
 
 	return `
-		<li class="local-item ${skill.enabled ? '' : 'local-item--disabled'}" data-skill-id="${escHtml(skill.id)}">
+		<li class="local-item ${isFolder ? 'local-item--folder' : 'local-item--file'} ${skill.enabled ? '' : 'local-item--disabled'}" data-skill-id="${escHtml(skill.id)}">
 			<span class="local-item-badge ${isFolder ? 'local-item-badge--folder' : 'local-item-badge--file'}" aria-hidden="true">
 				${isFolder ? FOLDER_ICON : skill.icon ?? ''}
 			</span>
