@@ -5,6 +5,7 @@ export interface LocalSkill {
 	name: string;
 	source: string;
 	kind: LocalSkillKind;
+	icon?: string;
 	enabled: boolean;
 	installedAt: number;
 }

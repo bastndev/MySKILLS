@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ROOT_SKILL_FILES, ROOT_SKILL_FILE_NAMES } from './file-folder/file-skills';
+import { ROOT_SKILL_FILES, ROOT_SKILL_FILE_ICON, ROOT_SKILL_FILE_NAMES } from './file-folder/file-skills';
 import { ROOT_SKILL_FOLDERS, ROOT_SKILL_FOLDER_WATCH_PATTERNS } from './file-folder/folder-skills';
 import type { LocalSkill } from './types';
 
@@ -41,6 +41,7 @@ export async function getWorkspaceRootSkills(): Promise<LocalSkill[]> {
 				name: fileName,
 				source: workspaceFolder.name,
 				kind: 'file',
+				icon: ROOT_SKILL_FILE_ICON,
 				enabled: !disabledSkills.has(fileName),
 				installedAt: stat.mtime,
 			};

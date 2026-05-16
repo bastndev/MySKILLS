@@ -204,6 +204,10 @@
 	stroke: var(--local-disabled);
 }
 
+.local-item--disabled .local-item-badge {
+	color: var(--local-disabled);
+}
+
 .local-item-badge {
 	flex: 0 0 28px;
 	height: 28px;
@@ -212,6 +216,7 @@
 	justify-content: center;
 	border-radius: 6px;
 	background: color-mix(in srgb, var(--local-fg) 7%, transparent);
+	color: var(--local-muted);
 	transition: background 0.14s ease;
 }
 
@@ -225,8 +230,8 @@
 }
 
 .local-item-badge svg {
-	width: 14px;
-	height: 14px;
+	width: 18px;
+	height: 18px;
 	fill: none;
 	stroke: var(--local-muted);
 	stroke-width: 1.4;
@@ -240,8 +245,17 @@
 	height: 18px;
 }
 
+.local-item-badge svg [fill="currentColor"] {
+	fill: currentColor;
+	stroke: none;
+}
+
 .local-item:hover .local-item-badge svg {
 	stroke: var(--local-accent);
+}
+
+.local-item:hover .local-item-badge {
+	color: var(--local-accent);
 }
 
 .local-item-info {
