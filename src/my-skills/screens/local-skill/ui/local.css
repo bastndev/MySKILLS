@@ -11,6 +11,8 @@
 	--local-border:   color-mix(in srgb, var(--local-fg) 10%, transparent);
 	--local-hover-bg: var(--vscode-list-hoverBackground, color-mix(in srgb, var(--local-fg) 6%, transparent));
 	--local-disabled: color-mix(in srgb, var(--local-muted) 74%, transparent);
+	--local-file-accent: color-mix(in srgb, var(--local-accent) 42%, var(--local-fg));
+	--local-folder-accent: var(--local-accent);
 
 	display: flex;
 	flex-direction: column;
@@ -216,28 +218,41 @@
 	justify-content: center;
 	border-radius: 6px;
 	background: color-mix(in srgb, var(--local-fg) 7%, transparent);
+	border: 1px solid transparent;
 	color: var(--local-muted);
-	transition: background 0.14s ease;
+	transition: background 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+	box-sizing: border-box;
+}
+
+.local-item-badge--file {
+	color: var(--local-file-accent);
 }
 
 .local-item-badge--folder {
 	flex-basis: 30px;
 	height: 30px;
+	color: var(--local-folder-accent);
 }
 
-.local-item:hover .local-item-badge {
-	background: color-mix(in srgb, var(--local-accent) 14%, transparent);
+.local-item:hover .local-item-badge--file {
+	background: color-mix(in srgb, var(--local-file-accent) 14%, transparent);
+	border-color: color-mix(in srgb, var(--local-file-accent) 28%, transparent);
+}
+
+.local-item:hover .local-item-badge--folder {
+	background: color-mix(in srgb, var(--local-folder-accent) 20%, transparent);
+	border-color: color-mix(in srgb, var(--local-folder-accent) 38%, transparent);
 }
 
 .local-item-badge svg {
 	width: 16px;
 	height: 16px;
 	fill: none;
-	stroke: var(--local-muted);
+	stroke: currentColor;
 	stroke-width: 1.4;
 	stroke-linecap: round;
 	stroke-linejoin: round;
-	transition: stroke 0.14s ease;
+	transition: stroke 0.14s ease, fill 0.14s ease;
 }
 
 .local-item-badge--folder svg {
@@ -248,14 +263,6 @@
 .local-item-badge svg [fill="currentColor"] {
 	fill: currentColor;
 	stroke: none;
-}
-
-.local-item:hover .local-item-badge svg {
-	stroke: var(--local-accent);
-}
-
-.local-item:hover .local-item-badge {
-	color: var(--local-accent);
 }
 
 .local-item-info {
