@@ -8,6 +8,8 @@ export { ROOT_SKILL_FOLDER_WATCH_PATTERNS };
 const GITIGNORE_FILE = '.gitignore';
 const BLOCK_BEGIN = '# My Skills: begin';
 const BLOCK_END = '# My Skills: end';
+const SKILL_MANIFEST_FILE = 'SKILL.md';
+const SKILL_FOLDER_NAME_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/;
 
 interface GitignoreBlock {
 	lines: string[];
@@ -93,13 +95,20 @@ async function getWorkspaceFolderSkills(
 	try {
 		const entries = await vscode.workspace.fs.readDirectory(folderUri);
 		const checks = entries
-			.filter(([, type]) => type === vscode.FileType.Directory)
+			.filter(([name, type]) => type === vscode.FileType.Directory && isValidSkillFolderName(name))
 			.map(async ([name]): Promise<LocalSkill | undefined> => {
 				const id = `${folder}/${name}`;
 				const uri = vscode.Uri.joinPath(folderUri, name);
 
 				try {
-					const stat = await vscode.workspace.fs.stat(uri);
+					const [stat, hasManifest] = await Promise.all([
+						vscode.workspace.fs.stat(uri),
+						hasSkillManifest(uri),
+					]);
+					if (!hasManifest) {
+						return undefined;
+					}
+
 					return {
 						id,
 						name,
@@ -116,6 +125,15 @@ async function getWorkspaceFolderSkills(
 		return results.filter((skill): skill is LocalSkill => Boolean(skill));
 	} catch {
 		return [];
+	}
+}
+
+async function hasSkillManifest(folderUri: vscode.Uri): Promise<boolean> {
+	try {
+		const stat = await vscode.workspace.fs.stat(vscode.Uri.joinPath(folderUri, SKILL_MANIFEST_FILE));
+		return stat.type === vscode.FileType.File;
+	} catch {
+		return false;
 	}
 }
 
@@ -264,6 +282,19 @@ function isRootSkillFile(value: string): value is typeof ROOT_SKILL_FILES[number
 
 function isRootSkillFolder(value: string): boolean {
 	return ROOT_SKILL_FOLDERS.some(folder => value.startsWith(`${folder}/`) && value.length > folder.length + 1);
+}
+
+function isValidSkillFolderName(value: string): boolean {
+	return SKILL_FOLDER_NAME_PATTERN.test(value)
+		&& !value.includes('..')
+		&& !value.includes('--')
+		&& !value.includes('__')
+		&& !value.includes('._')
+		&& !value.includes('_.')
+		&& !value.includes('.-')
+		&& !value.includes('-.')
+		&& !value.includes('_-')
+		&& !value.includes('-_');
 }
 
 function isSupportedSkillId(value: string): boolean {
