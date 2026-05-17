@@ -291,6 +291,13 @@ export function initLocalPanel(vscodeApi: VsCodeApi): void {
 			return;
 		}
 
+		if (action.dataset.action === 'delete') {
+			vscodeApi.postMessage({
+				type: 'localSkill.delete',
+				id: action.dataset.skillId ?? '',
+			});
+		}
+
 		action.blur();
 	});
 
