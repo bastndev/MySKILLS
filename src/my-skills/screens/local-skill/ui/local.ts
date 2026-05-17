@@ -37,6 +37,7 @@ const ACTION_ICONS = {
 } as const;
 
 type LocalAction = keyof typeof ACTION_ICONS;
+const POSTABLE_ACTIONS = new Set<LocalAction>(['delete']);
 
 function escHtml(s: string): string {
 	return s
@@ -229,6 +230,10 @@ function isLocalSkillsUpdateMessage(value: unknown): value is LocalSkillsUpdateM
 		&& Array.isArray((value as { skills?: unknown }).skills);
 }
 
+function isLocalAction(value: string | undefined): value is LocalAction {
+	return value === 'delete' || value === 'save' || value === 'duplicate';
+}
+
 export function initLocalPanel(vscodeApi: VsCodeApi): void {
 	const listEl        = document.getElementById('local-list')        as HTMLUListElement | null;
 	const emptyEl       = document.getElementById('local-empty')       as HTMLElement | null;
@@ -305,10 +310,12 @@ export function initLocalPanel(vscodeApi: VsCodeApi): void {
 			return;
 		}
 
-		if (action.dataset.action === 'delete') {
+		const actionName = action.dataset.action;
+		const skillId = action.dataset.skillId;
+		if (isLocalAction(actionName) && POSTABLE_ACTIONS.has(actionName) && skillId) {
 			vscodeApi.postMessage({
 				type: 'localSkill.delete',
-				id: action.dataset.skillId ?? '',
+				id: skillId,
 			});
 		}
 

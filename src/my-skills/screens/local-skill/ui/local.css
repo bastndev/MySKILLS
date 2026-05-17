@@ -425,10 +425,6 @@
 	border-color: color-mix(in srgb, var(--local-accent) 24%, transparent);
 }
 
-.local-item-action:active {
-	transform: translateY(-50%) scale(0.94);
-}
-
 .local-item-action--save {
 	--local-save: #34d477;
 }

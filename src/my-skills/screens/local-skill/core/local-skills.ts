@@ -223,7 +223,13 @@ function removeGitignoreSkillState(content: string, skillId: string, eol: '\n' |
 
 	const nextLines = block.lines.filter(line => parseManagedSkillLine(line)?.skillId !== skillId);
 	const allLines = splitLines(normalizedContent);
-	allLines.splice(block.startIndex + 1, block.lines.length, ...nextLines);
+
+	if (nextLines.some(line => parseManagedSkillLine(line))) {
+		allLines.splice(block.startIndex + 1, block.lines.length, ...nextLines);
+	} else {
+		allLines.splice(block.startIndex, block.endIndex - block.startIndex + 1);
+	}
+
 	return withLineEndings(formatManagedBlockSpacing(allLines).join('\n'), eol);
 }
 
