@@ -111,6 +111,7 @@ let sortMode: SortMode = 'newest';
 
 const SORT_CYCLE: SortMode[] = ['newest', 'az', 'za'];
 const SORT_LABELS: Record<SortMode, string> = { az: 'A–Z', za: 'Z–A', newest: 'New' };
+const NEXT_SORT_LABELS: Record<SortMode, string> = { newest: 'A–Z', az: 'Z–A', za: 'New' };
 
 function getSorted(list: LocalSkill[]): LocalSkill[] {
 	return [...list].sort((a, b) => {
@@ -262,7 +263,7 @@ export function initLocalPanel(vscodeApi: VsCodeApi): void {
 		sortBtn.addEventListener('click', () => {
 			const idx  = SORT_CYCLE.indexOf(sortMode);
 			sortMode   = SORT_CYCLE[(idx + 1) % SORT_CYCLE.length];
-			sortLabel.textContent = SORT_LABELS[sortMode];
+			sortLabel.textContent = NEXT_SORT_LABELS[sortMode];
 			rerender();
 		});
 	}
