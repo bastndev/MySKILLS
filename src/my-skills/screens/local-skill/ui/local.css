@@ -501,6 +501,7 @@
 }
 
 .local-item-switch {
+	position: relative;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -508,6 +509,15 @@
 	height: 18px;
 	padding: 0;
 	cursor: pointer;
+}
+
+.local-item-switch::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: -12px;
+	bottom: -12px;
 }
 
 .local-item-switch:hover .local-item-switch-track {
@@ -522,6 +532,7 @@
 
 .local-item-switch-track {
 	position: relative;
+	z-index: 1;
 	width: 32px;
 	height: 18px;
 	border-radius: 999px;
