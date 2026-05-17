@@ -314,8 +314,8 @@
 	z-index: 1;
 }
 
-.local-item:hover .local-item-info::after,
-.local-item:focus-within .local-item-info::after {
+.local-item:hover:not(:has(.local-item-switch:hover)) .local-item-info::after,
+.local-item:focus-within:not(:has(.local-item-switch:focus-within)) .local-item-info::after {
 	opacity: 1;
 }
 
@@ -411,14 +411,14 @@
 	transform: translateX(0);
 }
 
-.local-item:hover .local-item-action,
-.local-item:focus-within .local-item-action {
+.local-item:hover:not(:has(.local-item-switch:hover)) .local-item-action,
+.local-item:focus-within:not(:has(.local-item-switch:focus-within)) .local-item-action {
 	opacity: 1;
 	transform: translateX(0);
 }
 
-.local-item:hover .local-item-action,
-.local-item:focus-within .local-item-action {
+.local-item:hover:not(:has(.local-item-switch:hover)) .local-item-action,
+.local-item:focus-within:not(:has(.local-item-switch:focus-within)) .local-item-action {
 	opacity: 1;
 	pointer-events: auto;
 	transform: translateY(-50%) translateX(0);
