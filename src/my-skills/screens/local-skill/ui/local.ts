@@ -59,9 +59,11 @@ function renderSkill(skill: LocalSkill): string {
 				</span>
 			</div>
 			<div class="local-item-actions">
-				<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
-					${DUPLICATE_ICON}
-				</button>
+				${isFolder ? `
+					<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
+						${DUPLICATE_ICON}
+					</button>
+				` : ''}
 				<button class="local-item-action local-item-action--danger" type="button" aria-label="Delete ${escHtml(skill.name)}" title="Delete" data-action="delete" data-skill-id="${escHtml(skill.id)}">
 					${DELETE_ICON}
 				</button>
