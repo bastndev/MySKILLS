@@ -68,12 +68,14 @@ function renderSkill(skill: LocalSkill): string {
 				<button class="local-item-action local-item-action--danger" type="button" aria-label="Delete ${escHtml(skill.name)}" title="Delete" data-action="delete" data-skill-id="${escHtml(skill.id)}">
 					${DELETE_ICON}
 				</button>
-				<button class="local-item-action local-item-action--save" type="button" aria-label="Save ${escHtml(skill.name)}" title="Save" data-action="save" data-skill-id="${escHtml(skill.id)}">
-					${SAVE_ICON}
-				</button>
-				<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
-					${DUPLICATE_ICON}
-				</button>
+				${isFolder ? `
+					<button class="local-item-action local-item-action--save" type="button" aria-label="Save ${escHtml(skill.name)}" title="Save" data-action="save" data-skill-id="${escHtml(skill.id)}">
+						${SAVE_ICON}
+					</button>
+					<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
+						${DUPLICATE_ICON}
+					</button>
+				` : ''}
 				<label class="local-item-switch" aria-label="${escHtml(switchLabel)}">
 					<input type="checkbox" role="switch" data-toggle-id="${escHtml(skill.id)}" ${skill.enabled ? 'checked' : ''}>
 					<span class="local-item-switch-track" aria-hidden="true"></span>
