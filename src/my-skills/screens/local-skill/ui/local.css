@@ -174,7 +174,7 @@
 	min-height: 42px;
 	padding: 7px 8px;
 	border-radius: 6px;
-	transition: background 0.14s ease, box-shadow 0.14s ease;
+	transition: background 0.14s ease;
 	position: relative;
 	box-sizing: border-box;
 	user-select: none;
@@ -381,6 +381,7 @@
 	opacity: 0;
 	transform: translateX(4px);
 	transition: opacity 0.14s ease, transform 0.14s ease, color 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+	will-change: opacity, transform;
 }
 
 .local-item .local-item-action {
@@ -414,12 +415,6 @@
 .local-item:hover:not(:has(.local-item-switch:hover)) .local-item-action,
 .local-item:focus-within:not(:has(.local-item-switch:focus-within)) .local-item-action {
 	opacity: 1;
-	transform: translateX(0);
-}
-
-.local-item:hover:not(:has(.local-item-switch:hover)) .local-item-action,
-.local-item:focus-within:not(:has(.local-item-switch:focus-within)) .local-item-action {
-	opacity: 1;
 	pointer-events: auto;
 	transform: translateY(-50%) translateX(0);
 }
@@ -428,6 +423,10 @@
 	color: var(--local-accent);
 	background: color-mix(in srgb, var(--local-accent) 12%, transparent);
 	border-color: color-mix(in srgb, var(--local-accent) 24%, transparent);
+}
+
+.local-item-action:active {
+	transform: translateY(-50%) scale(0.94);
 }
 
 .local-item-action--save {
@@ -456,6 +455,10 @@
 .local-item .local-item-action:focus-visible {
 	pointer-events: auto;
 	transform: translateY(-50%) translateX(0);
+}
+
+.local-item .local-item-action:active {
+	transform: translateY(-50%) scale(0.94);
 }
 
 .local-item-action svg {

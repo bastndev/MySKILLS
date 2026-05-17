@@ -29,6 +29,14 @@ const DELETE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="fals
 	<path d="M7 7.5v3.5M9 7.5v3.5"/>
 </svg>`;
 
+const ACTION_ICONS = {
+	delete: DELETE_ICON,
+	save: SAVE_ICON,
+	duplicate: DUPLICATE_ICON,
+} as const;
+
+type LocalAction = keyof typeof ACTION_ICONS;
+
 function escHtml(s: string): string {
 	return s
 		.replace(/&/g, '&amp;')
@@ -44,6 +52,29 @@ function getSkillMeta(skill: LocalSkill): string {
 	}
 
 	return 'workspace root';
+}
+
+function renderActionButton(action: LocalAction, skill: LocalSkill): string {
+	const label = action.charAt(0).toUpperCase() + action.slice(1);
+	const className = action === 'delete'
+		? 'local-item-action local-item-action--danger'
+		: action === 'save'
+			? 'local-item-action local-item-action--save'
+			: 'local-item-action';
+
+	return `
+		<button class="${className}" type="button" aria-label="${label} ${escHtml(skill.name)}" title="${label}" data-action="${action}" data-skill-id="${escHtml(skill.id)}">
+			${ACTION_ICONS[action]}
+		</button>
+	`;
+}
+
+function renderSkillActions(skill: LocalSkill): string {
+	const actions: LocalAction[] = skill.kind === 'folder'
+		? ['delete', 'save', 'duplicate']
+		: ['delete'];
+
+	return actions.map(action => renderActionButton(action, skill)).join('');
 }
 
 function renderSkill(skill: LocalSkill): string {
@@ -65,17 +96,7 @@ function renderSkill(skill: LocalSkill): string {
 				</span>
 			</div>
 			<div class="local-item-actions">
-				<button class="local-item-action local-item-action--danger" type="button" aria-label="Delete ${escHtml(skill.name)}" title="Delete" data-action="delete" data-skill-id="${escHtml(skill.id)}">
-					${DELETE_ICON}
-				</button>
-				${isFolder ? `
-					<button class="local-item-action local-item-action--save" type="button" aria-label="Save ${escHtml(skill.name)}" title="Save" data-action="save" data-skill-id="${escHtml(skill.id)}">
-						${SAVE_ICON}
-					</button>
-					<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
-						${DUPLICATE_ICON}
-					</button>
-				` : ''}
+				${renderSkillActions(skill)}
 				<label class="local-item-switch" aria-label="${escHtml(switchLabel)}">
 					<input type="checkbox" role="switch" data-toggle-id="${escHtml(skill.id)}" ${skill.enabled ? 'checked' : ''}>
 					<span class="local-item-switch-track" aria-hidden="true"></span>
@@ -100,9 +121,16 @@ function getSorted(list: LocalSkill[]): LocalSkill[] {
 }
 
 function renderStats(statTotal: HTMLElement, statActive: HTMLElement, statDisabled: HTMLElement): void {
-	statTotal.textContent   = String(skills.length);
-	statActive.textContent   = String(skills.filter(s => s.enabled).length);
-	statDisabled.textContent = String(skills.filter(s => !s.enabled).length);
+	let activeCount = 0;
+	for (const skill of skills) {
+		if (skill.enabled) {
+			activeCount++;
+		}
+	}
+
+	statTotal.textContent = String(skills.length);
+	statActive.textContent = String(activeCount);
+	statDisabled.textContent = String(skills.length - activeCount);
 }
 
 function getSortedIds(list: LocalSkill[]): string[] {
