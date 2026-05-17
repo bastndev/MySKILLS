@@ -8,6 +8,8 @@ export { ROOT_SKILL_FOLDER_WATCH_PATTERNS };
 const GITIGNORE_FILE = '.gitignore';
 const BLOCK_BEGIN = '# My Skills: begin';
 const BLOCK_END = '# My Skills: end';
+const SKILL_MANIFEST_FILE = 'SKILL.md';
+const SKILL_FOLDER_NAME_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 interface GitignoreBlock {
 	lines: string[];
@@ -83,6 +85,25 @@ export async function setWorkspaceRootSkillEnabled(skillId: string, enabled: boo
 	await vscode.workspace.fs.writeFile(gitignoreUri, new TextEncoder().encode(nextContent));
 }
 
+export async function deleteWorkspaceRootSkill(skillId: string): Promise<void> {
+	if (!isSupportedSkillId(skillId)) {
+		return;
+	}
+
+	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+	if (!workspaceFolder) {
+		return;
+	}
+
+	const targetUri = getWorkspaceSkillUri(workspaceFolder.uri, skillId);
+	const stat = await vscode.workspace.fs.stat(targetUri);
+	await vscode.workspace.fs.delete(targetUri, {
+		recursive: stat.type === vscode.FileType.Directory,
+		useTrash: true,
+	});
+	await removeWorkspaceRootSkillState(workspaceFolder.uri, skillId);
+}
+
 async function getWorkspaceFolderSkills(
 	workspaceFolder: vscode.WorkspaceFolder,
 	folder: typeof ROOT_SKILL_FOLDERS[number],
@@ -93,13 +114,20 @@ async function getWorkspaceFolderSkills(
 	try {
 		const entries = await vscode.workspace.fs.readDirectory(folderUri);
 		const checks = entries
-			.filter(([, type]) => type === vscode.FileType.Directory)
+			.filter(([name, type]) => type === vscode.FileType.Directory && isValidSkillFolderName(name))
 			.map(async ([name]): Promise<LocalSkill | undefined> => {
 				const id = `${folder}/${name}`;
 				const uri = vscode.Uri.joinPath(folderUri, name);
 
 				try {
-					const stat = await vscode.workspace.fs.stat(uri);
+					const [stat, hasManifest] = await Promise.all([
+						vscode.workspace.fs.stat(uri),
+						hasSkillManifest(uri),
+					]);
+					if (!hasManifest) {
+						return undefined;
+					}
+
 					return {
 						id,
 						name,
@@ -116,6 +144,15 @@ async function getWorkspaceFolderSkills(
 		return results.filter((skill): skill is LocalSkill => Boolean(skill));
 	} catch {
 		return [];
+	}
+}
+
+async function hasSkillManifest(folderUri: vscode.Uri): Promise<boolean> {
+	try {
+		const stat = await vscode.workspace.fs.stat(vscode.Uri.joinPath(folderUri, SKILL_MANIFEST_FILE));
+		return stat.type === vscode.FileType.File;
+	} catch {
+		return false;
 	}
 }
 
@@ -162,6 +199,37 @@ function updateGitignoreSkillState(content: string, skillId: string, enabled: bo
 
 	const allLines = splitLines(normalizedContent);
 	allLines.splice(block.startIndex + 1, block.lines.length, ...nextLines);
+	return withLineEndings(formatManagedBlockSpacing(allLines).join('\n'), eol);
+}
+
+async function removeWorkspaceRootSkillState(workspaceUri: vscode.Uri, skillId: string): Promise<void> {
+	const gitignoreUri = vscode.Uri.joinPath(workspaceUri, GITIGNORE_FILE);
+	const text = await readGitignoreText(gitignoreUri);
+	const nextContent = removeGitignoreSkillState(text.content, skillId, text.eol);
+
+	if (nextContent === text.content) {
+		return;
+	}
+
+	await vscode.workspace.fs.writeFile(gitignoreUri, new TextEncoder().encode(nextContent));
+}
+
+function removeGitignoreSkillState(content: string, skillId: string, eol: '\n' | '\r\n'): string {
+	const normalizedContent = normalizeLineEndings(content);
+	const block = findGitignoreBlock(normalizedContent);
+	if (!block) {
+		return normalizedContent;
+	}
+
+	const nextLines = block.lines.filter(line => parseManagedSkillLine(line)?.skillId !== skillId);
+	const allLines = splitLines(normalizedContent);
+
+	if (nextLines.some(line => parseManagedSkillLine(line))) {
+		allLines.splice(block.startIndex + 1, block.lines.length, ...nextLines);
+	} else {
+		allLines.splice(block.startIndex, block.endIndex - block.startIndex + 1);
+	}
+
 	return withLineEndings(formatManagedBlockSpacing(allLines).join('\n'), eol);
 }
 
@@ -263,7 +331,22 @@ function isRootSkillFile(value: string): value is typeof ROOT_SKILL_FILES[number
 }
 
 function isRootSkillFolder(value: string): boolean {
-	return ROOT_SKILL_FOLDERS.some(folder => value.startsWith(`${folder}/`) && value.length > folder.length + 1);
+	return ROOT_SKILL_FOLDERS.some(folder => {
+		if (!value.startsWith(`${folder}/`)) {
+			return false;
+		}
+
+		const folderName = value.slice(folder.length + 1);
+		return isValidSkillFolderName(folderName);
+	});
+}
+
+function isValidSkillFolderName(value: string): boolean {
+	return SKILL_FOLDER_NAME_PATTERN.test(value);
+}
+
+function getWorkspaceSkillUri(workspaceUri: vscode.Uri, skillId: string): vscode.Uri {
+	return vscode.Uri.joinPath(workspaceUri, ...skillId.split('/'));
 }
 
 function isSupportedSkillId(value: string): boolean {

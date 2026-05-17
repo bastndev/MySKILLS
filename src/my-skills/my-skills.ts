@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { ROOT_SKILL_FILE_NAMES, ROOT_SKILL_FOLDER_WATCH_PATTERNS, getWorkspaceRootSkills, setWorkspaceRootSkillEnabled } from './screens/local-skill/core/local-skills';
-import type { LocalSkillSetEnabledMessage, LocalSkillsRequestMessage } from './screens/local-skill/core/types';
+import { ROOT_SKILL_FILE_NAMES, ROOT_SKILL_FOLDER_WATCH_PATTERNS, deleteWorkspaceRootSkill, getWorkspaceRootSkills, setWorkspaceRootSkillEnabled } from './screens/local-skill/core/local-skills';
+import type { LocalSkillDeleteMessage, LocalSkillSetEnabledMessage, LocalSkillsRequestMessage } from './screens/local-skill/core/types';
 
 export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'myskills-panel';
@@ -37,6 +37,9 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			if (isLocalSkillSetEnabledMessage(message)) {
 				void this._setLocalSkillEnabled(message);
 			}
+			if (isLocalSkillDeleteMessage(message)) {
+				void this._deleteLocalSkill(message);
+			}
 		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, nonce);
@@ -64,6 +67,27 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		} catch (err) {
 			console.error(`[MySkills] Failed to update .gitignore: ${err}`);
 			void vscode.window.showErrorMessage('My Skills could not update .gitignore.');
+		} finally {
+			await this._postLocalSkills();
+		}
+	}
+
+	private async _deleteLocalSkill(message: LocalSkillDeleteMessage) {
+		const confirmed = await vscode.window.showWarningMessage(
+			`Delete ${message.id}?`,
+			{ modal: true, detail: 'The item will be moved to the trash when possible.' },
+			'Delete',
+		);
+
+		if (confirmed !== 'Delete') {
+			return;
+		}
+
+		try {
+			await deleteWorkspaceRootSkill(message.id);
+		} catch (err) {
+			console.error(`[MySkills] Failed to delete local skill: ${err}`);
+			void vscode.window.showErrorMessage('My Skills could not delete this item.');
 		} finally {
 			await this._postLocalSkills();
 		}
@@ -271,6 +295,15 @@ function isLocalSkillSetEnabledMessage(value: unknown): value is LocalSkillSetEn
 
 	const message = value as { id?: unknown; enabled?: unknown };
 	return typeof message.id === 'string' && typeof message.enabled === 'boolean';
+}
+
+function isLocalSkillDeleteMessage(value: unknown): value is LocalSkillDeleteMessage {
+	if (!isWebviewMessage(value) || value.type !== 'localSkill.delete') {
+		return false;
+	}
+
+	const message = value as { id?: unknown };
+	return typeof message.id === 'string';
 }
 
 function getNonce(): string {

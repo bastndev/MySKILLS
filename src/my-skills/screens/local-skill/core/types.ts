@@ -24,3 +24,8 @@ export interface LocalSkillSetEnabledMessage {
 	id: string;
 	enabled: boolean;
 }
+
+export interface LocalSkillDeleteMessage {
+	type: 'localSkill.delete';
+	id: string;
+}

@@ -174,10 +174,11 @@
 	min-height: 42px;
 	padding: 7px 8px;
 	border-radius: 6px;
-	transition: background 0.14s ease, box-shadow 0.14s ease;
+	transition: background 0.14s ease;
 	position: relative;
 	box-sizing: border-box;
 	user-select: none;
+	overflow: hidden;
 }
 
 .local-item:hover {
@@ -291,6 +292,31 @@
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
+	position: relative;
+}
+
+.local-item .local-item-info::after {
+	content: '';
+	position: absolute;
+	inset: -6px -10px -6px -9px;
+	border-radius: 6px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		color-mix(in srgb, var(--local-bg) 86%, transparent) 5%,
+		color-mix(in srgb, var(--local-bg) 74%, transparent) 68%,
+		transparent 100%
+	);
+	backdrop-filter: blur(5px);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.16s ease;
+	z-index: 1;
+}
+
+.local-item:hover:not(:has(.local-item-switch:hover)) .local-item-info::after,
+.local-item:focus-within:not(:has(.local-item-switch:focus-within)) .local-item-info::after {
+	opacity: 1;
 }
 
 .local-item-name {
@@ -336,6 +362,10 @@
 	gap: 4px;
 }
 
+.local-item .local-item-actions {
+	position: static;
+}
+
 .local-item-action {
 	width: 24px;
 	height: 24px;
@@ -351,6 +381,29 @@
 	opacity: 0;
 	transform: translateX(4px);
 	transition: opacity 0.14s ease, transform 0.14s ease, color 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+	will-change: opacity, transform;
+}
+
+.local-item .local-item-action {
+	position: absolute;
+	left: 48px;
+	top: 50%;
+	z-index: 2;
+	width: 26px;
+	height: 26px;
+	background: color-mix(in srgb, var(--local-bg) 38%, transparent);
+	backdrop-filter: blur(7px);
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-50%) translateX(-8px);
+}
+
+.local-item .local-item-action[data-action="save"] {
+	left: 80px;
+}
+
+.local-item .local-item-action[data-action="duplicate"] {
+	left: 112px;
 }
 
 .local-item-action:disabled {
@@ -359,10 +412,11 @@
 	transform: translateX(0);
 }
 
-.local-item:hover .local-item-action,
-.local-item:focus-within .local-item-action {
+.local-item:hover:not(:has(.local-item-switch:hover)) .local-item-action,
+.local-item:focus-within:not(:has(.local-item-switch:focus-within)) .local-item-action {
 	opacity: 1;
-	transform: translateX(0);
+	pointer-events: auto;
+	transform: translateY(-50%) translateX(0);
 }
 
 .local-item-action:hover {
@@ -373,7 +427,6 @@
 
 .local-item-action--save {
 	--local-save: #34d477;
-	color: var(--local-save);
 }
 
 .local-item-action--save:hover {
@@ -395,6 +448,15 @@
 	outline-offset: 2px;
 }
 
+.local-item .local-item-action:focus-visible {
+	pointer-events: auto;
+	transform: translateY(-50%) translateX(0);
+}
+
+.local-item .local-item-action:active {
+	transform: translateY(-50%) scale(0.94);
+}
+
 .local-item-action svg {
 	width: 13px;
 	height: 13px;
@@ -405,7 +467,40 @@
 	stroke-linejoin: round;
 }
 
+.local-item .local-item-action svg {
+	width: 15px;
+	height: 15px;
+}
+
+.local-item .local-item-action--danger {
+	color: color-mix(in srgb, var(--vscode-errorForeground, #f14c4c) 70%, var(--local-muted));
+}
+
+.local-item .local-item-action--save {
+	color: color-mix(in srgb, var(--local-save) 70%, var(--local-muted));
+}
+
+.local-item .local-item-action[data-action="duplicate"] {
+	color: color-mix(in srgb, var(--local-accent) 70%, var(--local-muted));
+}
+
+.local-item .local-item-action--danger:hover,
+.local-item .local-item-action--danger:focus-visible {
+	color: var(--vscode-errorForeground, #f14c4c);
+}
+
+.local-item .local-item-action--save:hover,
+.local-item .local-item-action--save:focus-visible {
+	color: var(--local-save);
+}
+
+.local-item .local-item-action[data-action="duplicate"]:hover,
+.local-item .local-item-action[data-action="duplicate"]:focus-visible {
+	color: var(--local-accent);
+}
+
 .local-item-switch {
+	position: relative;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -413,6 +508,15 @@
 	height: 18px;
 	padding: 0;
 	cursor: pointer;
+}
+
+.local-item-switch::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: -12px;
+	bottom: -12px;
 }
 
 .local-item-switch:hover .local-item-switch-track {
@@ -427,6 +531,7 @@
 
 .local-item-switch-track {
 	position: relative;
+	z-index: 1;
 	width: 32px;
 	height: 18px;
 	border-radius: 999px;

@@ -1,4 +1,5 @@
 import type { LocalSkill, LocalSkillsUpdateMessage } from '../core/types';
+import { ROOT_SKILL_FILES } from '../core/file-folder/file-skills';
 
 type SortMode = 'az' | 'za' | 'newest';
 
@@ -29,6 +30,15 @@ const DELETE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="fals
 	<path d="M7 7.5v3.5M9 7.5v3.5"/>
 </svg>`;
 
+const ACTION_ICONS = {
+	delete: DELETE_ICON,
+	save: SAVE_ICON,
+	duplicate: DUPLICATE_ICON,
+} as const;
+
+type LocalAction = keyof typeof ACTION_ICONS;
+const POSTABLE_ACTIONS = new Set<LocalAction>(['delete']);
+
 function escHtml(s: string): string {
 	return s
 		.replace(/&/g, '&amp;')
@@ -44,6 +54,29 @@ function getSkillMeta(skill: LocalSkill): string {
 	}
 
 	return 'workspace root';
+}
+
+function renderActionButton(action: LocalAction, skill: LocalSkill): string {
+	const label = action.charAt(0).toUpperCase() + action.slice(1);
+	const className = action === 'delete'
+		? 'local-item-action local-item-action--danger'
+		: action === 'save'
+			? 'local-item-action local-item-action--save'
+			: 'local-item-action';
+
+	return `
+		<button class="${className}" type="button" aria-label="${label} ${escHtml(skill.name)}" title="${label}" data-action="${action}" data-skill-id="${escHtml(skill.id)}">
+			${ACTION_ICONS[action]}
+		</button>
+	`;
+}
+
+function renderSkillActions(skill: LocalSkill): string {
+	const actions: LocalAction[] = skill.kind === 'folder'
+		? ['delete', 'save', 'duplicate']
+		: ['delete'];
+
+	return actions.map(action => renderActionButton(action, skill)).join('');
 }
 
 function renderSkill(skill: LocalSkill): string {
@@ -65,17 +98,7 @@ function renderSkill(skill: LocalSkill): string {
 				</span>
 			</div>
 			<div class="local-item-actions">
-				${isFolder ? `
-					<button class="local-item-action local-item-action--save" type="button" aria-label="Save ${escHtml(skill.name)}" title="Save" data-action="save" data-skill-id="${escHtml(skill.id)}">
-						${SAVE_ICON}
-					</button>
-					<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
-						${DUPLICATE_ICON}
-					</button>
-				` : ''}
-				<button class="local-item-action local-item-action--danger" type="button" aria-label="Delete ${escHtml(skill.name)}" title="Delete" data-action="delete" data-skill-id="${escHtml(skill.id)}">
-					${DELETE_ICON}
-				</button>
+				${renderSkillActions(skill)}
 				<label class="local-item-switch" aria-label="${escHtml(switchLabel)}">
 					<input type="checkbox" role="switch" data-toggle-id="${escHtml(skill.id)}" ${skill.enabled ? 'checked' : ''}>
 					<span class="local-item-switch-track" aria-hidden="true"></span>
@@ -86,13 +109,26 @@ function renderSkill(skill: LocalSkill): string {
 }
 
 let skills: LocalSkill[] = [];
-let sortMode: SortMode = 'az';
+let sortMode: SortMode = 'newest';
 
-const SORT_CYCLE: SortMode[] = ['az', 'za', 'newest'];
+const SORT_CYCLE: SortMode[] = ['newest', 'az', 'za'];
 const SORT_LABELS: Record<SortMode, string> = { az: 'A–Z', za: 'Z–A', newest: 'New' };
+const NEXT_SORT_LABELS: Record<SortMode, string> = { newest: 'A–Z', az: 'Z–A', za: 'New' };
+
+function getRootFileOrder(skill: LocalSkill): number {
+	return ROOT_SKILL_FILES.findIndex(fileName => fileName === skill.id);
+}
 
 function getSorted(list: LocalSkill[]): LocalSkill[] {
 	return [...list].sort((a, b) => {
+		if (a.kind !== b.kind) {
+			return a.kind === 'file' ? -1 : 1;
+		}
+
+		if (a.kind === 'file') {
+			return getRootFileOrder(a) - getRootFileOrder(b);
+		}
+
 		if (sortMode === 'az')     { return a.name.localeCompare(b.name); }
 		if (sortMode === 'za')     { return b.name.localeCompare(a.name); }
 		return b.installedAt - a.installedAt;
@@ -100,9 +136,16 @@ function getSorted(list: LocalSkill[]): LocalSkill[] {
 }
 
 function renderStats(statTotal: HTMLElement, statActive: HTMLElement, statDisabled: HTMLElement): void {
-	statTotal.textContent   = String(skills.length);
-	statActive.textContent   = String(skills.filter(s => s.enabled).length);
-	statDisabled.textContent = String(skills.filter(s => !s.enabled).length);
+	let activeCount = 0;
+	for (const skill of skills) {
+		if (skill.enabled) {
+			activeCount++;
+		}
+	}
+
+	statTotal.textContent = String(skills.length);
+	statActive.textContent = String(activeCount);
+	statDisabled.textContent = String(skills.length - activeCount);
 }
 
 function getSortedIds(list: LocalSkill[]): string[] {
@@ -187,6 +230,10 @@ function isLocalSkillsUpdateMessage(value: unknown): value is LocalSkillsUpdateM
 		&& Array.isArray((value as { skills?: unknown }).skills);
 }
 
+function isLocalAction(value: string | undefined): value is LocalAction {
+	return value === 'delete' || value === 'save' || value === 'duplicate';
+}
+
 export function initLocalPanel(vscodeApi: VsCodeApi): void {
 	const listEl        = document.getElementById('local-list')        as HTMLUListElement | null;
 	const emptyEl       = document.getElementById('local-empty')       as HTMLElement | null;
@@ -230,7 +277,7 @@ export function initLocalPanel(vscodeApi: VsCodeApi): void {
 		sortBtn.addEventListener('click', () => {
 			const idx  = SORT_CYCLE.indexOf(sortMode);
 			sortMode   = SORT_CYCLE[(idx + 1) % SORT_CYCLE.length];
-			sortLabel.textContent = SORT_LABELS[sortMode];
+			sortLabel.textContent = NEXT_SORT_LABELS[sortMode];
 			rerender();
 		});
 	}
@@ -261,6 +308,15 @@ export function initLocalPanel(vscodeApi: VsCodeApi): void {
 		const action = (event.target as Element).closest<HTMLButtonElement>('[data-action]');
 		if (!action) {
 			return;
+		}
+
+		const actionName = action.dataset.action;
+		const skillId = action.dataset.skillId;
+		if (isLocalAction(actionName) && POSTABLE_ACTIONS.has(actionName) && skillId) {
+			vscodeApi.postMessage({
+				type: 'localSkill.delete',
+				id: skillId,
+			});
 		}
 
 		action.blur();
