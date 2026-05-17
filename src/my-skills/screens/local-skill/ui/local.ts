@@ -1,27 +1,32 @@
-type SortMode  = 'az' | 'za' | 'newest';
+import type { LocalSkill, LocalSkillsUpdateMessage } from '../core/types';
 
-interface LocalSkill {
-	id:        string;
-	name:      string;
-	source:    string;
-	enabled:   boolean;
-	installedAt: number;
-}
+type SortMode = 'az' | 'za' | 'newest';
 
-const MOCK_SKILLS: LocalSkill[] = [
-	{ id: 's1', name: 'AGENTS.md',         source: 'microsoft/skills',     enabled: true,  installedAt: 1747000000 },
-	{ id: 's2', name: 'typescript-expert', source: 'mattpocock/skills',    enabled: true,  installedAt: 1746800000 },
-	{ id: 's3', name: 'DESIGN.md',         source: 'bastndev/skills',      enabled: true,  installedAt: 1746700000 },
-	{ id: 's4', name: '.agents/',          source: 'bastndev/skills',      enabled: true,  installedAt: 1746600000 },
-	{ id: 's5', name: 'accessibility',     source: 'bastndev/skills',      enabled: true,  installedAt: 1746500000 },
-	{ id: 's6', name: 'find-skills',       source: 'vercel-labs/skills',   enabled: false, installedAt: 1746400000 },
-	{ id: 's7', name: 'gpt-image-2',       source: 'agentspace-so/skills', enabled: true,  installedAt: 1746300000 },
-	{ id: 's8', name: 'code-reviewer',     source: 'gh-actions/skills',    enabled: false, installedAt: 1746200000 },
-];
+type VsCodeApi = {
+	postMessage(message: unknown): void;
+};
 
-const SKILL_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-	<path d="M3.5 4.5h3l1 1h5v6h-9z"/>
-	<path d="M5.5 8h5M8 6.75V9.25"/>
+const FOLDER_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+	<path d="M2.5 4.5h4l1.2 1.4h5.8v5.6a1 1 0 0 1-1 1h-10z"/>
+	<path d="M2.5 4.5v-1h4.2l1.1 1.4"/>
+</svg>`;
+
+const DUPLICATE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+	<path d="M5 5.5h6.5v7H5z"/>
+	<path d="M3.5 10.5h-1v-7H9v1"/>
+</svg>`;
+
+const SAVE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+	<path d="M3.5 2.5h7.4l1.6 1.6v9.4h-9z"/>
+	<path d="M5.5 2.5v4h5"/>
+	<path d="M5.5 13.5v-4h5v4"/>
+</svg>`;
+
+const DELETE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+	<path d="M3.5 4.5h9"/>
+	<path d="M6.5 4.5v-1h3v1"/>
+	<path d="M5 6.5l.45 6h5.1l.45-6"/>
+	<path d="M7 7.5v3.5M9 7.5v3.5"/>
 </svg>`;
 
 function escHtml(s: string): string {
@@ -32,19 +37,45 @@ function escHtml(s: string): string {
 		.replace(/"/g, '&quot;');
 }
 
+function getSkillMeta(skill: LocalSkill): string {
+	if (skill.kind === 'folder') {
+		const segments = skill.id.split('/');
+		return segments.length > 1 ? segments.slice(0, -1).join('/') : skill.source;
+	}
+
+	return 'workspace root';
+}
+
 function renderSkill(skill: LocalSkill): string {
 	const switchLabel = `${skill.enabled ? 'Disable' : 'Enable'} ${skill.name}`;
+	const isFolder = skill.kind === 'folder';
+	const meta = getSkillMeta(skill);
+	const typeLabel = isFolder ? 'Folder' : 'File';
 
 	return `
-		<li class="local-item ${skill.enabled ? '' : 'local-item--disabled'}" data-skill-id="${escHtml(skill.id)}">
-			<span class="local-item-badge" aria-hidden="true">
-				${SKILL_ICON}
+		<li class="local-item ${isFolder ? 'local-item--folder' : 'local-item--file'} ${skill.enabled ? '' : 'local-item--disabled'}" data-skill-id="${escHtml(skill.id)}" title="${escHtml(skill.id)}">
+			<span class="local-item-badge ${isFolder ? 'local-item-badge--folder' : 'local-item-badge--file'}" aria-hidden="true">
+				${isFolder ? FOLDER_ICON : skill.icon ?? ''}
 			</span>
 			<div class="local-item-info">
-				<span class="local-item-name">${escHtml(skill.name)}</span>
-				<span class="local-item-meta">${escHtml(skill.source)}</span>
+				<span class="local-item-name" title="${escHtml(skill.name)}">${escHtml(skill.name)}</span>
+				<span class="local-item-meta" title="${escHtml(skill.id)}">
+					<span class="local-item-kind">${typeLabel}</span>
+					<span class="local-item-path">${escHtml(meta)}</span>
+				</span>
 			</div>
 			<div class="local-item-actions">
+				${isFolder ? `
+					<button class="local-item-action local-item-action--save" type="button" aria-label="Save ${escHtml(skill.name)}" title="Save" data-action="save" data-skill-id="${escHtml(skill.id)}">
+						${SAVE_ICON}
+					</button>
+					<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
+						${DUPLICATE_ICON}
+					</button>
+				` : ''}
+				<button class="local-item-action local-item-action--danger" type="button" aria-label="Delete ${escHtml(skill.name)}" title="Delete" data-action="delete" data-skill-id="${escHtml(skill.id)}">
+					${DELETE_ICON}
+				</button>
 				<label class="local-item-switch" aria-label="${escHtml(switchLabel)}">
 					<input type="checkbox" role="switch" data-toggle-id="${escHtml(skill.id)}" ${skill.enabled ? 'checked' : ''}>
 					<span class="local-item-switch-track" aria-hidden="true"></span>
@@ -54,10 +85,10 @@ function renderSkill(skill: LocalSkill): string {
 	`;
 }
 
-let skills:      LocalSkill[] = [...MOCK_SKILLS];
-let sortMode:     SortMode    = 'az';
+let skills: LocalSkill[] = [];
+let sortMode: SortMode = 'az';
 
-const SORT_CYCLE: SortMode[]      = ['az', 'za', 'newest'];
+const SORT_CYCLE: SortMode[] = ['az', 'za', 'newest'];
 const SORT_LABELS: Record<SortMode, string> = { az: 'A–Z', za: 'Z–A', newest: 'New' };
 
 function getSorted(list: LocalSkill[]): LocalSkill[] {
@@ -72,6 +103,38 @@ function renderStats(statTotal: HTMLElement, statActive: HTMLElement, statDisabl
 	statTotal.textContent   = String(skills.length);
 	statActive.textContent   = String(skills.filter(s => s.enabled).length);
 	statDisabled.textContent = String(skills.filter(s => !s.enabled).length);
+}
+
+function getSortedIds(list: LocalSkill[]): string[] {
+	return getSorted(list).map(skill => skill.id);
+}
+
+function hasSameRenderedOrder(currentSkills: LocalSkill[], nextSkills: LocalSkill[]): boolean {
+	const currentIds = getSortedIds(currentSkills);
+	const nextIds = getSortedIds(nextSkills);
+
+	return currentIds.length === nextIds.length
+		&& currentIds.every((id, index) => id === nextIds[index]);
+}
+
+function syncRenderedSkillState(
+	listEl: HTMLUListElement,
+	statTotal: HTMLElement,
+	statActive: HTMLElement,
+	statDisabled: HTMLElement,
+): void {
+	for (const skill of skills) {
+		const itemEl = listEl.querySelector<HTMLElement>(`[data-skill-id="${CSS.escape(skill.id)}"]`);
+		const inputEl = itemEl?.querySelector<HTMLInputElement>('[data-toggle-id]');
+
+		itemEl?.classList.toggle('local-item--disabled', !skill.enabled);
+		if (inputEl) {
+			inputEl.checked = skill.enabled;
+			inputEl.closest('.local-item-switch')?.setAttribute('aria-label', `${skill.enabled ? 'Disable' : 'Enable'} ${skill.name}`);
+		}
+	}
+
+	renderStats(statTotal, statActive, statDisabled);
 }
 
 function render(
@@ -117,7 +180,14 @@ function updateSkillEnabled(
 	renderStats(statTotal, statActive, statDisabled);
 }
 
-export function initLocalPanel(): void {
+function isLocalSkillsUpdateMessage(value: unknown): value is LocalSkillsUpdateMessage {
+	return Boolean(value)
+		&& typeof value === 'object'
+		&& (value as { type?: unknown }).type === 'localSkills.update'
+		&& Array.isArray((value as { skills?: unknown }).skills);
+}
+
+export function initLocalPanel(vscodeApi: VsCodeApi): void {
 	const listEl        = document.getElementById('local-list')        as HTMLUListElement | null;
 	const emptyEl       = document.getElementById('local-empty')       as HTMLElement | null;
 	const statTotal     = document.getElementById('stat-total')        as HTMLElement | null;
@@ -135,6 +205,26 @@ export function initLocalPanel(): void {
 		render(listEl, emptyEl, statTotal, statActive, statDisabled);
 
 	rerender();
+
+	window.addEventListener('message', event => {
+		if (!isLocalSkillsUpdateMessage(event.data)) {
+			return;
+		}
+
+		const nextSkills = event.data.skills;
+		const canSyncStateOnly = skills.length > 0
+			&& nextSkills.length > 0
+			&& hasSameRenderedOrder(skills, nextSkills);
+
+		skills = nextSkills;
+		if (canSyncStateOnly) {
+			syncRenderedSkillState(listEl, statTotal, statActive, statDisabled);
+		} else {
+			rerender();
+		}
+	});
+
+	vscodeApi.postMessage({ type: 'localSkills.request' });
 
 	if (sortBtn && sortLabel) {
 		sortBtn.addEventListener('click', () => {
@@ -160,6 +250,20 @@ export function initLocalPanel(): void {
 			statActive,
 			statDisabled,
 		);
+		vscodeApi.postMessage({
+			type: 'localSkill.setEnabled',
+			id: input.dataset.toggleId ?? '',
+			enabled: input.checked,
+		});
+	});
+
+	listEl.addEventListener('click', event => {
+		const action = (event.target as Element).closest<HTMLButtonElement>('[data-action]');
+		if (!action) {
+			return;
+		}
+
+		action.blur();
 	});
 
 	if (gotoInstall) {

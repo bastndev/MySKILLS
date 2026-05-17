@@ -1,10 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import { ROOT_SKILL_FILE_NAMES, ROOT_SKILL_FOLDER_WATCH_PATTERNS, getWorkspaceRootSkills, setWorkspaceRootSkillEnabled } from './screens/local-skill/core/local-skills';
+import type { LocalSkillSetEnabledMessage, LocalSkillsRequestMessage } from './screens/local-skill/core/types';
 
 export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'myskills-panel';
 	private _view?: vscode.WebviewView;
 	private _supportPanel?: vscode.WebviewPanel;
+	private _localSkillWatchers: vscode.FileSystemWatcher[] = [];
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
@@ -28,15 +31,64 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 			if (isWebviewMessage(message) && message.type === 'createSkill.openSupport') {
 				this._openCreateSkillSupport();
 			}
+			if (isLocalSkillsRequestMessage(message)) {
+				void this._postLocalSkills();
+			}
+			if (isLocalSkillSetEnabledMessage(message)) {
+				void this._setLocalSkillEnabled(message);
+			}
 		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, nonce);
+		this._watchWorkspaceLocalSkills();
 	}
 
 	public switchTab(target: string) {
 		if (this._view) {
 			this._view.webview.postMessage({ type: 'switch-tab', target });
 		}
+	}
+
+	private async _postLocalSkills() {
+		if (!this._view) {
+			return;
+		}
+
+		const skills = await getWorkspaceRootSkills();
+		await this._view.webview.postMessage({ type: 'localSkills.update', skills });
+	}
+
+	private async _setLocalSkillEnabled(message: LocalSkillSetEnabledMessage) {
+		try {
+			await setWorkspaceRootSkillEnabled(message.id, message.enabled);
+		} catch (err) {
+			console.error(`[MySkills] Failed to update .gitignore: ${err}`);
+			void vscode.window.showErrorMessage('My Skills could not update .gitignore.');
+		} finally {
+			await this._postLocalSkills();
+		}
+	}
+
+	private _watchWorkspaceLocalSkills() {
+		this._localSkillWatchers.forEach(watcher => watcher.dispose());
+		this._localSkillWatchers = [];
+
+		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+		if (!workspaceFolder) {
+			return;
+		}
+
+		const refresh = () => { void this._postLocalSkills(); };
+		const watchedFiles = ['.gitignore', ...ROOT_SKILL_FILE_NAMES, ...ROOT_SKILL_FOLDER_WATCH_PATTERNS];
+
+		this._localSkillWatchers = watchedFiles.map(fileName => {
+			const watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workspaceFolder, fileName));
+			watcher.onDidCreate(refresh);
+			watcher.onDidChange(refresh);
+			watcher.onDidDelete(refresh);
+
+			return watcher;
+		});
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview, nonce: string): string {
@@ -199,11 +251,26 @@ export class MySkillsViewProvider implements vscode.WebviewViewProvider {
 		this._view = undefined;
 		this._supportPanel?.dispose();
 		this._supportPanel = undefined;
+		this._localSkillWatchers.forEach(watcher => watcher.dispose());
+		this._localSkillWatchers = [];
 	}
 }
 
 function isWebviewMessage(value: unknown): value is { type: string } {
 	return Boolean(value) && typeof value === 'object' && typeof (value as { type?: unknown }).type === 'string';
+}
+
+function isLocalSkillsRequestMessage(value: unknown): value is LocalSkillsRequestMessage {
+	return isWebviewMessage(value) && value.type === 'localSkills.request';
+}
+
+function isLocalSkillSetEnabledMessage(value: unknown): value is LocalSkillSetEnabledMessage {
+	if (!isWebviewMessage(value) || value.type !== 'localSkill.setEnabled') {
+		return false;
+	}
+
+	const message = value as { id?: unknown; enabled?: unknown };
+	return typeof message.id === 'string' && typeof message.enabled === 'boolean';
 }
 
 function getNonce(): string {

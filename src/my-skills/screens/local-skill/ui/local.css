@@ -11,6 +11,8 @@
 	--local-border:   color-mix(in srgb, var(--local-fg) 10%, transparent);
 	--local-hover-bg: var(--vscode-list-hoverBackground, color-mix(in srgb, var(--local-fg) 6%, transparent));
 	--local-disabled: color-mix(in srgb, var(--local-muted) 74%, transparent);
+	--local-file-accent: color-mix(in srgb, var(--local-accent) 42%, var(--local-fg));
+	--local-folder-accent: var(--local-accent);
 
 	display: flex;
 	flex-direction: column;
@@ -152,7 +154,7 @@
 	flex: 1;
 	overflow-y: auto;
 	margin: 0;
-	padding: 6px 0 16px;
+	padding: 6px 10px 16px;
 	list-style: none;
 	scrollbar-width: thin;
 	scrollbar-color: color-mix(in srgb, var(--local-fg) 18%, transparent) transparent;
@@ -169,21 +171,29 @@
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	padding: 8px 12px;
-	transition: background 0.14s ease;
+	min-height: 42px;
+	padding: 7px 8px;
+	border-radius: 6px;
+	transition: background 0.14s ease, box-shadow 0.14s ease;
 	position: relative;
+	box-sizing: border-box;
+	user-select: none;
 }
 
 .local-item:hover {
 	background: var(--local-hover-bg);
 }
 
+.local-item:focus-within {
+	background: color-mix(in srgb, var(--local-fg) 7%, transparent);
+}
+
 .local-item::before {
 	content: '';
 	position: absolute;
 	left: 0;
-	top: 6px;
-	bottom: 6px;
+	top: 8px;
+	bottom: 8px;
 	width: 2px;
 	border-radius: 1px;
 	background: var(--local-accent);
@@ -191,7 +201,19 @@
 	transition: opacity 0.14s ease;
 }
 
+.local-item--file::before {
+	background: var(--local-file-accent);
+}
+
+.local-item--folder::before {
+	background: var(--local-folder-accent);
+}
+
 .local-item:hover::before {
+	opacity: 1;
+}
+
+.local-item:focus-within::before {
 	opacity: 1;
 }
 
@@ -204,34 +226,63 @@
 	stroke: var(--local-disabled);
 }
 
+.local-item--disabled .local-item-badge {
+	color: var(--local-disabled);
+}
+
 .local-item-badge {
-	flex: 0 0 28px;
-	height: 28px;
+	flex: 0 0 26px;
+	height: 26px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	border-radius: 6px;
 	background: color-mix(in srgb, var(--local-fg) 7%, transparent);
-	transition: background 0.14s ease;
+	border: 1px solid transparent;
+	color: var(--local-muted);
+	transition: background 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+	box-sizing: border-box;
 }
 
-.local-item:hover .local-item-badge {
-	background: color-mix(in srgb, var(--local-accent) 14%, transparent);
+.local-item-badge--file {
+	color: var(--local-file-accent);
+}
+
+.local-item-badge--folder {
+	flex-basis: 30px;
+	height: 30px;
+	color: var(--local-folder-accent);
+}
+
+.local-item:hover .local-item-badge--file {
+	background: color-mix(in srgb, var(--local-file-accent) 14%, transparent);
+	border-color: color-mix(in srgb, var(--local-file-accent) 28%, transparent);
+}
+
+.local-item:hover .local-item-badge--folder {
+	background: color-mix(in srgb, var(--local-folder-accent) 20%, transparent);
+	border-color: color-mix(in srgb, var(--local-folder-accent) 38%, transparent);
 }
 
 .local-item-badge svg {
-	width: 14px;
-	height: 14px;
+	width: 16px;
+	height: 16px;
 	fill: none;
-	stroke: var(--local-muted);
+	stroke: currentColor;
 	stroke-width: 1.4;
 	stroke-linecap: round;
 	stroke-linejoin: round;
-	transition: stroke 0.14s ease;
+	transition: stroke 0.14s ease, fill 0.14s ease;
 }
 
-.local-item:hover .local-item-badge svg {
-	stroke: var(--local-accent);
+.local-item-badge--folder svg {
+	width: 16px;
+	height: 16px;
+}
+
+.local-item-badge svg [fill="currentColor"] {
+	fill: currentColor;
+	stroke: none;
 }
 
 .local-item-info {
@@ -259,12 +310,99 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	min-width: 0;
+}
+
+.local-item-kind {
+	flex: 0 0 auto;
+	color: color-mix(in srgb, var(--local-muted) 82%, transparent);
+	font-size: 10px;
+	text-transform: uppercase;
+}
+
+.local-item-path {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .local-item-actions {
 	flex: 0 0 auto;
 	display: flex;
 	align-items: center;
+	gap: 4px;
+}
+
+.local-item-action {
+	width: 24px;
+	height: 24px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 5px;
+	background: transparent;
+	color: var(--local-muted);
+	cursor: pointer;
+	opacity: 0;
+	transform: translateX(4px);
+	transition: opacity 0.14s ease, transform 0.14s ease, color 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+}
+
+.local-item-action:disabled {
+	cursor: default;
+	opacity: 0.35;
+	transform: translateX(0);
+}
+
+.local-item:hover .local-item-action,
+.local-item:focus-within .local-item-action {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+.local-item-action:hover {
+	color: var(--local-accent);
+	background: color-mix(in srgb, var(--local-accent) 12%, transparent);
+	border-color: color-mix(in srgb, var(--local-accent) 24%, transparent);
+}
+
+.local-item-action--save {
+	--local-save: #34d477;
+	color: var(--local-save);
+}
+
+.local-item-action--save:hover {
+	color: var(--local-save);
+	background: color-mix(in srgb, var(--local-save) 14%, transparent);
+	border-color: color-mix(in srgb, var(--local-save) 32%, transparent);
+}
+
+.local-item-action--danger:hover {
+	color: var(--vscode-errorForeground, #f14c4c);
+	background: color-mix(in srgb, var(--vscode-errorForeground, #f14c4c) 12%, transparent);
+	border-color: color-mix(in srgb, var(--vscode-errorForeground, #f14c4c) 24%, transparent);
+}
+
+.local-item-action:focus-visible {
+	opacity: 1;
+	transform: translateX(0);
+	outline: 1px solid var(--local-accent);
+	outline-offset: 2px;
+}
+
+.local-item-action svg {
+	width: 13px;
+	height: 13px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.45;
+	stroke-linecap: round;
+	stroke-linejoin: round;
 }
 
 .local-item-switch {
@@ -408,6 +546,7 @@
 	.local-sort-btn,
 	.local-item,
 	.local-item::before,
+	.local-item-action,
 	.local-item-badge,
 	.local-item-badge svg,
 	.local-item-switch-track,
