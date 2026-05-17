@@ -385,7 +385,7 @@
 
 .local-item .local-item-action {
 	position: absolute;
-	left: 52px;
+	left: 48px;
 	top: 50%;
 	z-index: 2;
 	width: 26px;
@@ -398,11 +398,11 @@
 }
 
 .local-item .local-item-action[data-action="save"] {
-	left: 84px;
+	left: 80px;
 }
 
 .local-item .local-item-action[data-action="duplicate"] {
-	left: 116px;
+	left: 112px;
 }
 
 .local-item-action:disabled {
