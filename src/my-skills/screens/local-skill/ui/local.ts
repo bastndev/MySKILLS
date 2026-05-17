@@ -1,4 +1,5 @@
 import type { LocalSkill, LocalSkillsUpdateMessage } from '../core/types';
+import { ROOT_SKILL_FILES } from '../core/file-folder/file-skills';
 
 type SortMode = 'az' | 'za' | 'newest';
 
@@ -113,10 +114,18 @@ const SORT_CYCLE: SortMode[] = ['newest', 'az', 'za'];
 const SORT_LABELS: Record<SortMode, string> = { az: 'A–Z', za: 'Z–A', newest: 'New' };
 const NEXT_SORT_LABELS: Record<SortMode, string> = { newest: 'A–Z', az: 'Z–A', za: 'New' };
 
+function getRootFileOrder(skill: LocalSkill): number {
+	return ROOT_SKILL_FILES.findIndex(fileName => fileName === skill.id);
+}
+
 function getSorted(list: LocalSkill[]): LocalSkill[] {
 	return [...list].sort((a, b) => {
 		if (a.kind !== b.kind) {
 			return a.kind === 'file' ? -1 : 1;
+		}
+
+		if (a.kind === 'file') {
+			return getRootFileOrder(a) - getRootFileOrder(b);
 		}
 
 		if (sortMode === 'az')     { return a.name.localeCompare(b.name); }
