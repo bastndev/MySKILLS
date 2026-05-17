@@ -371,6 +371,17 @@
 	border-color: color-mix(in srgb, var(--local-accent) 24%, transparent);
 }
 
+.local-item-action--save {
+	--local-save: #4ade80;
+	color: var(--local-save);
+}
+
+.local-item-action--save:hover {
+	color: var(--local-save);
+	background: color-mix(in srgb, var(--local-save) 14%, transparent);
+	border-color: color-mix(in srgb, var(--local-save) 32%, transparent);
+}
+
 .local-item-action--danger:hover {
 	color: var(--vscode-errorForeground, #f14c4c);
 	background: color-mix(in srgb, var(--vscode-errorForeground, #f14c4c) 12%, transparent);

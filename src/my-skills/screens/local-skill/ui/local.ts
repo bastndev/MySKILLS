@@ -16,6 +16,12 @@ const DUPLICATE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="f
 	<path d="M3.5 10.5h-1v-7H9v1"/>
 </svg>`;
 
+const SAVE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+	<path d="M3.5 2.5h7.4l1.6 1.6v9.4h-9z"/>
+	<path d="M5.5 2.5v4h5"/>
+	<path d="M5.5 13.5v-4h5v4"/>
+</svg>`;
+
 const DELETE_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
 	<path d="M3.5 4.5h9"/>
 	<path d="M6.5 4.5v-1h3v1"/>
@@ -60,6 +66,9 @@ function renderSkill(skill: LocalSkill): string {
 			</div>
 			<div class="local-item-actions">
 				${isFolder ? `
+					<button class="local-item-action local-item-action--save" type="button" aria-label="Save ${escHtml(skill.name)}" title="Save" data-action="save" data-skill-id="${escHtml(skill.id)}">
+						${SAVE_ICON}
+					</button>
 					<button class="local-item-action" type="button" aria-label="Duplicate ${escHtml(skill.name)}" title="Duplicate" data-action="duplicate" data-skill-id="${escHtml(skill.id)}">
 						${DUPLICATE_ICON}
 					</button>
