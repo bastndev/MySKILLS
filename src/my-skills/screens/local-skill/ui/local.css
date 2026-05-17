@@ -474,6 +474,33 @@
 	height: 15px;
 }
 
+.local-item .local-item-action--danger {
+	color: color-mix(in srgb, var(--vscode-errorForeground, #f14c4c) 42%, var(--local-muted));
+}
+
+.local-item .local-item-action--save {
+	color: color-mix(in srgb, var(--local-save) 42%, var(--local-muted));
+}
+
+.local-item .local-item-action[data-action="duplicate"] {
+	color: color-mix(in srgb, var(--local-accent) 36%, var(--local-muted));
+}
+
+.local-item .local-item-action--danger:hover,
+.local-item .local-item-action--danger:focus-visible {
+	color: var(--vscode-errorForeground, #f14c4c);
+}
+
+.local-item .local-item-action--save:hover,
+.local-item .local-item-action--save:focus-visible {
+	color: var(--local-save);
+}
+
+.local-item .local-item-action[data-action="duplicate"]:hover,
+.local-item .local-item-action[data-action="duplicate"]:focus-visible {
+	color: var(--local-accent);
+}
+
 .local-item-switch {
 	display: inline-flex;
 	align-items: center;
