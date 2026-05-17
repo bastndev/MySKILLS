@@ -9,7 +9,7 @@ const GITIGNORE_FILE = '.gitignore';
 const BLOCK_BEGIN = '# My Skills: begin';
 const BLOCK_END = '# My Skills: end';
 const SKILL_MANIFEST_FILE = 'SKILL.md';
-const SKILL_FOLDER_NAME_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/;
+const SKILL_FOLDER_NAME_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 interface GitignoreBlock {
 	lines: string[];
@@ -281,20 +281,18 @@ function isRootSkillFile(value: string): value is typeof ROOT_SKILL_FILES[number
 }
 
 function isRootSkillFolder(value: string): boolean {
-	return ROOT_SKILL_FOLDERS.some(folder => value.startsWith(`${folder}/`) && value.length > folder.length + 1);
+	return ROOT_SKILL_FOLDERS.some(folder => {
+		if (!value.startsWith(`${folder}/`)) {
+			return false;
+		}
+
+		const folderName = value.slice(folder.length + 1);
+		return isValidSkillFolderName(folderName);
+	});
 }
 
 function isValidSkillFolderName(value: string): boolean {
-	return SKILL_FOLDER_NAME_PATTERN.test(value)
-		&& !value.includes('..')
-		&& !value.includes('--')
-		&& !value.includes('__')
-		&& !value.includes('._')
-		&& !value.includes('_.')
-		&& !value.includes('.-')
-		&& !value.includes('-.')
-		&& !value.includes('_-')
-		&& !value.includes('-_');
+	return SKILL_FOLDER_NAME_PATTERN.test(value);
 }
 
 function isSupportedSkillId(value: string): boolean {
