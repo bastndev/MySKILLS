@@ -107,13 +107,17 @@ function renderSkill(skill: LocalSkill): string {
 }
 
 let skills: LocalSkill[] = [];
-let sortMode: SortMode = 'az';
+let sortMode: SortMode = 'newest';
 
-const SORT_CYCLE: SortMode[] = ['az', 'za', 'newest'];
+const SORT_CYCLE: SortMode[] = ['newest', 'az', 'za'];
 const SORT_LABELS: Record<SortMode, string> = { az: 'A–Z', za: 'Z–A', newest: 'New' };
 
 function getSorted(list: LocalSkill[]): LocalSkill[] {
 	return [...list].sort((a, b) => {
+		if (a.kind !== b.kind) {
+			return a.kind === 'file' ? -1 : 1;
+		}
+
 		if (sortMode === 'az')     { return a.name.localeCompare(b.name); }
 		if (sortMode === 'za')     { return b.name.localeCompare(a.name); }
 		return b.installedAt - a.installedAt;
